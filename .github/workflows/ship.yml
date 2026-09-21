@@ -1,0 +1,89 @@
+name: WinSidebar Windows x64 release
+on:
+  push:
+    paths: [src/part-05.txt]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Extract and verify clean source and app icon
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $parts = @(1..5 | ForEach-Object { [IO.File]::ReadAllText(('src/part-{0:00}.txt' -f $_)).Trim() })
+          $inputStream = [IO.MemoryStream]::new([Convert]::FromBase64String(($parts -join '')))
+          $br = [IO.Compression.BrotliStream]::new($inputStream,[IO.Compression.CompressionMode]::Decompress)
+          $output = [IO.MemoryStream]::new()
+          try { $br.CopyTo($output) } finally { $br.Dispose(); $inputStream.Dispose() }
+          $bytes = $output.ToArray(); $output.Dispose()
+          if ($bytes.Length -lt 13) { throw 'Missing source bytes.' }
+          $sizes = @([BitConverter]::ToInt32($bytes,0),[BitConverter]::ToInt32($bytes,4),[BitConverter]::ToInt32($bytes,8))
+          if (($sizes | Where-Object { $_ -le 0 }).Count -gt 0 -or (12L + $sizes[0] + $sizes[1] + $sizes[2]) -ne $bytes.Length) { throw 'Invalid archive sizes.' }
+          New-Item -ItemType Directory -Path assets -Force | Out-Null
+          $paths = @('src/WinSidebar.cs','src/ShortcutConfig.cs','assets/WinSidebar.ico')
+          $hashes = @('a0d3e9e9e3334f031d5110a2b73fb79a14bf7271cb51148b82321b307febb140','76ece43fd4c09e87ac8a6c48b37f996fd60d72d24496712dabfab5cbd70d5011','169b51b4c2c03f2866f91276effb5059e8dad0e1deb7ad42949c68deb1ed9f95')
+          $offset = 12
+          for ($i=0; $i -lt 3; $i++) {
+            $file = [byte[]]::new($sizes[$i])
+            [Buffer]::BlockCopy($bytes,$offset,$file,0,$sizes[$i])
+            [IO.File]::WriteAllBytes($paths[$i],$file)
+            if ((Get-FileHash $paths[$i] -Algorithm SHA256).Hash -ne $hashes[$i]) { throw "Source audit failed: $($paths[$i])" }
+            $offset += $sizes[$i]
+          }
+          $text = [IO.File]::ReadAllText($paths[0]) + [IO.File]::ReadAllText($paths[1])
+          if ($text -match 'C:[\\]Users[\\]|[A-Z]:[\\]Git|[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}') { throw 'Unexpected personal data in public source.' }
+          foreach ($term in @('"WinSidebar", "settings.ini"','@"Local\WinSidebarPublic"','"https://www.google.com/"','Environment.SpecialFolder.MyDocuments','Native.DownloadsPath()')) {
+            if (-not $text.Contains($term)) { throw "Missing default/isolation: $term" }
+          }
+      - name: Build portable single-file app with .NET 8 included
+        shell: pwsh
+        run: |
+          dotnet publish WinSidebar.csproj -c Release -r win-x64 --self-contained true -o publish
+          if ($LASTEXITCODE -ne 0) { throw 'Windows compilation failed.' }
+          $files = @(Get-ChildItem publish -File)
+          if ($files.Count -ne 1 -or $files[0].Name -ne 'WinSidebar.exe' -or $files[0].Length -lt 10000000) { throw 'Distribution is not a single self-contained EXE.' }
+      - name: Package and check distribution contents
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path staging,dist -Force | Out-Null
+          Copy-Item publish/WinSidebar.exe staging/WinSidebar.exe
+          Copy-Item LEIA-ME.txt staging/LEIA-ME.txt
+          $zip = 'dist/WinSidebar-v1.0.0-win-x64.zip'
+          Compress-Archive staging/* $zip -CompressionLevel Optimal
+          $archive = [IO.Compression.ZipFile]::OpenRead((Resolve-Path $zip).Path)
+          try { if ((@($archive.Entries | ForEach-Object FullName | Sort-Object) -join ',') -ne 'LEIA-ME.txt,WinSidebar.exe') { throw 'Unexpected ZIP contents.' } } finally { $archive.Dispose() }
+          $sum = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLowerInvariant()
+          [IO.File]::WriteAllText('dist/SHA256SUMS.txt', "$sum  WinSidebar-v1.0.0-win-x64.zip`n")
+          Write-Host "ZIP SHA256: $sum"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: WinSidebar-1.0.0-win-x64
+          path: dist/
+          if-no-files-found: error
+      - name: Commit inspected, readable source to clean public repository
+        shell: pwsh
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/WinSidebar.cs src/ShortcutConfig.cs assets/WinSidebar.ico
+          git rm src/part-01.txt src/part-02.txt src/part-03.txt src/part-04.txt src/part-05.txt
+          git commit -m 'Publish audited WinSidebar source and icon'
+          if ($LASTEXITCODE -ne 0) { throw 'Could not commit audited source.' }
+          git push origin HEAD:main
+          if ($LASTEXITCODE -ne 0) { throw 'Could not publish audited source.' }
+      - name: Publish permanent GitHub release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $commit = (git rev-parse HEAD).Trim()
+          gh release create v1.0.0 'dist/WinSidebar-v1.0.0-win-x64.zip' 'dist/SHA256SUMS.txt' --repo $env:GITHUB_REPOSITORY --target $commit --title 'WinSidebar 1.0.0 — Windows x64' --notes 'Portátil para Windows 10/11 x64. O ZIP contém somente WinSidebar.exe e LEIA-ME.txt. O runtime .NET 8 está incluído. Dados locais em %LOCALAPPDATA%\WinSidebar, sem substituir instalações anteriores. Binário não assinado digitalmente.'
+          if ($LASTEXITCODE -ne 0) { throw 'Release publishing failed; CI artifact is available.' }
