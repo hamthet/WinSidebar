@@ -1,0 +1,103 @@
+name: Build and publish WinSidebar
+on:
+  push:
+    paths:
+      - src/source.br.b64
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  windows-release:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Restore audited source files and icon
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $raw = [Convert]::FromBase64String([IO.File]::ReadAllText('src/source.br.b64').Trim())
+          $inputStream = [IO.MemoryStream]::new($raw)
+          $decoder = [IO.Compression.BrotliStream]::new($inputStream, [IO.Compression.CompressionMode]::Decompress)
+          $outputStream = [IO.MemoryStream]::new()
+          try { $decoder.CopyTo($outputStream) } finally { $decoder.Dispose(); $inputStream.Dispose() }
+          $bytes = $outputStream.ToArray()
+          $outputStream.Dispose()
+          if ($bytes.Length -lt 13) { throw 'Invalid source bundle.' }
+          $n1 = [BitConverter]::ToInt32($bytes,0)
+          $n2 = [BitConverter]::ToInt32($bytes,4)
+          $n3 = [BitConverter]::ToInt32($bytes,8)
+          if ($n1 -le 0 -or $n2 -le 0 -or $n3 -le 0 -or (12L + $n1 + $n2 + $n3) -ne $bytes.Length) { throw 'Invalid source bundle sizes.' }
+          New-Item -ItemType Directory -Path src,assets -Force | Out-Null
+          $names = @('src/WinSidebar.cs','src/ShortcutConfig.cs','assets/WinSidebar.ico')
+          $sizes = @($n1,$n2,$n3)
+          $hashes = @('a0d3e9e9e3334f031d5110a2b73fb79a14bf7271cb51148b82321b307febb140','76ece43fd4c09e87ac8a6c48b37f996fd60d72d24496712dabfab5cbd70d5011','169b51b4c2c03f2866f91276effb5059e8dad0e1deb7ad42949c68deb1ed9f95')
+          $offset = 12
+          for ($i=0; $i -lt $names.Count; $i++) {
+            $part = [byte[]]::new($sizes[$i])
+            [Buffer]::BlockCopy($bytes,$offset,$part,0,$sizes[$i])
+            [IO.File]::WriteAllBytes($names[$i],$part)
+            if ((Get-FileHash $names[$i] -Algorithm SHA256).Hash -ne $hashes[$i]) { throw "Integrity check failed: $($names[$i])" }
+            $offset += $sizes[$i]
+          }
+          $code = [IO.File]::ReadAllText('src/WinSidebar.cs') + [IO.File]::ReadAllText('src/ShortcutConfig.cs')
+          if ($code -match 'C:[\\]Users[\\]|[A-Z]:[\\]Git|[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}') { throw 'Unexpected personal path or email in source.' }
+          foreach ($term in @('"WinSidebar", "settings.ini"','@"Local\WinSidebarPublic"','"https://www.google.com/"','Environment.SpecialFolder.MyDocuments','Native.DownloadsPath()')) {
+            if (-not $code.Contains($term)) { throw "Missing required app isolation/default: $term" }
+          }
+          Write-Host 'Source hashes, generic defaults, isolation and icon verified.'
+      - name: Build self-contained Windows x64 executable
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          dotnet publish WinSidebar.csproj -c Release -r win-x64 --self-contained true -o publish /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true /p:PublishTrimmed=false
+          if ($LASTEXITCODE -ne 0) { throw 'dotnet publish failed' }
+          $files = @(Get-ChildItem publish -File)
+          if ($files.Count -ne 1 -or $files[0].Name -ne 'WinSidebar.exe' -or $files[0].Length -lt 10000000) { throw 'Expected exactly one EXE with bundled runtime.' }
+          $pe = [IO.File]::OpenRead($files[0].FullName)
+          try { if ($pe.ReadByte() -ne 0x4d -or $pe.ReadByte() -ne 0x5a) { throw 'Invalid PE file.' } } finally { $pe.Dispose() }
+      - name: Package EXE and end-user instructions only
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Path staging,dist -Force | Out-Null
+          Copy-Item publish/WinSidebar.exe staging/WinSidebar.exe
+          Copy-Item LEIA-ME.txt staging/LEIA-ME.txt
+          $zip = 'dist/WinSidebar-v1.0.0-win-x64.zip'
+          Compress-Archive -Path staging/* -DestinationPath $zip -CompressionLevel Optimal
+          $archive = [IO.Compression.ZipFile]::OpenRead((Resolve-Path $zip).Path)
+          try { if ((@($archive.Entries | ForEach-Object FullName | Sort-Object) -join ',') -ne 'LEIA-ME.txt,WinSidebar.exe') { throw 'Unexpected distribution contents.' } } finally { $archive.Dispose() }
+          $sum = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLowerInvariant()
+          [IO.File]::WriteAllText('dist/SHA256SUMS.txt', "$sum  WinSidebar-v1.0.0-win-x64.zip`n")
+          Write-Host "ZIP SHA256: $sum"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: WinSidebar-v1.0.0-win-x64
+          path: |
+            dist/WinSidebar-v1.0.0-win-x64.zip
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
+      - name: Publish readable source in clean public history
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/WinSidebar.cs src/ShortcutConfig.cs assets/WinSidebar.ico
+          git rm src/source.br.b64
+          git commit -m 'Publish audited WinSidebar source and icon'
+          if ($LASTEXITCODE -ne 0) { throw 'Could not commit clean public source.' }
+          git push origin HEAD:main
+          if ($LASTEXITCODE -ne 0) { throw 'Could not push clean source; release blocked.' }
+      - name: Publish permanent release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $commit = (git rev-parse HEAD).Trim()
+          gh release create v1.0.0 'dist/WinSidebar-v1.0.0-win-x64.zip' 'dist/SHA256SUMS.txt' --repo $env:GITHUB_REPOSITORY --target $commit --title 'WinSidebar 1.0.0 — Windows x64' --notes 'Portátil para Windows 10/11 x64. O ZIP contém apenas WinSidebar.exe e LEIA-ME.txt, com .NET 8 incorporado. Preferências próprias em %LOCALAPPDATA%\WinSidebar; não substitui instalações anteriores nem muda o navegador padrão. O executável não é assinado digitalmente.'
+          if ($LASTEXITCODE -ne 0) { throw 'GitHub release failed; build artifact remains available.' }
