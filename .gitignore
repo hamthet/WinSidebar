@@ -1,0 +1,12 @@
+bin/
+obj/
+publish/
+dist/
+staging/
+*.user
+*.suo
+*.pdb
+*.tmp
+settings.ini
+shortcuts.xml
+shortcuts.xml.bak
