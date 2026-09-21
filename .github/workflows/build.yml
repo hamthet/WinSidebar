@@ -1,0 +1,52 @@
+name: Verify portable Windows build
+on:
+  push:
+    paths:
+      - 'src/**'
+      - 'assets/**'
+      - WinSidebar.csproj
+      - LEIA-ME.txt
+      - .github/workflows/build.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Audit published source and defaults
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $text = [IO.File]::ReadAllText('src/WinSidebar.cs') + [IO.File]::ReadAllText('src/ShortcutConfig.cs')
+          if ($text -match 'C:[\\]Users[\\]|[A-Z]:[\\]Git|[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}') { throw 'Possible personal path or email in public source.' }
+          foreach ($term in @('"WinSidebar", "settings.ini"','@"Local\WinSidebarPublic"','"https://www.google.com/"','Environment.SpecialFolder.MyDocuments','Native.DownloadsPath()')) {
+            if (-not $text.Contains($term)) { throw "Missing required generic default or isolation: $term" }
+          }
+      - name: Build self-contained single EXE
+        shell: pwsh
+        run: |
+          dotnet publish WinSidebar.csproj -c Release -r win-x64 --self-contained true -o publish
+          if ($LASTEXITCODE -ne 0) { throw 'Publish failed.' }
+          $output = @(Get-ChildItem publish -File)
+          if ($output.Count -ne 1 -or $output[0].Name -ne 'WinSidebar.exe' -or $output[0].Length -lt 10000000) { throw 'Expected a single self-contained EXE.' }
+      - name: Package end-user deliverable
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path staging,dist -Force | Out-Null
+          Copy-Item publish/WinSidebar.exe staging/WinSidebar.exe
+          Copy-Item LEIA-ME.txt staging/LEIA-ME.txt
+          Compress-Archive staging/* dist/WinSidebar-win-x64.zip -CompressionLevel Optimal
+          $archive = [IO.Compression.ZipFile]::OpenRead((Resolve-Path dist/WinSidebar-win-x64.zip).Path)
+          try { if ((@($archive.Entries | ForEach-Object FullName | Sort-Object) -join ',') -ne 'LEIA-ME.txt,WinSidebar.exe') { throw 'Unexpected ZIP contents.' } } finally { $archive.Dispose() }
+          $sum = (Get-FileHash dist/WinSidebar-win-x64.zip -Algorithm SHA256).Hash.ToLowerInvariant()
+          [IO.File]::WriteAllText('dist/SHA256SUMS.txt', "$sum  WinSidebar-win-x64.zip`n")
+      - uses: actions/upload-artifact@v4
+        with:
+          name: WinSidebar-win-x64-build
+          path: dist/
+          if-no-files-found: error
