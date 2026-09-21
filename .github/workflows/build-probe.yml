@@ -1,0 +1,15 @@
+name: Probe Windows build availability
+on:
+  push:
+    paths:
+      - .github/workflows/build-probe.yml
+  workflow_dispatch:
+jobs:
+  probe:
+    runs-on: windows-latest
+    steps:
+      - name: Verify runner
+        shell: pwsh
+        run: |
+          Write-Host "Windows build runner available"
+          dotnet --info
