@@ -1,0 +1,3 @@
+# Implementation status
+
+CR-2026-09-22 is documented but not yet implemented. `src/WinSidebar.cs` retains Calculator/Settings hard-coded exclusions and `PASTAS / WEB`, and no tested per-window rename, reversible ignored-app manager or Save/Restore controls exist. The approved pre-existing preference behavior is distinct from untested new persistence code; cross-version migration tests are out of scope. Owner acceptance of all five runtime languages is pending their implementation. Do not describe these features as working or the product as completed until source commits and tests are linked here.
