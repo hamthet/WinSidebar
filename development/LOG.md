@@ -25,17 +25,31 @@ A narrative of **observed work**, not a prediction of work to be done. Entry fie
 - Removed the inherited obsolete copy from `develop` in [`1b7ebb4`](https://github.com/hamthet/WinSidebar/commit/1b7ebb43356c464bc55f47351b8f07f3df9f905c). Its history remains in Git; the self-contained current plan is `development/PLAN.md`.
 - **Test evidence:** GitHub file deletion responses succeeded; confirm eventual source-tree and final package absence again at release (`CLEAN-01`). No executable/source implementation changed, and this does not establish a product build or a five-language release.
 
+## 2026-09-22 — later accepted requirements and window-management prototype
+
+- The owner clarified that only actual Alt+Tab-like windows should appear, including genuinely opened Calculator/Settings windows; previous exclusions were a workaround for phantom entries. Accepted separate live-window aliases, reversible persisted per-app ignore rules, `ATALHOS` heading plus Save/Restore controls. Existing preference reliability is owner-approved; cross-version migration testing is OUT OF SCOPE. The owner will test the completed five-language UI.
+- Requirements, implementation and evidence are documented in [`CHANGE-REQUEST-2026-09-22.md`](CHANGE-REQUEST-2026-09-22.md), [`LOG-2026-09-22-IMPLEMENTATION.md`](LOG-2026-09-22-IMPLEMENTATION.md) and [`CODE-STATUS.md`](CODE-STATUS.md). Windows feature compile passed in [CI run 35756515790](https://github.com/hamthet/WinSidebar/actions/runs/35756515790); source is in [draft PR #1](https://github.com/hamthet/WinSidebar/pull/1), not `develop` or `main`.
+- **NOT RUN:** actual Alt+Tab parity, phantom-window test, five Calculator alias workflow, ignore/undo usability, restore rollback and Windows DPI/keyboard acceptance. A successful publish is not a behavior test.
+
+## 2026-09-22 — English/Portuguese runtime implementation, source parity and smoke tests
+
+- Starting from `feature/window-management`, created [`feature/runtime-i18n-en`](https://github.com/hamthet/WinSidebar/tree/feature/runtime-i18n-en). Added embedded `i18n/catalog.json`, `src/Localization.cs`, and localized application-owned strings in `src/WinSidebar.cs`, `src/ShortcutConfig.cs`, `src/WindowManagement.cs`; localized icon display labels while keeping XML icon IDs stable; added English/Portuguese context-menu selection, in-place UI update and a saved `language=` preference. Prior settings without a language field retain Portuguese; new profiles select English fallback or supported Windows language. Source integration was performed through an anchored development script, and its one-shot CI workflow was retired after successful source compilation.
+- [Windows single-EXE publish and source integration: PASS](https://github.com/hamthet/WinSidebar/actions/runs/35758403513). [Catalog parity and executable smoke tests: PASS](https://github.com/hamthet/WinSidebar/actions/runs/35758684168): 114 referenced source keys / 115 bilingual entries, 354 runtime checks passed, full WinForms build 0 warnings / 0 errors. A heuristic untranslated-literal report found only the native `Português (Brasil)` option label.
+- Opened dependent [draft PR #2](https://github.com/hamthet/WinSidebar/pull/2), targeting PR #1's feature branch, not `main`. Full implementation and evidence are self-contained in [`RUNTIME-I18N-EN-2026-09-22.md`](RUNTIME-I18N-EN-2026-09-22.md). The branch includes ordinary smoke tests and development-only script/report; development-only material must be excluded from final product.
+- **NOT RUN / NOT APPROVED:** live WinForms English/Portuguese visual and accessibility testing, actual language switch/restart, every error/modal path, Windows 10/11 and scaling, Calculator/Settings phantom-window behavior. Three further locale catalogs and user acceptance are pending. The published v1.0.0 remains Portuguese. No cross-version migration test was run, by owner decision.
+
 ## Stage board (update only with evidence)
 
 | Stage | Status | Evidence needed |
 | --- | --- | --- |
-| Branch and self-contained development documentation | DOCUMENTED | Dossier files in `develop`, path verification |
-| Core functional inventory and engineering design | PARTIAL | Exhaustive string inventory + recorded design spike |
-| Runtime localization infrastructure | NOT STARTED | Code, locale resource parity test, Windows compile |
-| English and Portuguese runtime | NOT STARTED | Tested runtime workflows, upgrade preservation |
+| Branch and self-contained development documentation | DOCUMENTED | Dossier and implementation evidence in `develop` |
+| Core functional inventory and engineering design | PARTIAL | Full Alt+Tab scope/behavior evidence |
+| Runtime localization infrastructure | COMPILED + SMOKE PASS | Live Windows GUI and persistence checks |
+| English and Portuguese runtime | IMPLEMENTED + AUTOMATED PASS; UI NOT RUN | Owner/Windows UI verification |
 | Spanish runtime | NOT STARTED | Locale and UI evidence |
 | Russian runtime | NOT STARTED | Locale and UI evidence |
 | Simplified Chinese runtime | NOT STARTED | Locale and UI evidence |
+| Window-management features | PROTOTYPE COMPILED; UI NOT RUN | Phantom/alias/ignore/save-reset acceptance |
 | Product hardening / end-user validation | NOT STARTED | P0/P1 review + test evidence |
 | Five-language repository/docs/artwork | PARTIAL, PREMATURE | Revalidate/revise only after product gates |
 | New artifact / final release | NOT STARTED | Version, ZIP manifest, SHA256, end-to-end verification |
