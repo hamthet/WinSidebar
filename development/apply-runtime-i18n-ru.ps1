@@ -1,5 +1,6 @@
 # Development-only integration; never include this script in the shipping product.
 # Run in the root of hamthet/WinSidebar on feature/runtime-i18n-ru.
+# ASCII-only script: compatible with Windows PowerShell 5.1 and PowerShell 7.
 # No Actions, FILEBRIDGE or remote build is called.
 [CmdletBinding()]
 param([switch]$Push)
@@ -30,7 +31,8 @@ function Replace-Unique([string]$old, [string]$new) {
 }
 
 Replace-Unique '    private ToolStripMenuItem spanishItem;' ('    private ToolStripMenuItem spanishItem;' + $nl + '    private ToolStripMenuItem russianItem;')
-Replace-Unique '        spanishItem = new ToolStripMenuItem("Español");' ('        spanishItem = new ToolStripMenuItem("Español");' + $nl + '        russianItem = new ToolStripMenuItem("Русский");')
+# In C# a Unicode escape in a string literal produces the native Russian menu label.
+Replace-Unique '        englishItem.Click += delegate { ChangeLanguage("en-US"); };' ('        russianItem = new ToolStripMenuItem("\u0420\u0443\u0441\u0441\u043A\u0438\u0439");' + $nl + '        englishItem.Click += delegate { ChangeLanguage("en-US"); };')
 Replace-Unique '        spanishItem.Click += delegate { ChangeLanguage("es-ES"); };' ('        spanishItem.Click += delegate { ChangeLanguage("es-ES"); };' + $nl + '        russianItem.Click += delegate { ChangeLanguage("ru-RU"); };')
 Replace-Unique '        languageMenu.DropDownItems.Add(spanishItem);' ('        languageMenu.DropDownItems.Add(spanishItem);' + $nl + '        languageMenu.DropDownItems.Add(russianItem);')
 Replace-Unique '        spanishItem.Checked = Localization.Current == "es-ES";' ('        spanishItem.Checked = Localization.Current == "es-ES";' + $nl + '        russianItem.Checked = Localization.Current == "ru-RU";')
