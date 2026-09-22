@@ -35,6 +35,7 @@ internal static class Localization
         }
         MergeLocale(assembly, catalog, "es-ES");
         MergeLocale(assembly, catalog, "ru-RU");
+        MergeLocale(assembly, catalog, "zh-CN");
         return catalog;
     }
 
@@ -67,15 +68,27 @@ internal static class Localization
         return value;
     }
 
+    private static bool IsSimplifiedChinese(CultureInfo culture)
+    {
+        // Traditional Chinese Windows UI must not silently receive simplified characters.
+        string name = culture.Name;
+        return name.Equals("zh-CN", StringComparison.OrdinalIgnoreCase) ||
+            name.Equals("zh-SG", StringComparison.OrdinalIgnoreCase) ||
+            name.Equals("zh-MY", StringComparison.OrdinalIgnoreCase) ||
+            name.Equals("zh-Hans", StringComparison.OrdinalIgnoreCase) ||
+            name.StartsWith("zh-Hans-", StringComparison.OrdinalIgnoreCase);
+    }
+
     internal static void Initialize(string settingsFile)
     {
         // Existing profiles without a language field retain Portuguese.
         string chosen = "pt-BR";
         if (!File.Exists(settingsFile))
         {
-            string os = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+            CultureInfo culture = CultureInfo.CurrentUICulture;
+            string os = culture.TwoLetterISOLanguageName;
             chosen = os == "pt" ? "pt-BR" : os == "es" ? "es-ES" :
-                os == "ru" ? "ru-RU" : "en-US";
+                os == "ru" ? "ru-RU" : IsSimplifiedChinese(culture) ? "zh-CN" : "en-US";
         }
         else
         {
@@ -85,8 +98,8 @@ internal static class Localization
                 {
                     if (!line.StartsWith("language=", StringComparison.Ordinal)) continue;
                     string code = line.Substring("language=".Length).Trim();
-                    if (code == "pt-BR" || code == "en-US" || code == "es-ES" || code == "ru-RU")
-                        chosen = code;
+                    if (code == "pt-BR" || code == "en-US" || code == "es-ES" ||
+                        code == "ru-RU" || code == "zh-CN") chosen = code;
                 }
             }
             catch (IOException) { }
@@ -98,7 +111,8 @@ internal static class Localization
     internal static void Select(string code)
     {
         // Only catalogs actually embedded in the application can be selected.
-        if (code != "pt-BR" && code != "en-US" && code != "es-ES" && code != "ru-RU")
+        if (code != "pt-BR" && code != "en-US" && code != "es-ES" &&
+            code != "ru-RU" && code != "zh-CN")
             throw new ArgumentOutOfRangeException(nameof(code), "Unsupported application language.");
         Current = code;
         Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(code);
