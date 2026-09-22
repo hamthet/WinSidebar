@@ -1,12 +1,6 @@
 name: Verify portable Windows build
+# Russian development branch: owner-requested local builds only; no automatic Actions.
 on:
-  push:
-    paths:
-      - 'src/**'
-      - 'assets/**'
-      - WinSidebar.csproj
-      - LEIA-ME.txt
-      - .github/workflows/build.yml
   workflow_dispatch:
 permissions:
   contents: read
