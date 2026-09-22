@@ -182,7 +182,17 @@ internal sealed class WindowManagement
             catch (Exception ex) { ignored.Remove(identity); MessageBox.Show(owner, Localization.Text("windows.rule_save_failed") + ex.Message, "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Warning); }
         };
         menu.Items.Add(ignore);
-        menu.Closed += delegate { menu.Dispose(); };
+        // Closed fires while WinForms may still be unwinding WM_CONTEXTMENU.
+        // Never dispose an active drop-down synchronously from its Closed handler.
+        menu.Closed += delegate {
+            if (owner.IsDisposed || !owner.IsHandleCreated) return;
+            try {
+                owner.BeginInvoke((MethodInvoker)delegate {
+                    if (!menu.IsDisposed) menu.Dispose();
+                });
+            }
+            catch (InvalidOperationException) { /* Form is shutting down. */ }
+        };
         menu.Show(tree, where);
     }
 
