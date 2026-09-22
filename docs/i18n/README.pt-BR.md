@@ -1,5 +1,7 @@
 # WinSidebar
 
+[English](../../README.md) · **Português (Brasil)** · Español, Русский e 简体中文 (traduções planejadas)
+
 ![Ilustração conceitual do WinSidebar em um desktop com dois monitores](../../assets/hero-ilustrativo.svg)
 
 > **Arte meramente ilustrativa, gerada com auxílio de IA.** Não é captura de tela nem representação exata dos controles do aplicativo. A interface inspirada no **Windows 98 é intencional** — uma escolha visual, não uma falha de modernização.
@@ -22,7 +24,7 @@ O ZIP contém **somente o executável e o LEIA-ME**. Para usar o aplicativo, nã
 
 - **Alternar janelas:** a aba lateral abre e recolhe a barra; `Shift+F1` alterna a barra, `Shift+F2/F3` navegam entre janelas e `Shift+F4` ativa a janela selecionada.
 - **Organizar por monitor:** visualizar as janelas do monitor principal e, quando houver, do secundário.
-- **Personalizar quatro atalhos:** na seção **PASTAS / WEB**, clique na engrenagem e escolha nome, pasta ou URL, ícone e navegador. Os padrões genéricos são **Documentos**, **Downloads**, **Acervo ainda não configurado** e **Google**.
+- **Personalizar quatro atalhos:** na seção **PASTAS / WEB**, clique na engrenagem e escolha nome, pasta ou URL, ícone e navegador. Os padrões genéricos são **Pasta local**, **Downloads**, **Acervo** e **Site**.
 - **Ajustar a barra:** no cabeçalho, mude de lado, diminua ou aumente a largura e use o X vermelho para encerrar.
 
 **[Veja o tutorial ilustrado com todas as etapas →](../TUTORIAL.md)**
