@@ -1,0 +1,5 @@
+# Feature implementation status
+
+As of the owner change request on 2026-09-22, `src/WinSidebar.cs` still contains the Calculator/Settings title and process exclusions, and neither the per-window alias/ignored-process manager nor the Save/Restore header buttons has been implemented. All changes in `CHANGE-REQUEST-2026-09-22.md` are **ACCEPTED REQUIREMENTS, NOT WORKING SOFTWARE**. The branch must never be described as having completed these features based solely on this document. Reinspect current source and update this note with commit and tested build evidence when code lands; no CI run for the new features has passed at the time this note was written.
+
+Development-only materials are not part of the final release. Prior user-approved preference behavior remains accepted, while cross-version migration testing is expressly excluded. The owner will perform five-language UI acceptance after the actual multi-language product exists.
