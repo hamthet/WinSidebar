@@ -15,35 +15,44 @@ internal static class LocalizationSmoke
         if (!condition) throw new Exception("FAILED: " + scenario);
     }
 
+    private static Dictionary<string, string> ReadLocale(Assembly assembly, string code)
+    {
+        using (Stream resource = assembly.GetManifestResourceStream("WinSidebar.i18n." + code + ".json"))
+        {
+            Check(resource != null, code + " catalog embedded in executable");
+            return JsonSerializer.Deserialize<Dictionary<string, string>>(resource);
+        }
+    }
+
     private static void Main()
     {
         Assembly assembly = Assembly.GetExecutingAssembly();
         Dictionary<string, Dictionary<string, string>> catalog;
-        Dictionary<string, string> spanish;
         using (Stream resource = assembly.GetManifestResourceStream("WinSidebar.i18n.catalog.json"))
         {
             Check(resource != null, "English/Portuguese catalog embedded in executable");
             catalog = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(resource);
         }
-        using (Stream resource = assembly.GetManifestResourceStream("WinSidebar.i18n.es-ES.json"))
-        {
-            Check(resource != null, "Spanish catalog embedded in executable");
-            spanish = JsonSerializer.Deserialize<Dictionary<string, string>>(resource);
-        }
-        Check(catalog != null && catalog.Count >= 100, "base catalog covers the application");
-        Check(spanish != null && spanish.Count == catalog.Count, "Spanish covers exactly the same keys");
+        Dictionary<string, string> spanish = ReadLocale(assembly, "es-ES");
+        Dictionary<string, string> russian = ReadLocale(assembly, "ru-RU");
+        Check(catalog != null && catalog.Count >= 100, "base catalog covers application-owned UI");
+        Check(spanish != null && spanish.Count == catalog.Count, "Spanish key parity");
+        Check(russian != null && russian.Count == catalog.Count, "Russian key parity");
         foreach (KeyValuePair<string, Dictionary<string, string>> item in catalog)
         {
             Check(item.Value.Count == 2 && item.Value.ContainsKey("en-US") && item.Value.ContainsKey("pt-BR"),
-                "base translations remain complete: " + item.Key);
+                "base translation parity: " + item.Key);
             string spanishText;
+            string russianText;
             Check(spanish.TryGetValue(item.Key, out spanishText) && !string.IsNullOrWhiteSpace(spanishText),
-                "Spanish translation exists: " + item.Key);
-            foreach (string code in new[] { "en-US", "pt-BR", "es-ES" })
+                "Spanish entry: " + item.Key);
+            Check(russian.TryGetValue(item.Key, out russianText) && !string.IsNullOrWhiteSpace(russianText),
+                "Russian entry: " + item.Key);
+            foreach (string code in new[] { "en-US", "pt-BR", "es-ES", "ru-RU" })
             {
                 Localization.Select(code);
-                string expected = code == "es-ES" ? spanishText : item.Value[code];
-                Check(Localization.Text(item.Key) == expected, "embedded lookup matches catalog: " + item.Key + "/" + code);
+                string expected = code == "es-ES" ? spanishText : code == "ru-RU" ? russianText : item.Value[code];
+                Check(Localization.Text(item.Key) == expected, "embedded translation: " + item.Key + "/" + code);
             }
         }
 
@@ -53,22 +62,25 @@ internal static class LocalizationSmoke
         CultureInfo originalCulture = Thread.CurrentThread.CurrentUICulture;
         try
         {
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("es-ES");
-            Localization.Initialize(path);
-            Check(Localization.Current == "es-ES" && Localization.Text("sidebar.language") == "Idioma",
-                "Spanish Windows UI language selects Spanish on first launch");
             Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("es-MX");
             Localization.Initialize(path);
-            Check(Localization.Current == "es-ES", "other Spanish Windows locales select available Spanish catalog");
+            Check(Localization.Current == "es-ES", "Spanish Windows variants select Spanish");
             Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("ru-RU");
             Localization.Initialize(path);
-            Check(Localization.Current == "en-US", "unsupported Windows UI locale defaults to English on first launch");
+            Check(Localization.Current == "ru-RU" && Localization.Text("sidebar.language") == "Язык",
+                "Russian Windows selects Russian on first launch");
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("ru-KZ");
+            Localization.Initialize(path);
+            Check(Localization.Current == "ru-RU", "other Russian Windows locales select Russian");
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("zh-CN");
+            Localization.Initialize(path);
+            Check(Localization.Current == "en-US", "unimplemented Chinese defaults to English");
             Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("pt-BR");
             Localization.Initialize(path);
-            Check(Localization.Current == "pt-BR", "Portuguese Windows selects Portuguese on first launch");
+            Check(Localization.Current == "pt-BR", "Portuguese Windows selects Portuguese");
             File.WriteAllLines(path, new[] { "width=1", "left=1" });
             Localization.Initialize(path);
-            Check(Localization.Current == "pt-BR", "existing settings without language retain Portuguese");
+            Check(Localization.Current == "pt-BR", "existing profile without language retains Portuguese");
             File.WriteAllLines(path, new[] { "width=1", "language=en-US", "left=1" });
             Localization.Initialize(path);
             Check(Localization.Current == "en-US" && Localization.Text("sidebar.shortcuts") == " SHORTCUTS",
@@ -80,15 +92,20 @@ internal static class LocalizationSmoke
             File.WriteAllLines(path, new[] { "width=1", "language=es-ES", "left=1" });
             Localization.Initialize(path);
             Check(Localization.Current == "es-ES" && Localization.Text("windows.rename") == "Cambiar nombre de ventana...",
-                "saved Spanish selection restores translated window controls");
+                "saved Spanish selection restores window commands");
+            File.WriteAllLines(path, new[] { "width=1", "language=ru-RU", "left=1" });
+            Localization.Initialize(path);
+            Check(Localization.Current == "ru-RU" && Localization.Text("windows.rename") == "Переименовать окно..." &&
+                Localization.Text("windows.ignore") == "Игнорировать это приложение",
+                "saved Russian selection restores localized window commands");
             bool unsupportedRejected = false;
-            try { Localization.Select("ru-RU"); }
+            try { Localization.Select("zh-CN"); }
             catch (ArgumentOutOfRangeException) { unsupportedRejected = true; }
-            Check(unsupportedRejected, "unimplemented languages are not selectable");
+            Check(unsupportedRejected, "unimplemented Chinese cannot be selected");
             bool missingRejected = false;
             try { Localization.Text("missing.test.key"); }
             catch (InvalidDataException) { missingRejected = true; }
-            Check(missingRejected, "missing localization keys fail closed");
+            Check(missingRejected, "missing translation keys fail closed");
         }
         finally
         {
