@@ -4,27 +4,31 @@
 
 This directory records source-grounded facts, product scope, decisions, implementation and observed verification. It belongs only on the public development branch, **not** in final `main` or the end-user ZIP. Never put secrets, customer data, machine-private paths or unredacted logs here. Another contributor should be able to continue from this directory and the repository without relying on chat history. A plan describes future work; it does not prove its implementation.
 
+## Current status
+
+**A compiled but not UI-accepted feature prototype exists on [`feature/window-management`](https://github.com/hamthet/WinSidebar/tree/feature/window-management), in [draft PR #1](https://github.com/hamthet/WinSidebar/pull/1).** The code has not been merged into `develop` or `main`. See [`CODE-STATUS.md`](CODE-STATUS.md) and [`LOG-2026-09-22-IMPLEMENTATION.md`](LOG-2026-09-22-IMPLEMENTATION.md) for exact commits, CI result, remaining defects/unknowns and distinction between a successful build and a functional acceptance test. Runtime five-language support and a new release remain incomplete.
+
 ## Read in order and authority
 
 1. [`BASELINE.md`](BASELINE.md) — the original source/CI snapshot and previous documentation-first failure.
 2. **[`CHANGE-REQUEST-2026-09-22.md`](CHANGE-REQUEST-2026-09-22.md) — ACCEPTED newer owner requirements: Alt+Tab-like genuine windows; remove hard-coded Calculator/Settings exclusions while still preventing phantom windows; distinct per-window aliases; reversible ignored-app rules; localized Atalhos header with Restore defaults and Save preferences; owner-approved existing preference behavior and no cross-version migration test. This supersedes conflicting claims or tests in older documents.**
-3. [`ENGINEERING-NOTES.md`](ENGINEERING-NOTES.md) — implementation hazards and non-assumptions for that change request.
-4. [`PLAN.md`](PLAN.md) — product-first five-language architecture, implementation and release plan, **subject to the newer change-request overrides**.
-5. [`PRODUCT-REVIEW.md`](PRODUCT-REVIEW.md) — dated design baseline; its old Calculator/Settings question and preference risk are superseded as described above.
-6. [`VERIFICATION.md`](VERIFICATION.md) — test matrix, extended by WM-01..06, SP-01..03 and I18N-01 in the newer change request. Migration tests are `OUT OF SCOPE`, not `PASS`.
-7. [`DECISIONS.md`](DECISIONS.md) — decision history; ADR-007 and portions of ADR-009 are superseded by the accepted change request.
-8. [`LOG.md`](LOG.md) — chronological, append-only evidence of actual commits, runs, corrections and remaining work.
+3. [`ENGINEERING-NOTES.md`](ENGINEERING-NOTES.md) and [`IMPLEMENTATION-BACKLOG.md`](IMPLEMENTATION-BACKLOG.md) — technical pitfalls and ordered acceptance-driven work.
+4. [`PLAN.md`](PLAN.md) — product-first five-language architecture and release plan, **subject to newer owner decisions**.
+5. [`PRODUCT-REVIEW.md`](PRODUCT-REVIEW.md) — dated design baseline; old Calculator/Settings questions superseded.
+6. [`VERIFICATION.md`](VERIFICATION.md) and [`RELEASE-GATE-OVERRIDE.md`](RELEASE-GATE-OVERRIDE.md) — tests extended by WM-01..06, SP-01..03 and I18N-01 in the change request; migration tests are `OUT OF SCOPE`, never `PASS`.
+7. [`DECISIONS.md`](DECISIONS.md) — updated ADRs documenting accepted inclusion and preference behavior.
+8. [`LOG.md`](LOG.md), [`LOG-2026-09-22-CHANGE.md`](LOG-2026-09-22-CHANGE.md), [`LOG-2026-09-22-IMPLEMENTATION.md`](LOG-2026-09-22-IMPLEMENTATION.md), and [`CODE-STATUS.md`](CODE-STATUS.md) — observed chronology, prototype build evidence and remaining verification.
 
-**Conflict rule:** dated, accepted owner requirements take precedence over older proposals. Keep superseded rationale: Calculator/Settings were filtered to suppress *phantom windows*, not because genuine open windows should be excluded. A new feature is not verified merely because a requirement or helper script exists.
+**Conflict rule:** dated, accepted owner requirements take precedence over older proposals. Preserve the earlier rationale: Calculator/Settings were filtered to suppress *phantom windows*, not because genuinely open windows should be excluded. A new feature is not verified merely because a requirement, a source commit or a passing compile exists.
 
 ## Implementation and release order
 
-1. Record a reproducible Windows baseline and compare actual listed windows with Alt+Tab; inspect the phantom-window cause.
-2. Implement window aliases, ignored applications and their reachable manager; implement localized heading and functional Save/Restore controls while preserving the already owner-approved existing preferences.
-3. Implement five complete **runtime** UI localizations (en-US, pt-BR, es-ES, ru-RU, zh-CN), including all new menu/dialog/button/accessibility text and locale resources embedded in one portable EXE. Owner will personally test the five-language UI; development/CI still owns automated parity, persistence and regression tests.
-4. Verify five Calculator windows, window close/reopen, phantom-window absence, ignore/undo, preferences save/restore, monitor/hotkey behavior, DPI and keyboard access against the actual built artifact.
-5. Only after the product passes, finish five complete repository READMEs, tutorials, localized illustration sources and PNGs, in-ZIP instructions and a new checksummed release. The historical v1.0.0 executable is Portuguese; never relabel or overwrite it.
+1. Record an Alt+Tab/phantom-window baseline and compare it with the prototype on supported Windows builds; review code identity and alias semantics.
+2. Complete/review window aliases, ignored-app management and functional Save/Restore controls, with keyboard/DPI/persistence regressions. The prototype compiles, but these behaviors are **not yet accepted**.
+3. Implement five complete **runtime** UI localizations (en-US, pt-BR, es-ES, ru-RU, zh-CN), including all new menu/dialog/button/accessibility text and locale resources embedded in one portable EXE. Owner will personally test the five-language UI; development/CI still owns automated parity, persistence and regression checks.
+4. Verify five Calculator windows, close/reopen, no phantom entries, ignore/undo, preferences, monitor/hotkeys and DPI/keyboard behavior against the actual artifact.
+5. Only after the product passes, finish five complete repository READMEs, tutorials, localized illustration SVG/PNGs, in-ZIP instructions and a **new** checksummed release. The historical v1.0.0 executable is Portuguese; never relabel or overwrite it.
 
-Log for each change: baseline SHA, requirement ID, files, behavior, exact commands/results, CI/commit evidence, remaining risks and next work. `develop` is the integration branch; feature branches may target it. Do **not** merge `develop` wholesale into final `main`: create a clean release branch from approved `main` and selectively promote only shipping source, resources, production tests/workflows, end-user docs, artwork and license. Review the final Git tree and ZIP separately.
+Log for each change: baseline SHA, requirement ID, files, behavior, exact commands/results, CI/commit evidence, remaining risks and next work. `develop` is the integration branch; feature branches may target it. Do **not** merge `develop` wholesale into final `main`: create a clean release branch from approved `main` and selectively promote only shipping source, resources, production tests/workflows, end-user docs, artwork and license. Review final Git tree and ZIP separately.
 
 Status terms: `ACCEPTED`, `PROPOSED`, `OPEN`, `CONFIRMED` (source/tool evidence), `PASS` (executed test with evidence), `NOT RUN`, and `OUT OF SCOPE`. Owner approval of existing preferences does not prove new Save/Restore/ignore persistence.
