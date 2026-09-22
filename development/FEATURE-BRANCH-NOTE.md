@@ -1,0 +1,3 @@
+# Engineering integration note
+
+Feature code must target a development/feature branch and be integrated into `develop` only after a reproducible Windows build, independent code review of the generated changes and appropriate regression evidence. Do not push a manually unverified source rewrite directly to `main`. The owner-requested features have not been implemented by this note. When code is pushed, replace this note with the concrete branch, commits, CI run IDs, test results and unresolved behavior.
