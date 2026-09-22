@@ -42,8 +42,8 @@ $new = @'
             }
             tree.SelectedNode = node;
 '@
-$old = $old.TrimEnd("`r", "`n").Replace("`n", $lineEnding)
-$new = $new.TrimEnd("`r", "`n").Replace("`n", $lineEnding)
+$old = $old.TrimEnd("`r", "`n").Replace("`r`n", "`n").Replace("`n", $lineEnding)
+$new = $new.TrimEnd("`r", "`n").Replace("`r`n", "`n").Replace("`n", $lineEnding)
 $count = [regex]::Matches($source, [regex]::Escape($old)).Count
 if ($count -ne 1) { throw "Expected one blank-tree router anchor; found $count. Nothing changed." }
 $source = $source.Replace($old, $new)
