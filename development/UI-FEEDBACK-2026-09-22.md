@@ -1,0 +1,17 @@
+# 2026-09-22 — Owner's live WinSidebar feedback and local correction
+
+## Observed, not inferred
+
+The owner ran a local preview on Windows and supplied a screenshot showing Portuguese UI, the shortcut editor partly behind the always-on-top sidebar, and no visible language-switch button. The screenshot is not copied to the public repository because it contains the owner's window and file names. These are **owner-reported GUI issues**; this is not a successful five-language acceptance test.
+
+Source inspection on `feature/runtime-i18n-ru` confirmed that the language selector is present only as a submenu in the tray/sidebar context menu (`English`, `Português (Brasil)`, `Español`, `Русский`); previously saved `settings.ini` without a language entry retains Portuguese. Portuguese UI alone does not establish that the Russian catalog is missing or an old build was launched. The shortcut editor uses `CenterParent` while the sidebar is `TopMost`, which can place the modal under the sidebar and partially outside the monitor working area. Shortcut-editor Save already writes shortcut entries and settings when confirmed. Width, side, monitor and language changes also initiate saving, making the extra `S` Save Preferences button redundant. However, legacy `SaveSettings()` silently swallows some file I/O failures: auto-save reliability should be evaluated separately rather than asserting all writes always succeed.
+
+## Planned source correction, NOT yet locally verified
+
+The one-shot [PowerShell patch on the Russian feature branch](https://github.com/hamthet/WinSidebar/blob/feature/runtime-i18n-ru/development/apply-ui-feedback-20260922.ps1) is checked into the WinSidebar repository. It modifies only `src/WinSidebar.cs`, is anchored to the observed baseline source blob and refuses to run on another branch or a dirty checkout. It removes the redundant whole-form Save Preferences button and handler **without removing the shortcut editor's Save**, adds a globe language button beside Restore/Configure that opens the existing four-language menu, and positions the shortcut editor within the owner's monitor working area with TopMost ordering.
+
+The script invokes the **portable SDK on the owner's Windows computer** to run localization smoke checks and build the full WinForms project. Its optional `-Push` commits and pushes the source only if both checks succeed. It never invokes GitHub Actions or uploads to FILEBRIDGE. The script creation commit is [d6697e5](https://github.com/hamthet/WinSidebar/commit/d6697e57c033893b3bdf2b88064f5b736d674cb3). The tool response confirms the script exists, NOT that it has been executed. A native GUI retest of topmost behavior, language selection/persistence, Restore and editor Save is still required, with actual results recorded on receipt. Do not automatically run CI; Actions credits are unavailable per owner.
+
+## Pending execution
+
+Owner: close the current WinSidebar preview via its tray exit menu, fast-forward local `feature/runtime-i18n-ru`, run the one-shot script with `-Push` once on a clean checkout, then locally publish and launch the resulting `WinSidebar.exe` from an explicit absolute path. Check that the taskbar/tray has no earlier instance; compare the running process executable path if the UI still appears unchanged. No preview needs transfer via FILEBRIDGE unless the owner requests a file to download. `main` and the official release remain unchanged.
