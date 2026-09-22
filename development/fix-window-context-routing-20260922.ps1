@@ -23,7 +23,11 @@ $env:PATH = "$dotnetRoot;$env:PATH"
 
 $path = Join-Path $root 'src\WinSidebar.cs'
 $script:code = [IO.File]::ReadAllText($path)
+$script:lineEnding = if ($script:code.Contains("`r`n")) { "`r`n" } else { "`n" }
 function Replace-Unique([string]$old, [string]$new) {
+    # Git may check out source as CRLF or LF; match and preserve its original form.
+    $old = $old.Replace("`r`n", "`n").Replace("`n", $script:lineEnding)
+    $new = $new.Replace("`r`n", "`n").Replace("`n", $script:lineEnding)
     $count = [regex]::Matches($script:code, [regex]::Escape($old)).Count
     if ($count -ne 1) { throw "Expected exactly one source anchor, found ${count}: $old" }
     $script:code = $script:code.Replace($old, $new)
@@ -79,7 +83,7 @@ $newKeyboard = @'
                 });
 '@
 Replace-Unique $oldKeyboard.TrimEnd("`r", "`n") $newKeyboard.TrimEnd("`r", "`n")
-Replace-Unique '            tips.Dispose();' "            windowContextRouter.Dispose();`r`n            tips.Dispose();"
+Replace-Unique '            tips.Dispose();' "            windowContextRouter.Dispose();`n            tips.Dispose();"
 
 [IO.File]::WriteAllText($path, $script:code, (New-Object Text.UTF8Encoding($false)))
 git diff --check -- src/WinSidebar.cs
