@@ -1,6 +1,7 @@
 # Development-only one-shot source integration on Windows PowerShell without admin.
 # WinSidebar repository only. No GitHub Actions and no FILEBRIDGE transfer.
 # Must be run from C:\git\WinSidebar with portable .NET 8 SDK installed.
+# This script is ASCII-only: Windows PowerShell 5.1 misreads UTF-8 scripts without BOM.
 [CmdletBinding()]
 param([switch]$Push)
 $ErrorActionPreference = 'Stop'
@@ -68,7 +69,7 @@ Replace-Unique '    private ToolStripMenuItem russianItem;' @'
 '@.TrimEnd("`r", "`n")
 Replace-Unique '        russianItem = new ToolStripMenuItem("\u0420\u0443\u0441\u0441\u043A\u0438\u0439");' @'
         russianItem = new ToolStripMenuItem("\u0420\u0443\u0441\u0441\u043A\u0438\u0439");
-        chineseItem = new ToolStripMenuItem("简体中文");
+        chineseItem = new ToolStripMenuItem("\u7B80\u4F53\u4E2D\u6587");
 '@.TrimEnd("`r", "`n")
 Replace-Unique '        russianItem.Click += delegate { ChangeLanguage("ru-RU"); };' @'
         russianItem.Click += delegate { ChangeLanguage("ru-RU"); };
