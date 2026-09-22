@@ -186,6 +186,21 @@ internal sealed class WindowManagement
         menu.Show(tree, where);
     }
 
+    // Keep dialogs next to the sidebar, inside its monitor's working area.
+    // Modal ownership is preserved; never move the user's other windows.
+    private static void PlaceModalBesideSidebar(Form owner, Form dialog)
+    {
+        Rectangle work = Screen.FromControl(owner).WorkingArea;
+        bool barOnLeft = owner.Left + owner.Width / 2 <= work.Left + work.Width / 2;
+        int preferredX = barOnLeft ? owner.Right + 12 : owner.Left - dialog.Width - 12;
+        int maxX = Math.Max(work.Left, work.Right - dialog.Width);
+        int preferredY = owner.Top + (owner.Height - dialog.Height) / 2;
+        int maxY = Math.Max(work.Top, work.Bottom - dialog.Height);
+        dialog.StartPosition = FormStartPosition.Manual;
+        dialog.Location = new Point(Math.Max(work.Left, Math.Min(preferredX, maxX)),
+            Math.Max(work.Top, Math.Min(preferredY, maxY)));
+        dialog.TopMost = owner.TopMost;
+    }
     private void Rename(Form owner, IntPtr hwnd, Action changed)
     {
         if (!Native.IsWindow(hwnd)) return;
@@ -208,6 +223,7 @@ internal sealed class WindowManagement
             cancel.Text = Localization.Text("editor.cancel"); cancel.SetBounds(298, 65, 90, 28); cancel.DialogResult = DialogResult.Cancel;
             dialog.Controls.Add(input); dialog.Controls.Add(ok); dialog.Controls.Add(cancel);
             dialog.AcceptButton = ok; dialog.CancelButton = cancel;
+            PlaceModalBesideSidebar(owner, dialog);
             if (dialog.ShowDialog(owner) != DialogResult.OK) return;
             string label = input.Text.Trim();
             if (label.Length == 0) { aliases.Remove(hwnd); changed(); return; }
@@ -250,6 +266,7 @@ internal sealed class WindowManagement
             };
             dialog.Controls.Add(list); dialog.Controls.Add(remove); dialog.Controls.Add(clear); dialog.Controls.Add(close);
             dialog.CancelButton = close;
+            PlaceModalBesideSidebar(owner, dialog);
             dialog.ShowDialog(owner);
         }
     }
