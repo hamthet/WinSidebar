@@ -2,7 +2,7 @@
 
 **[English README](../../README.md)** · [Português (Brasil)](../DIVULGACAO.md)
 
-![English-language WinSidebar promotional concept illustration](../../assets/i18n/en-US/linkedin-illustration.svg)
+![English-language WinSidebar promotional concept illustration](../../assets/i18n/en-US/linkedin-illustration.png)
 
 > **Concept artwork created with AI assistance, not an actual screenshot.** The Windows 98-inspired look is an intentional visual choice. The currently published v1.0.0 app still has a Portuguese interface.
 
@@ -24,7 +24,7 @@ If you try it, what makes switching between windows difficult in your daily work
 
 ## How to publish
 
-1. Use the [English square illustration](../../assets/i18n/en-US/linkedin-illustration.svg). An English PNG can be generated from this SVG by the project's artwork workflow; do not use the original Portuguese PNG for an English post. If the English PNG is not available yet, export the SVG to PNG with an image editor before uploading.
+1. Download the [English square PNG](../../assets/i18n/en-US/linkedin-illustration.png). The editable [SVG source](../../assets/i18n/en-US/linkedin-illustration.svg) is also available; GitHub Actions renders the PNG from it.
 2. Create a LinkedIn post, upload the English PNG, and adapt the suggested copy to accurately reflect your own experience.
 3. Make sure the **concept illustration / not a screenshot** disclaimer remains legible both on the artwork and in the post. Do not claim that the illustration reproduces the current interface or contains controls not present in the distributed release.
 4. Link to the official **release**, not an unofficial file share. Alternatively, put the release link in the first comment and mention that in the post.
