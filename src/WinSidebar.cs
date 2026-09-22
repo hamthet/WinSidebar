@@ -171,6 +171,7 @@ internal sealed class SidebarWindow : Form
     private ToolStripMenuItem portugueseItem;
     private ToolStripMenuItem spanishItem;
     private ToolStripMenuItem russianItem;
+    private ToolStripMenuItem chineseItem;
     private int widthIndex;
     private bool leftSide;
     private bool secondary;
@@ -369,14 +370,17 @@ internal sealed class SidebarWindow : Form
         portugueseItem = new ToolStripMenuItem("Português (Brasil)");
         spanishItem = new ToolStripMenuItem("Español");
         russianItem = new ToolStripMenuItem("\u0420\u0443\u0441\u0441\u043A\u0438\u0439");
+        chineseItem = new ToolStripMenuItem("\u7B80\u4F53\u4E2D\u6587");
         englishItem.Click += delegate { ChangeLanguage("en-US"); };
         portugueseItem.Click += delegate { ChangeLanguage("pt-BR"); };
         spanishItem.Click += delegate { ChangeLanguage("es-ES"); };
         russianItem.Click += delegate { ChangeLanguage("ru-RU"); };
+        chineseItem.Click += delegate { ChangeLanguage("zh-CN"); };
         languageMenu.DropDownItems.Add(englishItem);
         languageMenu.DropDownItems.Add(portugueseItem);
         languageMenu.DropDownItems.Add(spanishItem);
         languageMenu.DropDownItems.Add(russianItem);
+        languageMenu.DropDownItems.Add(chineseItem);
         menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add(manageIgnored);
         menu.Items.Add(languageMenu);
@@ -486,6 +490,7 @@ internal sealed class SidebarWindow : Form
         portugueseItem.Checked = Localization.Current == "pt-BR";
         spanishItem.Checked = Localization.Current == "es-ES";
         russianItem.Checked = Localization.Current == "ru-RU";
+        chineseItem.Checked = Localization.Current == "zh-CN";
         if (hotkeyErrors.Length > 0)
         {
             status.Text = Localization.Text("sidebar.hotkeys_unavailable") + hotkeyErrors;
