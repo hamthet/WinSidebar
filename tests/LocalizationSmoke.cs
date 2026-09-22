@@ -35,23 +35,29 @@ internal static class LocalizationSmoke
         }
         Dictionary<string, string> spanish = ReadLocale(assembly, "es-ES");
         Dictionary<string, string> russian = ReadLocale(assembly, "ru-RU");
+        Dictionary<string, string> chinese = ReadLocale(assembly, "zh-CN");
         Check(catalog != null && catalog.Count >= 100, "base catalog covers application-owned UI");
         Check(spanish != null && spanish.Count == catalog.Count, "Spanish key parity");
         Check(russian != null && russian.Count == catalog.Count, "Russian key parity");
+        Check(chinese != null && chinese.Count == catalog.Count, "Simplified Chinese key parity");
         foreach (KeyValuePair<string, Dictionary<string, string>> item in catalog)
         {
             Check(item.Value.Count == 2 && item.Value.ContainsKey("en-US") && item.Value.ContainsKey("pt-BR"),
                 "base translation parity: " + item.Key);
             string spanishText;
             string russianText;
+            string chineseText;
             Check(spanish.TryGetValue(item.Key, out spanishText) && !string.IsNullOrWhiteSpace(spanishText),
                 "Spanish entry: " + item.Key);
             Check(russian.TryGetValue(item.Key, out russianText) && !string.IsNullOrWhiteSpace(russianText),
                 "Russian entry: " + item.Key);
-            foreach (string code in new[] { "en-US", "pt-BR", "es-ES", "ru-RU" })
+            Check(chinese.TryGetValue(item.Key, out chineseText) && !string.IsNullOrWhiteSpace(chineseText),
+                "Simplified Chinese entry: " + item.Key);
+            foreach (string code in new[] { "en-US", "pt-BR", "es-ES", "ru-RU", "zh-CN" })
             {
                 Localization.Select(code);
-                string expected = code == "es-ES" ? spanishText : code == "ru-RU" ? russianText : item.Value[code];
+                string expected = code == "es-ES" ? spanishText : code == "ru-RU" ? russianText :
+                    code == "zh-CN" ? chineseText : item.Value[code];
                 Check(Localization.Text(item.Key) == expected, "embedded translation: " + item.Key + "/" + code);
             }
         }
@@ -74,7 +80,14 @@ internal static class LocalizationSmoke
             Check(Localization.Current == "ru-RU", "other Russian Windows locales select Russian");
             Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("zh-CN");
             Localization.Initialize(path);
-            Check(Localization.Current == "en-US", "unimplemented Chinese defaults to English");
+            Check(Localization.Current == "zh-CN" && Localization.Text("sidebar.language") == "语言",
+                "Simplified Chinese Windows selects Chinese on first launch");
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("zh-SG");
+            Localization.Initialize(path);
+            Check(Localization.Current == "zh-CN", "Singapore Chinese selects Simplified Chinese");
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("zh-TW");
+            Localization.Initialize(path);
+            Check(Localization.Current == "en-US", "Traditional Chinese Windows does not receive Simplified Chinese by default");
             Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("pt-BR");
             Localization.Initialize(path);
             Check(Localization.Current == "pt-BR", "Portuguese Windows selects Portuguese");
@@ -95,13 +108,17 @@ internal static class LocalizationSmoke
                 "saved Spanish selection restores window commands");
             File.WriteAllLines(path, new[] { "width=1", "language=ru-RU", "left=1" });
             Localization.Initialize(path);
-            Check(Localization.Current == "ru-RU" && Localization.Text("windows.rename") == "Переименовать окно..." &&
-                Localization.Text("windows.ignore") == "Игнорировать это приложение",
-                "saved Russian selection restores localized window commands");
+            Check(Localization.Current == "ru-RU" && Localization.Text("windows.rename") == "Переименовать окно...",
+                "saved Russian selection restores window commands");
+            File.WriteAllLines(path, new[] { "width=1", "language=zh-CN", "left=1" });
+            Localization.Initialize(path);
+            Check(Localization.Current == "zh-CN" && Localization.Text("windows.rename") == "重命名窗口…" &&
+                Localization.Text("windows.ignore") == "忽略此应用",
+                "saved Simplified Chinese selection restores localized window commands");
             bool unsupportedRejected = false;
-            try { Localization.Select("zh-CN"); }
+            try { Localization.Select("zh-TW"); }
             catch (ArgumentOutOfRangeException) { unsupportedRejected = true; }
-            Check(unsupportedRejected, "unimplemented Chinese cannot be selected");
+            Check(unsupportedRejected, "unsupported Traditional Chinese cannot be selected");
             bool missingRejected = false;
             try { Localization.Text("missing.test.key"); }
             catch (InvalidDataException) { missingRejected = true; }
