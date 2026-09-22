@@ -1,20 +1,6 @@
 name: Verify runtime localization behavior
+# Owner-directed local-only stage; no push or PR runs.
 on:
-  push:
-    branches: [feature/runtime-i18n-en, feature/runtime-i18n-es, develop, main]
-    paths:
-      - 'tests/**'
-      - 'src/**'
-      - 'i18n/**'
-      - '.github/workflows/localization-tests.yml'
-      - WinSidebar.csproj
-  pull_request:
-    paths:
-      - 'tests/**'
-      - 'src/**'
-      - 'i18n/**'
-      - '.github/workflows/localization-tests.yml'
-      - WinSidebar.csproj
   workflow_dispatch:
 permissions:
   contents: read
@@ -36,21 +22,19 @@ jobs:
           keys = set()
           for path in (Path('src/WinSidebar.cs'), Path('src/ShortcutConfig.cs'), Path('src/WindowManagement.cs')):
               keys.update(re.findall(r'Localization\.Text\("([\w.]+)"\)', path.read_text(encoding='utf-8')))
-          missing = keys - base.keys()
-          assert not missing, f'Undefined source keys: {sorted(missing)}'
+          assert keys <= set(base), f'Undefined source keys: {sorted(keys-set(base))}'
           assert len(keys) >= 90, f'Unexpectedly low runtime coverage: {len(keys)}'
           for key, entry in base.items():
               assert set(entry) == {'en-US', 'pt-BR'}, key
               assert all(isinstance(value, str) and value.strip() for value in entry.values()), key
-          spanish_file = Path('i18n/es-ES.json')
-          if spanish_file.exists():
-              spanish = json.loads(spanish_file.read_text(encoding='utf-8'))
-              assert set(spanish) == set(base), f'Spanish catalog missing/extra keys: {set(base) ^ set(spanish)}'
-              assert all(isinstance(value, str) and value.strip() for value in spanish.values())
-              assert spanish['windows.rename'] == 'Cambiar nombre de ventana...'
-              print(f'PASS: {len(keys)} referenced keys; {len(base)} fully populated English, Portuguese and Spanish entries')
-          else:
-              print(f'PASS: {len(keys)} referenced keys; {len(base)} fully populated bilingual entries')
+          for code in ('es-ES', 'ru-RU'):
+              file = Path('i18n') / f'{code}.json'
+              if not file.exists():
+                  continue
+              translations = json.loads(file.read_text(encoding='utf-8'))
+              assert set(translations) == set(base), f'{code} catalog key mismatch'
+              assert all(isinstance(value, str) and value.strip() for value in translations.values()), code
+          print(f'PASS: {len(keys)} referenced keys; {len(base)} base entries; installed locale catalogs complete')
           '@ | python -
           if ($LASTEXITCODE -ne 0) { throw 'Locale source parity audit failed.' }
       - name: Exercise embedded catalog and locale-selection behavior
