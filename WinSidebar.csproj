@@ -31,5 +31,6 @@
     <Compile Include="src/Localization.cs" />
     <EmbeddedResource Include="i18n/catalog.json" LogicalName="WinSidebar.i18n.catalog.json" />
     <EmbeddedResource Include="i18n/es-ES.json" LogicalName="WinSidebar.i18n.es-ES.json" />
+    <EmbeddedResource Include="i18n/ru-RU.json" LogicalName="WinSidebar.i18n.ru-RU.json" />
   </ItemGroup>
 </Project>
