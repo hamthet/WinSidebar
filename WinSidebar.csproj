@@ -28,5 +28,7 @@
     <Compile Include="src/WinSidebar.cs" />
     <Compile Include="src/ShortcutConfig.cs" />
     <Compile Include="src/WindowManagement.cs" />
+    <Compile Include="src/Localization.cs" />
+    <EmbeddedResource Include="i18n/catalog.json" LogicalName="WinSidebar.i18n.catalog.json" />
   </ItemGroup>
 </Project>
