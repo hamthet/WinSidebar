@@ -1,0 +1,47 @@
+name: Implement and compile window-management development patch
+on:
+  push:
+    branches: [feature/window-management]
+    paths:
+      - 'development/apply-window-management.py'
+      - '.github/workflows/feature-window-management.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  patch-build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Apply anchored patch (fail if baseline differs)
+        shell: pwsh
+        run: python development/apply-window-management.py
+      - name: Verify source changes and build self-contained EXE
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $source = [IO.File]::ReadAllText('src/WinSidebar.cs')
+          foreach ($required in @('windows.ShowWindowMenu','windows.IsIgnored(hwnd)','windows.ManageIgnored','Restaurar configurações padrão','Salvar preferências','" ATALHOS"')) {
+            if (-not $source.Contains($required)) { throw "Missing source feature: $required" }
+          }
+          if ($source.Contains('name.Equals("Calculadora"') -or $source.Contains('processName.Equals("CalculatorApp"')) { throw 'Legacy unconditional Calculator exclusions remain.' }
+          dotnet publish WinSidebar.csproj -c Release -r win-x64 --self-contained true -o publish
+          if ($LASTEXITCODE -ne 0) { throw 'Windows publish failed.' }
+          if (-not (Test-Path publish/WinSidebar.exe)) { throw 'WinSidebar.exe missing.' }
+      - name: Commit tested code onto feature branch only
+        shell: pwsh
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/WinSidebar.cs WinSidebar.csproj
+          if (git diff --cached --quiet) { throw 'Expected a new source diff.' }
+          git commit -m 'feat: integrate reversible ignored-app rules, live window aliases and shortcut preference controls'
+          git push origin HEAD:feature/window-management
