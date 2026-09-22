@@ -1,5 +1,6 @@
 name: Verify runtime localization behavior
-# Owner-directed local-only stage; no push or PR runs.
+# Owner-directed local-only stage: no push or pull-request triggers.
+# This workflow is NOT invoked while GitHub Actions billing is unavailable.
 on:
   workflow_dispatch:
 permissions:
@@ -12,7 +13,7 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
-      - name: Verify all referenced localization keys and installed locale parity
+      - name: Verify source keys and exact five-language parity
         shell: pwsh
         run: |
           @'
@@ -27,14 +28,11 @@ jobs:
           for key, entry in base.items():
               assert set(entry) == {'en-US', 'pt-BR'}, key
               assert all(isinstance(value, str) and value.strip() for value in entry.values()), key
-          for code in ('es-ES', 'ru-RU'):
-              file = Path('i18n') / f'{code}.json'
-              if not file.exists():
-                  continue
-              translations = json.loads(file.read_text(encoding='utf-8'))
-              assert set(translations) == set(base), f'{code} catalog key mismatch'
+          for code in ('es-ES', 'ru-RU', 'zh-CN'):
+              translations = json.loads((Path('i18n') / f'{code}.json').read_text(encoding='utf-8'))
+              assert set(translations) == set(base), f'{code} catalog key mismatch: {sorted(set(translations)^set(base))}'
               assert all(isinstance(value, str) and value.strip() for value in translations.values()), code
-          print(f'PASS: {len(keys)} referenced keys; {len(base)} base entries; installed locale catalogs complete')
+          print(f'PASS: {len(keys)} referenced keys; {len(base)} fully populated entries in all five languages')
           '@ | python -
           if ($LASTEXITCODE -ne 0) { throw 'Locale source parity audit failed.' }
       - name: Exercise embedded catalog and locale-selection behavior
