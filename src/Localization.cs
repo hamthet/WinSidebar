@@ -6,8 +6,8 @@ using System.Reflection;
 using System.Text.Json;
 using System.Threading;
 
-// Application-owned strings only. External window titles, user data, paths,
-// process identities and serialized shortcut/icon identifiers are never translated.
+// Application-owned strings only. Never translate user data, external window titles,
+// paths, process identities or persisted icon/shortcut identifiers.
 internal static class Localization
 {
     private static readonly Dictionary<string, Dictionary<string, string>> Catalog = ReadCatalog();
@@ -25,28 +25,37 @@ internal static class Localization
         if (catalog == null || catalog.Count == 0)
             throw new InvalidDataException("Empty localization catalog.");
 
-        Dictionary<string, string> spanish;
-        using (Stream stream = assembly.GetManifestResourceStream("WinSidebar.i18n.es-ES.json"))
-        {
-            if (stream == null) throw new InvalidDataException("Missing embedded Spanish localization catalog.");
-            spanish = JsonSerializer.Deserialize<Dictionary<string, string>>(stream);
-        }
-        if (spanish == null || spanish.Count != catalog.Count)
-            throw new InvalidDataException("Incomplete Spanish localization catalog.");
-
         foreach (KeyValuePair<string, Dictionary<string, string>> item in catalog)
         {
             Dictionary<string, string> entry = item.Value;
-            string translated;
             if (string.IsNullOrWhiteSpace(item.Key) || entry == null ||
-                !entry.ContainsKey("pt-BR") || !entry.ContainsKey("en-US") ||
-                string.IsNullOrWhiteSpace(entry["pt-BR"]) ||
-                string.IsNullOrWhiteSpace(entry["en-US"]) ||
-                !spanish.TryGetValue(item.Key, out translated) || string.IsNullOrWhiteSpace(translated))
+                entry.Count != 2 || !entry.ContainsKey("pt-BR") || !entry.ContainsKey("en-US") ||
+                string.IsNullOrWhiteSpace(entry["pt-BR"]) || string.IsNullOrWhiteSpace(entry["en-US"]))
                 throw new InvalidDataException("Incomplete localization entry: " + item.Key);
-            entry.Add("es-ES", translated);
         }
+        MergeLocale(assembly, catalog, "es-ES");
+        MergeLocale(assembly, catalog, "ru-RU");
         return catalog;
+    }
+
+    private static void MergeLocale(Assembly assembly,
+        Dictionary<string, Dictionary<string, string>> catalog, string code)
+    {
+        Dictionary<string, string> translations;
+        using (Stream stream = assembly.GetManifestResourceStream("WinSidebar.i18n." + code + ".json"))
+        {
+            if (stream == null) throw new InvalidDataException("Missing embedded localization catalog: " + code);
+            translations = JsonSerializer.Deserialize<Dictionary<string, string>>(stream);
+        }
+        if (translations == null || translations.Count != catalog.Count)
+            throw new InvalidDataException("Incomplete localization catalog: " + code);
+        foreach (KeyValuePair<string, Dictionary<string, string>> item in catalog)
+        {
+            string value;
+            if (!translations.TryGetValue(item.Key, out value) || string.IsNullOrWhiteSpace(value))
+                throw new InvalidDataException("Incomplete localization entry: " + code + "/" + item.Key);
+            item.Value.Add(code, value);
+        }
     }
 
     internal static string Text(string key)
@@ -65,7 +74,8 @@ internal static class Localization
         if (!File.Exists(settingsFile))
         {
             string os = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
-            chosen = os == "pt" ? "pt-BR" : os == "es" ? "es-ES" : "en-US";
+            chosen = os == "pt" ? "pt-BR" : os == "es" ? "es-ES" :
+                os == "ru" ? "ru-RU" : "en-US";
         }
         else
         {
@@ -75,7 +85,8 @@ internal static class Localization
                 {
                     if (!line.StartsWith("language=", StringComparison.Ordinal)) continue;
                     string code = line.Substring("language=".Length).Trim();
-                    if (code == "pt-BR" || code == "en-US" || code == "es-ES") chosen = code;
+                    if (code == "pt-BR" || code == "en-US" || code == "es-ES" || code == "ru-RU")
+                        chosen = code;
                 }
             }
             catch (IOException) { }
@@ -86,8 +97,8 @@ internal static class Localization
 
     internal static void Select(string code)
     {
-        // Unimplemented locales are not shown or selectable.
-        if (code != "pt-BR" && code != "en-US" && code != "es-ES")
+        // Only catalogs actually embedded in the application can be selected.
+        if (code != "pt-BR" && code != "en-US" && code != "es-ES" && code != "ru-RU")
             throw new ArgumentOutOfRangeException(nameof(code), "Unsupported application language.");
         Current = code;
         Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(code);
