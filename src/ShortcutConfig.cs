@@ -29,13 +29,13 @@ internal static class ShortcutStore
     internal static ShortcutEntry[] Defaults()
     {
         return new ShortcutEntry[] {
-            new ShortcutEntry { Name = "Pasta local", Type = "folder",
+            new ShortcutEntry { Name = Localization.Text("defaults.documents"), Type = "folder",
                 Target = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), Icon = "folder", IconFile = "" },
-            new ShortcutEntry { Name = "Downloads", Type = "folder",
+            new ShortcutEntry { Name = Localization.Text("defaults.downloads"), Type = "folder",
                 Target = Native.DownloadsPath(), Icon = "download", IconFile = "" },
-            new ShortcutEntry { Name = "Acervo", Type = "folder",
+            new ShortcutEntry { Name = Localization.Text("defaults.archive"), Type = "folder",
                 Target = "", Icon = "archive", IconFile = "" },
-            new ShortcutEntry { Name = "Site", Type = "website",
+            new ShortcutEntry { Name = Localization.Text("defaults.website"), Type = "website",
                 Target = "https://www.google.com/", Icon = "globe", IconFile = "" }
         };
     }
@@ -44,7 +44,7 @@ internal static class ShortcutStore
     {
         if (!File.Exists(FilePath)) return Defaults();
         if (new FileInfo(FilePath).Length > 65536)
-            throw new InvalidDataException("Configuração de atalhos excessivamente grande.");
+            throw new InvalidDataException(Localization.Text("store.too_large"));
         XmlReaderSettings settings = new XmlReaderSettings();
         settings.DtdProcessing = DtdProcessing.Prohibit;
         settings.XmlResolver = null;
@@ -53,20 +53,20 @@ internal static class ShortcutStore
         using (XmlReader reader = XmlReader.Create(FilePath, settings)) xml.Load(reader);
         if (xml.DocumentElement == null || xml.DocumentElement.Name != "shortcuts" ||
             xml.DocumentElement.GetAttribute("version") != "1")
-            throw new InvalidDataException("Versão de configuração de atalhos desconhecida.");
+            throw new InvalidDataException(Localization.Text("store.unknown_version"));
         XmlNodeList elements = xml.DocumentElement.SelectNodes("item");
         if (elements.Count != 4)
-            throw new InvalidDataException("A configuração precisa conter quatro atalhos.");
+            throw new InvalidDataException(Localization.Text("store.four_entries"));
         ShortcutEntry[] result = new ShortcutEntry[4];
         bool[] seen = new bool[4];
         foreach (XmlNode node in elements)
         {
             XmlElement item = node as XmlElement;
-            if (item == null) throw new InvalidDataException("Atalho inválido.");
+            if (item == null) throw new InvalidDataException(Localization.Text("store.invalid_entry"));
             int id;
             if (!int.TryParse(item.GetAttribute("id"), out id) ||
                 id < 0 || id > 3 || seen[id])
-                throw new InvalidDataException("Identificador de atalho inválido.");
+                throw new InvalidDataException(Localization.Text("store.invalid_id"));
             seen[id] = true;
             ShortcutEntry entry = new ShortcutEntry {
                 Name = item.GetAttribute("name"),
@@ -86,31 +86,31 @@ internal static class ShortcutStore
         if (entry == null || string.IsNullOrWhiteSpace(entry.Name) ||
             entry.Name.Length > 48 || entry.Target == null || entry.Target.Length > 2048 ||
             (entry.Type != "folder" && entry.Type != "website"))
-            throw new InvalidDataException("Nome, tipo ou destino de atalho inválido.");
+            throw new InvalidDataException(Localization.Text("store.invalid_fields"));
         if (entry.Type == "folder")
         {
             if (entry.Target.Length > 0 && !Path.IsPathRooted(entry.Target))
-                throw new InvalidDataException("A pasta precisa ter um caminho absoluto.");
+                throw new InvalidDataException(Localization.Text("store.absolute_folder"));
         }
         else
         {
             Uri uri;
             if (!Uri.TryCreate(entry.Target, UriKind.Absolute, out uri) ||
                 (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
-                throw new InvalidDataException("Informe uma URL HTTP ou HTTPS válida.");
+                throw new InvalidDataException(Localization.Text("store.valid_url"));
         }
         string[] allowed = { "folder", "download", "archive", "globe", "star", "briefcase", "custom" };
         if (Array.IndexOf(allowed, entry.Icon) < 0 || entry.IconFile == null || entry.IconFile.Length > 1024)
-            throw new InvalidDataException("Ícone inválido.");
+            throw new InvalidDataException(Localization.Text("store.invalid_icon"));
         if (entry.Icon == "custom" && (!Path.IsPathRooted(entry.IconFile) ||
             !File.Exists(entry.IconFile)))
-            throw new InvalidDataException("O arquivo do ícone personalizado não foi encontrado.");
+            throw new InvalidDataException(Localization.Text("store.custom_icon_missing"));
     }
 
     internal static void Write(ShortcutEntry[] entries)
     {
         if (entries == null || entries.Length != 4)
-            throw new InvalidDataException("São necessários quatro atalhos.");
+            throw new InvalidDataException(Localization.Text("store.requires_four"));
         foreach (ShortcutEntry entry in entries) Validate(entry);
         Directory.CreateDirectory(Root);
         XmlDocument document = new XmlDocument();
@@ -147,10 +147,10 @@ internal static class ShortcutStore
     {
         FileInfo file = new FileInfo(source);
         if (!file.Exists || file.Length > 1024 * 1024 || file.Length == 0)
-            throw new InvalidDataException("Ícone inexistente ou maior que 1 MB.");
+            throw new InvalidDataException(Localization.Text("store.icon_size"));
         string extension = Path.GetExtension(source).ToLowerInvariant();
         if (extension != ".png" && extension != ".ico")
-            throw new InvalidDataException("Somente PNG e ICO são aceitos.");
+            throw new InvalidDataException(Localization.Text("store.icon_type"));
         string directory = Path.Combine(Root, "icons");
         Directory.CreateDirectory(directory);
         string destination = Path.Combine(directory, Guid.NewGuid().ToString("N") + ".png");
@@ -166,7 +166,7 @@ internal static class ShortcutStore
             using (Image image = Image.FromFile(source))
             {
                 if (image.Width > 4096 || image.Height > 4096)
-                    throw new InvalidDataException("Dimensões do ícone muito grandes.");
+                    throw new InvalidDataException(Localization.Text("store.icon_dimensions"));
                 using (Bitmap converted = new Bitmap(image, new Size(32, 32)))
                     converted.Save(destination, System.Drawing.Imaging.ImageFormat.Png);
             }
@@ -196,6 +196,7 @@ internal static class ShortcutStore
 
 internal sealed class ShortcutEditor : Form
 {
+    private static readonly string[] IconCodes = { "folder", "download", "archive", "globe", "star", "briefcase", "custom" };
     private readonly TextBox name = new TextBox();
     private readonly TextBox target = new TextBox();
     private readonly ComboBox type = new ComboBox();
@@ -213,7 +214,7 @@ internal sealed class ShortcutEditor : Form
         initial = entry.Copy();
         BrowserExecutable = browserExecutable;
         BrowserUseSystem = browserUseSystem;
-        Text = "WinSidebar — configurar atalho";
+        Text = Localization.Text("editor.title");
         FormBorderStyle = FormBorderStyle.FixedDialog;
         StartPosition = FormStartPosition.CenterParent;
         MaximizeBox = false; MinimizeBox = false;
@@ -221,60 +222,60 @@ internal sealed class ShortcutEditor : Form
         ClientSize = new Size(460, 347);
         Font = new Font("Microsoft Sans Serif", 8.25f);
         BackColor = Color.FromArgb(212, 208, 200);
-        Label intro = AddLabel("Nome", 12, 14, 120);
+        Label intro = AddLabel(Localization.Text("editor.name"), 12, 14, 120);
         name.SetBounds(12, 33, 430, 22); name.MaxLength = 48;
         name.Text = entry.Name; Controls.Add(name);
-        AddLabel("Tipo", 12, 62, 180);
+        AddLabel(Localization.Text("editor.type"), 12, 62, 180);
         type.SetBounds(12, 81, 140, 23);
         type.DropDownStyle = ComboBoxStyle.DropDownList;
-        type.Items.AddRange(new object[] { "Pasta", "Site" });
+        type.Items.AddRange(new object[] { Localization.Text("editor.folder"), Localization.Text("defaults.website") });
         type.SelectedIndex = entry.Type == "website" ? 1 : 0;
         Controls.Add(type);
-        AddLabel("Destino / URL", 12, 108, 180);
+        AddLabel(Localization.Text("editor.target"), 12, 108, 180);
         target.SetBounds(12, 128, 332, 23); target.Text = entry.Target;
         target.MaxLength = 2048; Controls.Add(target);
-        Button browse = AddButton("Procurar...", 350, 127, 92, 24);
+        Button browse = AddButton(Localization.Text("editor.browse"), 350, 127, 92, 24);
         browse.Click += delegate {
             if (type.SelectedIndex == 0)
             {
                 using (FolderBrowserDialog dialog = new FolderBrowserDialog())
                 {
-                    dialog.Description = "Selecione a pasta do atalho";
+                    dialog.Description = Localization.Text("editor.folder_picker");
                     if (Directory.Exists(target.Text)) dialog.SelectedPath = target.Text;
                     if (dialog.ShowDialog(this) == DialogResult.OK) target.Text = dialog.SelectedPath;
                 }
             }
-            else MessageBox.Show(this, "Digite uma URL HTTP/HTTPS no campo Destino.", "WinSidebar");
+            else MessageBox.Show(this, Localization.Text("editor.enter_url"), "WinSidebar");
         };
-        AddLabel("Ícone", 12, 158, 120);
+        AddLabel(Localization.Text("editor.icon"), 12, 158, 120);
         icon.SetBounds(12, 178, 175, 23);
         icon.DropDownStyle = ComboBoxStyle.DropDownList;
-        icon.Items.AddRange(new object[] { "folder", "download", "archive", "globe", "star", "briefcase", "custom" });
-        icon.SelectedItem = entry.Icon; Controls.Add(icon);
+        icon.Items.AddRange(new object[] { Localization.Text("editor.icon_folder"), Localization.Text("editor.icon_download"), Localization.Text("editor.icon_archive"), Localization.Text("editor.icon_globe"), Localization.Text("editor.icon_star"), Localization.Text("editor.icon_briefcase"), Localization.Text("editor.icon_custom") });
+        icon.SelectedIndex = Math.Max(0, Array.IndexOf(IconCodes, entry.Icon)); Controls.Add(icon);
         iconFile.SetBounds(193, 178, 151, 23); iconFile.ReadOnly = true;
         iconFile.Text = entry.IconFile; Controls.Add(iconFile);
         Button iconBrowse = AddButton("PNG/ICO...", 350, 177, 92, 24);
         iconBrowse.Click += delegate {
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
-                dialog.Filter = "Imagens PNG/ICO|*.png;*.ico";
+                dialog.Filter = Localization.Text("editor.images_filter");
                 if (dialog.ShowDialog(this) == DialogResult.OK)
-                { iconFile.Text = dialog.FileName; icon.SelectedItem = "custom"; }
+                { iconFile.Text = dialog.FileName; icon.SelectedIndex = Array.IndexOf(IconCodes, "custom"); }
             }
         };
-        AddLabel("Navegador (somente sites)", 12, 208, 230);
+        AddLabel(Localization.Text("editor.browser_only_sites"), 12, 208, 230);
         systemBrowser.SetBounds(12, 228, 240, 21);
-        systemBrowser.Text = "Usar navegador padrão do Windows";
+        systemBrowser.Text = Localization.Text("editor.system_browser");
         systemBrowser.Checked = browserUseSystem;
         Controls.Add(systemBrowser);
         browser.SetBounds(12, 254, 332, 23);
         browser.Text = browserExecutable; browser.ReadOnly = true;
         Controls.Add(browser);
-        Button browserBrowse = AddButton("Selecionar .exe", 350, 253, 92, 24);
+        Button browserBrowse = AddButton(Localization.Text("editor.choose_exe"), 350, 253, 92, 24);
         browserBrowse.Click += delegate {
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
-                dialog.Filter = "Executáveis|*.exe";
+                dialog.Filter = Localization.Text("editor.executables_filter");
                 dialog.CheckFileExists = true;
                 if (File.Exists(browser.Text)) dialog.FileName = browser.Text;
                 if (dialog.ShowDialog(this) == DialogResult.OK)
@@ -284,15 +285,15 @@ internal sealed class ShortcutEditor : Form
         type.SelectedIndexChanged += delegate { UpdateBrowserControls(browserBrowse); };
         systemBrowser.CheckedChanged += delegate { UpdateBrowserControls(browserBrowse); };
         UpdateBrowserControls(browserBrowse);
-        Button cancel = AddButton("Cancelar", 252, 304, 90, 27);
+        Button cancel = AddButton(Localization.Text("editor.cancel"), 252, 304, 90, 27);
         cancel.DialogResult = DialogResult.Cancel;
-        Button save = AddButton("Salvar", 350, 304, 92, 27);
+        Button save = AddButton(Localization.Text("editor.save"), 350, 304, 92, 27);
         save.Click += delegate {
             try
             {
                 ShortcutEntry changed = new ShortcutEntry {
                     Name = name.Text.Trim(), Type = type.SelectedIndex == 0 ? "folder" : "website",
-                    Target = target.Text.Trim(), Icon = (string)icon.SelectedItem,
+                    Target = target.Text.Trim(), Icon = IconCodes[icon.SelectedIndex],
                     IconFile = iconFile.Text
                 };
                 if (changed.Icon == "custom" && changed.IconFile != initial.IconFile)
@@ -300,14 +301,14 @@ internal sealed class ShortcutEditor : Form
                 ShortcutStore.Validate(changed);
                 if (changed.Type == "website" && !systemBrowser.Checked &&
                     (!File.Exists(browser.Text) || !Path.GetExtension(browser.Text).Equals(".exe", StringComparison.OrdinalIgnoreCase)))
-                    throw new InvalidDataException("Escolha um navegador .exe ou marque 'Usar navegador padrão'.");
+                    throw new InvalidDataException(Localization.Text("editor.choose_browser_error"));
                 Result = changed;
                 BrowserExecutable = browser.Text;
                 BrowserUseSystem = systemBrowser.Checked;
                 DialogResult = DialogResult.OK;
                 Close();
             }
-            catch (Exception ex) { MessageBox.Show(this, ex.Message, "Configuração inválida", MessageBoxButtons.OK, MessageBoxIcon.Warning); }
+            catch (Exception ex) { MessageBox.Show(this, ex.Message, Localization.Text("editor.invalid_configuration"), MessageBoxButtons.OK, MessageBoxIcon.Warning); }
         };
         AcceptButton = save; CancelButton = cancel;
     }

@@ -53,7 +53,7 @@ internal static class Native
         catch (DllNotFoundException) { }
         catch (EntryPointNotFoundException) { }
         finally { if (path != IntPtr.Zero) Marshal.FreeCoTaskMem(path); }
-        return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+        return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), Localization.Text("defaults.downloads"));
     }
 }
 
@@ -162,6 +162,13 @@ internal sealed class SidebarWindow : Form
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         "WinSidebar", "settings.ini");
 
+    private ToolStripMenuItem monitorPrimaryItem;
+    private ToolStripMenuItem monitorSecondaryItem;
+    private ToolStripMenuItem ignoredMenuItem;
+    private ToolStripMenuItem exitMenuItem;
+    private ToolStripMenuItem languageMenu;
+    private ToolStripMenuItem englishItem;
+    private ToolStripMenuItem portugueseItem;
     private int widthIndex;
     private bool leftSide;
     private bool secondary;
@@ -181,6 +188,7 @@ internal sealed class SidebarWindow : Form
 
     internal SidebarWindow()
     {
+        Localization.Initialize(settingsPath);
         browserUseSystem = !File.Exists(settingsPath); // primeira instalação: navegador padrão
         LoadSettings();
         try
@@ -191,11 +199,11 @@ internal sealed class SidebarWindow : Form
         catch (Exception ex)
         {
             Array.Copy(ShortcutStore.Defaults(), entries, 4);
-            configurationError = "A configuração de atalhos não pôde ser carregada. " +
-                "O arquivo original foi preservado.\n\n" + ex.Message;
+            configurationError = Localization.Text("config.shortcuts_unreadable") +
+                Localization.Text("config.original_preserved") + ex.Message;
         }
         try { windows.Load(); }
-        catch (Exception ex) { configurationError += "\n\nA lista de aplicativos ignorados não pôde ser carregada. O arquivo foi preservado.\n" + ex.Message; }
+        catch (Exception ex) { configurationError += Localization.Text("config.ignored_unreadable") + ex.Message; }
         Text = "WinSidebar";
         FormBorderStyle = FormBorderStyle.None;
         ShowInTaskbar = false;
@@ -214,7 +222,7 @@ internal sealed class SidebarWindow : Form
         tab.TabStop = false;
         tab.Click += delegate { Expand(!expanded); };
         Controls.Add(tab);
-        tips.SetToolTip(tab, "Shift+F1: abrir/recolher");
+        tips.SetToolTip(tab, Localization.Text("sidebar.tab_hint"));
 
         header.BackColor = Navy;
         content.Controls.Add(header);
@@ -226,18 +234,18 @@ internal sealed class SidebarWindow : Form
         title.Dock = DockStyle.Fill;
         header.Controls.Add(title);
 
-        ConfigureHeaderButton(closeButton, "X", "Encerrar (com confirmação)");
+        ConfigureHeaderButton(closeButton, "X", Localization.Text("sidebar.exit_hint"));
         closeButton.FlatStyle = FlatStyle.Flat;
         closeButton.FlatAppearance.BorderColor = Color.White;
         closeButton.BackColor = Color.FromArgb(185, 38, 38);
         closeButton.ForeColor = Color.White;
-        closeButton.AccessibleName = "Encerrar WinSidebar";
-        ConfigureHeaderButton(smallerButton, "◀", "Diminuir largura");
-        smallerButton.AccessibleName = "Diminuir largura";
-        ConfigureHeaderButton(largerButton, "▶", "Aumentar largura");
-        largerButton.AccessibleName = "Aumentar largura";
-        ConfigureHeaderButton(sideButton, "↔", "Mover para a outra borda");
-        sideButton.AccessibleName = "Mover a barra para a outra borda";
+        closeButton.AccessibleName = Localization.Text("sidebar.exit_accessible");
+        ConfigureHeaderButton(smallerButton, "◀", Localization.Text("sidebar.shrink"));
+        smallerButton.AccessibleName = Localization.Text("sidebar.shrink");
+        ConfigureHeaderButton(largerButton, "▶", Localization.Text("sidebar.expand"));
+        largerButton.AccessibleName = Localization.Text("sidebar.expand");
+        ConfigureHeaderButton(sideButton, "↔", Localization.Text("sidebar.other_edge"));
+        sideButton.AccessibleName = Localization.Text("sidebar.move_accessible");
         closeButton.Click += delegate { RequestExit(); };
         smallerButton.Click += delegate { ChangeWidth(-1); };
         largerButton.Click += delegate { ChangeWidth(1); };
@@ -301,7 +309,7 @@ internal sealed class SidebarWindow : Form
         folderHeader.Dock = DockStyle.Top;
         folderHeader.Height = 20;
         folders.Controls.Add(folderHeader);
-        folderTitle.Text = " ATALHOS";
+        folderTitle.Text = Localization.Text("sidebar.shortcuts");
         folderTitle.BackColor = Navy;
         folderTitle.ForeColor = Color.White;
         folderTitle.Font = bold;
@@ -314,13 +322,13 @@ internal sealed class SidebarWindow : Form
         configureButton.Height = 20;
         configureButton.BackColor = Face;
         configureButton.FlatStyle = FlatStyle.Standard;
-        configureButton.AccessibleName = "Configurar atalhos";
+        configureButton.AccessibleName = Localization.Text("sidebar.configure");
         configureButton.Click += delegate { ToggleConfigure(); };
         folderHeader.Controls.Add(configureButton);
         configureButton.BringToFront();
-        tips.SetToolTip(configureButton, "Entrar ou sair do modo Configurar");
-        ConfigureShortcutHeaderButton(savePreferencesButton, "S", "Salvar preferências", delegate { SavePreferences(); });
-        ConfigureShortcutHeaderButton(restoreDefaultsButton, "↺", "Restaurar configurações padrão", delegate { RestoreDefaults(); });
+        tips.SetToolTip(configureButton, Localization.Text("sidebar.configure_mode"));
+        ConfigureShortcutHeaderButton(savePreferencesButton, "S", Localization.Text("sidebar.save_preferences"), delegate { SavePreferences(); });
+        ConfigureShortcutHeaderButton(restoreDefaultsButton, "↺", Localization.Text("sidebar.restore_defaults"), delegate { RestoreDefaults(); });
         for (int i = 0; i < 4; i++)
         {
             int slot = i;
@@ -339,18 +347,30 @@ internal sealed class SidebarWindow : Form
         RefreshShortcutVisuals();
 
         ContextMenuStrip menu = new ContextMenuStrip();
-        ToolStripMenuItem main = new ToolStripMenuItem("Usar monitor principal");
-        ToolStripMenuItem other = new ToolStripMenuItem("Usar monitor secundário");
-        ToolStripMenuItem exit = new ToolStripMenuItem("Encerrar WinSidebar...");
+        ToolStripMenuItem main = new ToolStripMenuItem(Localization.Text("sidebar.primary_monitor"));
+        ToolStripMenuItem other = new ToolStripMenuItem(Localization.Text("sidebar.secondary_monitor"));
+        ToolStripMenuItem exit = new ToolStripMenuItem(Localization.Text("sidebar.exit_menu"));
         main.Click += delegate { secondary = false; Reposition(); SaveSettings(); RefreshWindows(true); };
         other.Click += delegate { secondary = true; Reposition(); SaveSettings(); RefreshWindows(true); };
         exit.Click += delegate { RequestExit(); };
         menu.Items.Add(main);
         menu.Items.Add(other);
-        ToolStripMenuItem manageIgnored = new ToolStripMenuItem("Gerenciar aplicativos ignorados...");
+        ToolStripMenuItem manageIgnored = new ToolStripMenuItem(Localization.Text("sidebar.manage_ignored"));
         manageIgnored.Click += delegate { windows.ManageIgnored(this, delegate { RefreshWindows(true); }); };
+        monitorPrimaryItem = main;
+        monitorSecondaryItem = other;
+        ignoredMenuItem = manageIgnored;
+        exitMenuItem = exit;
+        languageMenu = new ToolStripMenuItem(Localization.Text("sidebar.language"));
+        englishItem = new ToolStripMenuItem("English");
+        portugueseItem = new ToolStripMenuItem("Português (Brasil)");
+        englishItem.Click += delegate { ChangeLanguage("en-US"); };
+        portugueseItem.Click += delegate { ChangeLanguage("pt-BR"); };
+        languageMenu.DropDownItems.Add(englishItem);
+        languageMenu.DropDownItems.Add(portugueseItem);
         menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add(manageIgnored);
+        menu.Items.Add(languageMenu);
         menu.Items.Add(exit);
         tab.ContextMenuStrip = menu;
         content.ContextMenuStrip = menu;
@@ -359,6 +379,7 @@ internal sealed class SidebarWindow : Form
         tray.ContextMenuStrip = menu;
         tray.Visible = true;
         tray.DoubleClick += delegate { Expand(!expanded); };
+        ApplyLanguage();
         poll.Interval = 1800;
         poll.Tick += delegate { if (expanded) RefreshWindows(false); };
         poll.Start();
@@ -370,9 +391,9 @@ internal sealed class SidebarWindow : Form
                 MessageBox.Show(this, configurationError, "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             if (hotkeyErrors.Length > 0)
             {
-                status.Text = "Atalhos indisponíveis: " + hotkeyErrors;
+                status.Text = Localization.Text("sidebar.hotkeys_unavailable") + hotkeyErrors;
                 tray.BalloonTipTitle = "WinSidebar";
-                tray.BalloonTipText = "Atalhos em uso: " + hotkeyErrors;
+                tray.BalloonTipText = Localization.Text("sidebar.hotkeys_in_use") + hotkeyErrors;
                 tray.ShowBalloonTip(6000);
             }
         };
@@ -411,6 +432,58 @@ internal sealed class SidebarWindow : Form
         button.BringToFront();
     }
 
+    private void ChangeLanguage(string code)
+    {
+        if (Localization.Current == code) return;
+        string oldLanguage = Localization.Current;
+        Localization.Select(code);
+        try { SaveSettingsStrict(); }
+        catch (Exception ex)
+        {
+            Localization.Select(oldLanguage);
+            MessageBox.Show(this, Localization.Text("sidebar.language_save_failed") + ex.Message,
+                "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+        ApplyLanguage();
+        signature = "";
+        RefreshWindows(true);
+    }
+
+    private void ApplyLanguage()
+    {
+        tips.SetToolTip(tab, Localization.Text("sidebar.tab_hint"));
+        tips.SetToolTip(closeButton, Localization.Text("sidebar.exit_hint"));
+        closeButton.AccessibleName = Localization.Text("sidebar.exit_accessible");
+        tips.SetToolTip(smallerButton, Localization.Text("sidebar.shrink"));
+        smallerButton.AccessibleName = Localization.Text("sidebar.shrink");
+        tips.SetToolTip(largerButton, Localization.Text("sidebar.expand"));
+        largerButton.AccessibleName = Localization.Text("sidebar.expand");
+        tips.SetToolTip(sideButton, Localization.Text("sidebar.other_edge"));
+        sideButton.AccessibleName = Localization.Text("sidebar.move_accessible");
+        folderTitle.Text = Localization.Text(configureMode ? "sidebar.configuring" : "sidebar.shortcuts");
+        configureButton.AccessibleName = Localization.Text("sidebar.configure");
+        tips.SetToolTip(configureButton, Localization.Text(configureMode ? "sidebar.finish_editing" : "sidebar.configure_mode"));
+        savePreferencesButton.AccessibleName = Localization.Text("sidebar.save_preferences");
+        tips.SetToolTip(savePreferencesButton, Localization.Text("sidebar.save_preferences"));
+        restoreDefaultsButton.AccessibleName = Localization.Text("sidebar.restore_defaults");
+        tips.SetToolTip(restoreDefaultsButton, Localization.Text("sidebar.restore_defaults"));
+        monitorPrimaryItem.Text = Localization.Text("sidebar.primary_monitor");
+        monitorSecondaryItem.Text = Localization.Text("sidebar.secondary_monitor");
+        ignoredMenuItem.Text = Localization.Text("sidebar.manage_ignored");
+        exitMenuItem.Text = Localization.Text("sidebar.exit_menu");
+        languageMenu.Text = Localization.Text("sidebar.language");
+        englishItem.Checked = Localization.Current == "en-US";
+        portugueseItem.Checked = Localization.Current == "pt-BR";
+        if (hotkeyErrors.Length > 0)
+        {
+            status.Text = Localization.Text("sidebar.hotkeys_unavailable") + hotkeyErrors;
+            tray.BalloonTipText = Localization.Text("sidebar.hotkeys_in_use") + hotkeyErrors;
+        }
+        RefreshShortcutVisuals();
+        Reposition();
+    }
+
     private void LoadSettings()
     {
         try
@@ -441,7 +514,8 @@ internal sealed class SidebarWindow : Form
                 "width=" + widthIndex, "left=" + (leftSide ? "1" : "0"),
                 "secondary=" + (secondary ? "1" : "0"),
                 "browser=" + browserExecutable,
-                "browserSystem=" + (browserUseSystem ? "1" : "0")
+                "browserSystem=" + (browserUseSystem ? "1" : "0"),
+                "language=" + Localization.Current
             });
         }
         catch (IOException) { }
@@ -458,7 +532,8 @@ internal sealed class SidebarWindow : Form
                 "width=" + widthIndex, "left=" + (leftSide ? "1" : "0"),
                 "secondary=" + (secondary ? "1" : "0"),
                 "browser=" + browserExecutable,
-                "browserSystem=" + (browserUseSystem ? "1" : "0")
+                "browserSystem=" + (browserUseSystem ? "1" : "0"),
+                "language=" + Localization.Current
             });
             if (File.Exists(settingsPath)) File.Replace(temporary, settingsPath, settingsPath + ".bak", true);
             else File.Move(temporary, settingsPath);
@@ -480,18 +555,18 @@ internal sealed class SidebarWindow : Form
             SaveSettingsStrict();
             ShortcutStore.Write(entries);
             windows.Save();
-            MessageBox.Show(this, "Preferências salvas.", "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(this, Localization.Text("sidebar.save_success"), "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, "Não foi possível salvar todas as preferências. Algumas alterações podem já estar gravadas.\n\n" + ex.Message,
+            MessageBox.Show(this, Localization.Text("sidebar.save_partial") + ex.Message,
                 "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
 
     private void RestoreDefaults()
     {
-        if (MessageBox.Show(this, "Restaurar atalhos, posição, navegador e aplicativos ignorados aos padrões?\nO idioma atual será mantido.",
+        if (MessageBox.Show(this, Localization.Text("sidebar.restore_question"),
             "WinSidebar", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) != DialogResult.Yes) return;
         byte[] oldSettings, oldShortcuts, oldIgnored;
         try {
@@ -499,7 +574,7 @@ internal sealed class SidebarWindow : Form
             oldShortcuts = SnapshotFile(ShortcutStore.FilePath);
             oldIgnored = SnapshotFile(windows.FilePath);
         }
-        catch (Exception ex) { MessageBox.Show(this, "Não foi possível preparar a restauração: " + ex.Message, "WinSidebar"); return; }
+        catch (Exception ex) { MessageBox.Show(this, Localization.Text("sidebar.restore_prepare_error") + ex.Message, "WinSidebar"); return; }
         ShortcutEntry[] previous = new ShortcutEntry[4];
         for (int i = 0; i < 4; i++) previous[i] = entries[i].Copy();
         int oldWidth = widthIndex; bool oldLeft = leftSide, oldSecondary = secondary;
@@ -513,9 +588,9 @@ internal sealed class SidebarWindow : Form
             SaveSettingsStrict();
             windows.ResetRules();
             Array.Copy(defaults, entries, 4);
-            configureMode = false; folderTitle.Text = " ATALHOS"; configureButton.Text = "⚙";
+            configureMode = false; folderTitle.Text = Localization.Text("sidebar.shortcuts"); configureButton.Text = "⚙";
             RefreshShortcutVisuals(); Reposition(); RefreshWindows(true);
-            MessageBox.Show(this, "Configurações padrão restauradas.", "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(this, Localization.Text("sidebar.restore_success"), "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch (Exception ex)
         {
@@ -524,9 +599,9 @@ internal sealed class SidebarWindow : Form
             Array.Copy(previous, entries, 4);
             string recoveryError = "";
             try { RestoreFile(settingsPath, oldSettings); RestoreFile(ShortcutStore.FilePath, oldShortcuts); RestoreFile(windows.FilePath, oldIgnored); windows.Load(); }
-            catch (Exception recovery) { recoveryError = "\nFalha adicional ao recuperar arquivos: " + recovery.Message; }
+            catch (Exception recovery) { recoveryError = Localization.Text("sidebar.recovery_error") + recovery.Message; }
             RefreshShortcutVisuals(); Reposition(); RefreshWindows(true);
-            MessageBox.Show(this, "Não foi possível concluir a restauração; foi tentada a recuperação das preferências anteriores.\n" + ex.Message + recoveryError,
+            MessageBox.Show(this, Localization.Text("sidebar.restore_failed") + ex.Message + recoveryError,
                 "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
@@ -548,7 +623,7 @@ internal sealed class SidebarWindow : Form
         tab.SetBounds(leftSide ? 0 : width - TabWidth, 0, TabWidth, height);
         content.SetBounds(leftSide ? TabWidth : 0, 0, Math.Max(0, width - TabWidth), height);
         tab.Text = leftSide ? (expanded ? "<" : ">") : (expanded ? ">" : "<");
-        tips.SetToolTip(sideButton, leftSide ? "Mover para a direita" : "Mover para a esquerda");
+        tips.SetToolTip(sideButton, leftSide ? Localization.Text("sidebar.move_right") : Localization.Text("sidebar.move_left"));
         smallerButton.Enabled = widthIndex > 0;
         largerButton.Enabled = widthIndex < Widths.Length - 1;
         title.Text = " WinSidebar";
@@ -573,7 +648,7 @@ internal sealed class SidebarWindow : Form
     }
     private void RequestExit()
     {
-        if (MessageBox.Show(this, "Deseja encerrar o WinSidebar?", "Encerrar WinSidebar",
+        if (MessageBox.Show(this, Localization.Text("sidebar.exit_question"), Localization.Text("sidebar.exit_accessible"),
             MessageBoxButtons.YesNo, MessageBoxIcon.Question,
             MessageBoxDefaultButton.Button2) == DialogResult.Yes) Close();
     }
@@ -588,9 +663,9 @@ internal sealed class SidebarWindow : Form
     private void ToggleConfigure()
     {
         configureMode = !configureMode;
-        folderTitle.Text = configureMode ? " CONFIGURANDO" : " ATALHOS";
+        folderTitle.Text = configureMode ? Localization.Text("sidebar.configuring") : Localization.Text("sidebar.shortcuts");
         configureButton.Text = configureMode ? "✓" : "⚙";
-        tips.SetToolTip(configureButton, configureMode ? "Concluir configuração" : "Configurar atalhos");
+        tips.SetToolTip(configureButton, configureMode ? Localization.Text("sidebar.finish_editing") : Localization.Text("sidebar.configure"));
         RefreshShortcutVisuals();
     }
     private void RefreshShortcutVisuals()
@@ -602,8 +677,8 @@ internal sealed class SidebarWindow : Form
             icons[i] = ShortcutStore.MakeIcon(entries[i]);
             shortcuts[i].Image = icons[i];
             shortcuts[i].AccessibleName = entries[i].Name;
-            tips.SetToolTip(shortcuts[i], (configureMode ? "Editar: " : "Abrir: ") +
-                entries[i].Name + "\n" + (entries[i].Target.Length == 0 ? "Não configurado" : entries[i].Target));
+            tips.SetToolTip(shortcuts[i], (configureMode ? Localization.Text("sidebar.edit_prefix") : Localization.Text("sidebar.open_prefix")) +
+                entries[i].Name + "\n" + (entries[i].Target.Length == 0 ? Localization.Text("sidebar.not_configured") : entries[i].Target));
         }
     }
     private void EditShortcut(int slot)
@@ -626,7 +701,7 @@ internal sealed class SidebarWindow : Form
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, "Não foi possível salvar o atalho. Os dados anteriores foram preservados.\n\n" +
+                MessageBox.Show(this, Localization.Text("sidebar.save_shortcut_failed") +
                     ex.Message, "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
@@ -636,20 +711,20 @@ internal sealed class SidebarWindow : Form
         ShortcutEntry entry = entries[slot];
         if (entry.Target.Length == 0)
         {
-            MessageBox.Show(this, "Atalho não configurado. Clique na engrenagem para escolher o destino.",
+            MessageBox.Show(this, Localization.Text("sidebar.shortcut_missing"),
                 "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Information);
             return;
         }
         if (entry.Type == "folder" && !Directory.Exists(entry.Target))
         {
-            MessageBox.Show(this, "Pasta não encontrada:\n" + entry.Target,
+            MessageBox.Show(this, Localization.Text("sidebar.folder_missing") + entry.Target,
                 "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Information);
             return;
         }
         if (entry.Type == "website" && !browserUseSystem && !File.Exists(browserExecutable))
         {
-            MessageBox.Show(this, "Escolha um navegador no modo Configurar antes de abrir este site.\n" +
-                "O navegador padrão não será usado automaticamente.", "WinSidebar",
+            MessageBox.Show(this, Localization.Text("sidebar.choose_browser") +
+                Localization.Text("sidebar.default_browser_not_used"), "WinSidebar",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
             return;
         }
@@ -663,7 +738,7 @@ internal sealed class SidebarWindow : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, "Não foi possível abrir:\n" + entry.Target + "\n\n" + ex.Message,
+            MessageBox.Show(this, Localization.Text("sidebar.open_failed") + entry.Target + "\n\n" + ex.Message,
                 "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
@@ -761,8 +836,8 @@ internal sealed class SidebarWindow : Form
                 for (int i = 0; i < monitors.Length; i++)
                 {
                     Screen screen = monitors[i];
-                    TreeNode root = new TreeNode("Monitor " + (i + 1) +
-                        (screen.Primary ? " - principal" : " - secundário"));
+                    TreeNode root = new TreeNode(Localization.Text("sidebar.monitor_prefix") + (i + 1) +
+                        (screen.Primary ? Localization.Text("sidebar.primary_suffix") : Localization.Text("sidebar.secondary_suffix")));
                     root.NodeFont = bold;
                     foreach (WindowItem w in items)
                     {
@@ -781,11 +856,11 @@ internal sealed class SidebarWindow : Form
                 selectedHandle = tree.SelectedNode != null && tree.SelectedNode.Tag is IntPtr
                     ? (IntPtr)tree.SelectedNode.Tag : IntPtr.Zero;
                 if (tree.SelectedNode != null) tree.SelectedNode.EnsureVisible();
-                if (hotkeyErrors.Length == 0) status.Text = items.Count + " janelas | Shift+F1-F4";
+                if (hotkeyErrors.Length == 0) status.Text = items.Count + Localization.Text("sidebar.window_count_suffix");
             }
             finally { internalSelection = false; tree.EndUpdate(); }
         }
-        catch (Exception ex) { status.Text = "Erro: " + ex.GetType().Name; }
+        catch (Exception ex) { status.Text = Localization.Text("sidebar.error_prefix") + ex.GetType().Name; }
         finally { refreshing = false; }
     }
     private List<TreeNode> WindowNodes()
@@ -828,11 +903,13 @@ internal static class Program
     [STAThread]
     private static void Main()
     {
+        Localization.Initialize(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "WinSidebar", "settings.ini"));
         bool first;
         using (System.Threading.Mutex mutex = new System.Threading.Mutex(true,
             @"Local\WinSidebarPublic", out first))
         {
-            if (!first) { MessageBox.Show("WinSidebar já está aberto.", "WinSidebar"); return; }
+            if (!first) { MessageBox.Show(Localization.Text("startup.already_running"), "WinSidebar"); return; }
             try
             {
                 Application.SetCompatibleTextRenderingDefault(false);
@@ -840,7 +917,7 @@ internal static class Program
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Falha ao iniciar:\n" + ex.Message, "WinSidebar",
+                MessageBox.Show(Localization.Text("startup.failed") + ex.Message, "WinSidebar",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally { mutex.ReleaseMutex(); }

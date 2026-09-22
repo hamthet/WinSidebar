@@ -1,0 +1,2 @@
+# Candidate untranslated literals; review manually. Empty means none found by this heuristic.
+WinSidebar.cs: 'Português (Brasil)'
