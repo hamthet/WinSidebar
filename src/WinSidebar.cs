@@ -155,7 +155,7 @@ internal sealed class SidebarWindow : Form
     private readonly Image[] icons = new Image[4];
     private readonly ShortcutEntry[] entries = new ShortcutEntry[4];
     private readonly WindowManagement windows = new WindowManagement();
-    private readonly Button savePreferencesButton = new Button();
+    private readonly Button languageButton = new Button();
     private readonly Button restoreDefaultsButton = new Button();
     private readonly List<int> registered = new List<int>();
     private readonly string settingsPath = Path.Combine(
@@ -329,7 +329,8 @@ internal sealed class SidebarWindow : Form
         folderHeader.Controls.Add(configureButton);
         configureButton.BringToFront();
         tips.SetToolTip(configureButton, Localization.Text("sidebar.configure_mode"));
-        ConfigureShortcutHeaderButton(savePreferencesButton, "S", Localization.Text("sidebar.save_preferences"), delegate { SavePreferences(); });
+        ConfigureShortcutHeaderButton(languageButton, "\U0001F310", Localization.Text("sidebar.language"),
+            delegate { languageMenu.DropDown.Show(languageButton, new Point(0, languageButton.Height)); });
         ConfigureShortcutHeaderButton(restoreDefaultsButton, "↺", Localization.Text("sidebar.restore_defaults"), delegate { RestoreDefaults(); });
         for (int i = 0; i < 4; i++)
         {
@@ -472,8 +473,8 @@ internal sealed class SidebarWindow : Form
         folderTitle.Text = Localization.Text(configureMode ? "sidebar.configuring" : "sidebar.shortcuts");
         configureButton.AccessibleName = Localization.Text("sidebar.configure");
         tips.SetToolTip(configureButton, Localization.Text(configureMode ? "sidebar.finish_editing" : "sidebar.configure_mode"));
-        savePreferencesButton.AccessibleName = Localization.Text("sidebar.save_preferences");
-        tips.SetToolTip(savePreferencesButton, Localization.Text("sidebar.save_preferences"));
+        languageButton.AccessibleName = Localization.Text("sidebar.language");
+        tips.SetToolTip(languageButton, Localization.Text("sidebar.language"));
         restoreDefaultsButton.AccessibleName = Localization.Text("sidebar.restore_defaults");
         tips.SetToolTip(restoreDefaultsButton, Localization.Text("sidebar.restore_defaults"));
         monitorPrimaryItem.Text = Localization.Text("sidebar.primary_monitor");
@@ -558,21 +559,6 @@ internal sealed class SidebarWindow : Form
         else { Directory.CreateDirectory(Path.GetDirectoryName(path)); File.WriteAllBytes(path, bytes); }
     }
 
-    private void SavePreferences()
-    {
-        try
-        {
-            SaveSettingsStrict();
-            ShortcutStore.Write(entries);
-            windows.Save();
-            MessageBox.Show(this, Localization.Text("sidebar.save_success"), "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(this, Localization.Text("sidebar.save_partial") + ex.Message,
-                "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        }
-    }
 
     private void RestoreDefaults()
     {
@@ -695,6 +681,14 @@ internal sealed class SidebarWindow : Form
     {
         using (ShortcutEditor editor = new ShortcutEditor(entries[slot], browserExecutable, browserUseSystem))
         {
+            Rectangle workArea = Screen.FromControl(this).WorkingArea;
+            int preferredX = leftSide ? Right + 12 : Left - editor.Width - 12;
+            int editorX = Math.Max(workArea.Left, Math.Min(preferredX, Math.Max(workArea.Left, workArea.Right - editor.Width)));
+            int preferredY = Top + (Height - editor.Height) / 2;
+            int editorY = Math.Max(workArea.Top, Math.Min(preferredY, Math.Max(workArea.Top, workArea.Bottom - editor.Height)));
+            editor.StartPosition = FormStartPosition.Manual;
+            editor.Location = new Point(editorX, editorY);
+            editor.TopMost = true;
             if (editor.ShowDialog(this) != DialogResult.OK) return;
             ShortcutEntry[] candidate = new ShortcutEntry[4];
             for (int i = 0; i < 4; i++) candidate[i] = entries[i].Copy();
