@@ -1,40 +1,44 @@
 # WinSidebar
 
-![Ilustração conceitual do WinSidebar em um desktop com dois monitores](assets/hero-ilustrativo.svg)
+**English** · [Português (Brasil)](docs/i18n/README.pt-BR.md) · Español, Русский and 简体中文 (translations planned)
 
-> **Arte meramente ilustrativa, gerada com auxílio de IA.** Não é captura de tela nem representação exata dos controles do aplicativo. A interface inspirada no **Windows 98 é intencional** — uma escolha visual, não uma falha de modernização.
+![Concept illustration of WinSidebar on a dual-monitor desktop](assets/i18n/en-US/hero-illustration.svg)
 
-Uma barra lateral retrátil para **encontrar e alternar entre janelas**, organizadas por monitor, com quatro atalhos configuráveis para pastas e sites. Portátil, sem instalador e sem exigir que o usuário baixe o .NET separadamente. **Código aberto sob a [licença MIT](LICENSE).**
+> **Concept artwork, created with AI assistance.** This is not a screenshot or an exact representation of the application controls. The **Windows 98-inspired appearance is intentional**, not an outdated UI in need of modernization.
 
-**[⬇ Baixar WinSidebar 1.0.0 para Windows 10/11 x64](https://github.com/hamthet/WinSidebar/releases/tag/v1.0.0)** · **[Ler o tutorial passo a passo](docs/TUTORIAL.md)**
+WinSidebar is a collapsible Windows sidebar for **finding and switching between open windows**, grouped by monitor. It also provides four customizable shortcuts to folders and websites. It is portable, needs no installer or separate .NET download, and is open source under the [MIT license](LICENSE).
 
-> **Aviso sobre assinatura digital:** o executável desta versão **não possui assinatura digital**. O Windows Defender SmartScreen pode exibir um aviso de aplicativo não reconhecido, e políticas de segurança podem impedir sua execução. Baixe apenas da [release oficial](https://github.com/hamthet/WinSidebar/releases/tag/v1.0.0), confira o arquivo `SHA256SUMS.txt` disponível nela se desejar verificar a integridade do download e respeite as políticas de TI do seu computador. **O checksum não substitui uma assinatura digital.**
+**[Download WinSidebar 1.0.0 for Windows 10/11 x64](https://github.com/hamthet/WinSidebar/releases/tag/v1.0.0)** · **[Read the step-by-step tutorial](docs/i18n/TUTORIAL.en-US.md)**
 
-## Comece em um minuto
+> **Language availability:** The repository's default documentation and concept artwork are in English. **The existing v1.0.0 executable still has a Portuguese interface.** An in-app language selector and translated executable have not been released. This documentation change does not update the published binary.
 
-1. Na página de lançamento, baixe **`WinSidebar-v1.0.0-win-x64.zip`**, em *Assets*.
-2. Extraia o ZIP em uma pasta sua.
-3. Abra **`WinSidebar.exe`**. O arquivo `LEIA-ME.txt` contém as instruções essenciais.
+> **Unsigned application:** This version's executable is **not digitally signed**. Microsoft Defender SmartScreen may show an unrecognized-app warning, and security policies may block it. Download only from the [official release](https://github.com/hamthet/WinSidebar/releases/tag/v1.0.0). If you want to check the download's integrity, compare it with the release's `SHA256SUMS.txt`. Follow your computer's IT policies. **A checksum is not a substitute for a digital signature.**
 
-O ZIP contém **somente o executável e o LEIA-ME**. Para usar o aplicativo, não são necessários PowerShell, Git, compilador, instalador nem download separado do .NET. O executável inclui o runtime .NET 8.
+## Get started in a minute
 
-## O que você pode fazer
+1. Open the release page and download **`WinSidebar-v1.0.0-win-x64.zip`** under *Assets*.
+2. Extract the ZIP into a folder you control.
+3. Run **`WinSidebar.exe`**. The included `LEIA-ME.txt` provides essential instructions in Portuguese.
 
-- **Alternar janelas:** a aba lateral abre e recolhe a barra; `Shift+F1` alterna a barra, `Shift+F2/F3` navegam entre janelas e `Shift+F4` ativa a janela selecionada.
-- **Organizar por monitor:** visualizar as janelas do monitor principal e, quando houver, do secundário.
-- **Personalizar quatro atalhos:** na seção **PASTAS / WEB**, clique na engrenagem e escolha nome, pasta ou URL, ícone e navegador. Os padrões genéricos são **Documentos**, **Downloads**, **Acervo ainda não configurado** e **Google**.
-- **Ajustar a barra:** no cabeçalho, mude de lado, diminua ou aumente a largura e use o X vermelho para encerrar.
+The ZIP contains **only the executable and `LEIA-ME.txt`**. You do not need PowerShell, Git, a compiler, an installer, or a separate .NET download. The executable bundles the .NET 8 runtime.
 
-**[Veja o tutorial ilustrado com todas as etapas →](docs/TUTORIAL.md)**
+## Features
 
-## Privacidade e versões existentes
+- **Switch windows:** click the sidebar tab to expand or collapse it; `Shift+F1` toggles the sidebar, `Shift+F2/F3` navigate windows, and `Shift+F4` activates the selected window.
+- **Group windows by monitor:** view windows on the primary monitor and, if available, a secondary display.
+- **Customize four shortcuts:** in the **PASTAS / WEB** (Folders / Web) section, click the gear and then a shortcut to set its name, folder or URL, icon, and browser. The current executable's generic defaults are **Pasta local** (Documents folder), **Downloads**, **Acervo** (unconfigured), and **Site** (Google).
+- **Adjust the sidebar:** use the header buttons to move it to the opposite edge, decrease or increase its width, and exit with the red X.
 
-As preferências ficam em `%LOCALAPPDATA%\WinSidebar`, isoladas das outras instalações. O WinSidebar não substitui executáveis anteriores, não altera o navegador padrão, não ativa a inicialização automática e não envia telemetria. Para evitar conflitos de teclas globais, feche outra edição da barra antes de iniciar esta.
+**[See the illustrated tutorial →](docs/i18n/TUTORIAL.en-US.md)**
 
-Para remover, encerre pelo X e apague `WinSidebar.exe`. Opcionalmente, apague `%LOCALAPPDATA%\WinSidebar` para excluir **as preferências desta edição**.
+## Privacy and existing installations
 
-## Projeto, licença e divulgação
+Preferences are stored under `%LOCALAPPDATA%\WinSidebar`, independently of other installations. WinSidebar does not replace earlier executables, change your default browser, enable automatic startup, or send telemetry. Close any other edition of the sidebar before launching this one to avoid conflicts between global keyboard shortcuts.
 
-O código-fonte C# fica em [`src/`](src/); a compilação Windows é verificada pelo [fluxo de build](.github/workflows/build.yml). O projeto é distribuído sob a **[licença MIT](LICENSE)**, que permite usar, modificar e redistribuir o código, inclusive comercialmente, mantendo os avisos de autoria e licença. Você pode abrir uma [issue](https://github.com/hamthet/WinSidebar/issues/new) para relatar erros e sugerir melhorias, evitando incluir dados pessoais em capturas ou logs.
+To uninstall, exit with the X and delete `WinSidebar.exe`. Optionally, delete `%LOCALAPPDATA%\WinSidebar` to remove **this edition's preferences**.
 
-A [arte quadrada ilustrativa para divulgação](assets/linkedin-ilustrativo.svg) e o [texto sugerido para LinkedIn com instruções de publicação](docs/DIVULGACAO.md) estão no repositório. **Nenhuma das artes deve ser apresentada como captura real do aplicativo.**
+## Source, license, and outreach
+
+The C# source is in [`src/`](src/); the Windows build is verified by the [build workflow](.github/workflows/build.yml). The [MIT license](LICENSE) permits use, modification, and redistribution, including commercial use, provided its copyright and license notices are retained. To report issues or suggest improvements, [open an issue](https://github.com/hamthet/WinSidebar/issues/new); remove personal information from any screenshots or logs.
+
+An [English square promotional illustration](assets/i18n/en-US/linkedin-illustration.svg) and [English LinkedIn publishing guidance](docs/i18n/OUTREACH.en-US.md) are available. **Do not present either illustration as an actual application screenshot.**
