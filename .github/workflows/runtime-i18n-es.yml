@@ -1,0 +1,57 @@
+name: Integrate and verify Spanish runtime locale
+on:
+  push:
+    branches: [feature/runtime-i18n-es]
+    paths:
+      - 'development/apply-runtime-i18n-es.py'
+      - '.github/workflows/runtime-i18n-es.yml'
+permissions:
+  contents: write
+jobs:
+  integrate-spanish:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Integrate Spanish selector with anchored source checks
+        shell: pwsh
+        run: |
+          python development/apply-runtime-i18n-es.py
+          if ($LASTEXITCODE -ne 0) { throw 'Spanish source integration failed.' }
+      - name: Test all three runtime languages
+        shell: pwsh
+        run: |
+          dotnet run --project tests/LocalizationSmoke.csproj -c Release
+          if ($LASTEXITCODE -ne 0) { throw 'Runtime locale smoke checks failed.' }
+      - name: Publish portable Windows developer preview
+        shell: pwsh
+        run: |
+          dotnet publish WinSidebar.csproj -c Release -r win-x64 --self-contained true -o publish
+          if ($LASTEXITCODE -ne 0) { throw 'Windows publication failed.' }
+          if (-not (Test-Path publish/WinSidebar.exe)) { throw 'Missing WinSidebar.exe' }
+          $binary = Get-Item publish/WinSidebar.exe
+          Write-Host "Preview executable size: $($binary.Length) bytes"
+          Get-FileHash publish/WinSidebar.exe -Algorithm SHA256 | Format-List
+      - name: Upload development preview (not a release)
+        uses: actions/upload-artifact@v4
+        with:
+          name: WinSidebar-es-ES-dev-preview
+          path: publish/WinSidebar.exe
+          retention-days: 7
+          if-no-files-found: error
+      - name: Commit compiled Spanish selector onto feature branch only
+        shell: pwsh
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/WinSidebar.cs
+          if (git diff --cached --quiet) { throw 'Expected a Spanish selector source diff.' }
+          git commit -m 'feat(i18n): enable complete Spanish runtime language selection'
+          git push origin HEAD:feature/runtime-i18n-es
