@@ -1,0 +1,21 @@
+# Engineering journal supplement — 2026-09-22, feature prototype
+
+**Requirement:** CR-2026-09-22, acceptance WM-01..06, SP-01..03, I18N-01. **Integration:** `develop`. **Prototype:** `feature/window-management`. **Review target:** [draft PR #1](https://github.com/hamthet/WinSidebar/pull/1) into `develop`, not `main`.
+
+## Actions observed and source evidence
+
+1. Created feature branch from `develop` after requirement documents were recorded. Added `src/WindowManagement.cs` in [commit `d77b1b3`](https://github.com/hamthet/WinSidebar/commit/d77b1b3d6fbca07cc0bbb53a028779c9f8ff805c): live-window alias lookup, application identity, reversible ignored rules in `%LOCALAPPDATA%\WinSidebar\ignored-apps.json`, window context menu, basic rename editor, and tray-accessible manager. Alias is intentionally session/live-window scoped; no claim of durable names across restarts. Avoid ignoring an unresolved `ApplicationFrameHost` identity as one entire group of unrelated UWP apps.
+2. Added one-shot anchored source integration patch (`development/apply-window-management.py`, [commit `5d2e881`](https://github.com/hamthet/WinSidebar/commit/5d2e881aecbbe63e60ef509b2bb771149ea22a90)); created development-only verification workflow in [commit `61d3d1f`](https://github.com/hamthet/WinSidebar/commit/61d3d1f7dfa262f5ce2b0f7d9c7b6d82f5cbec66). The workflow runs the patch against inspected original source, rejects changed anchors, checks expected source strings, builds self-contained win-x64, and commits the patched `src/WinSidebar.cs` and `WinSidebar.csproj` only if that build succeeds.
+3. GitHub Actions [run 35756515790](https://github.com/hamthet/WinSidebar/actions/runs/35756515790) completed `success`; patch, source assertions, `dotnet publish WinSidebar.csproj -c Release -r win-x64 --self-contained true -o publish`, and commit/push all succeeded. Generated source [commit `c40b62f`](https://github.com/hamthet/WinSidebar/commit/c40b62f84a15b8378189e2fb5c590ed314baa023) removes hard-coded Calculator/Settings exclusions; adds window right-click rename/reset/ignore and keyboard menu; adds tray manager and `ATALHOS` heading with two preference controls; includes `WindowManagement.cs` in the project. Draft PR #1 targets only `develop` and remains unmerged.
+
+## Precise status and limitations
+
+- **PASS (build only):** anchored patch and Windows self-contained publish in the named run. No independent unit or interactive Windows UI test was executed for the new functionality. The previously green v1.0.0 workflow is not evidence for this candidate.
+- **NOT RUN / requires inspection:** genuine-versus-phantom Calculator/Settings comparison with Alt+Tab, five same-process aliases, HWND reuse/quick close/reopen, distinct packaged-app identification, ignore restoration after restart, save failure/recovery, reset rollback, 211px/DPI/keyboard/a11y and the full regression matrix.
+- **NOT IMPLEMENTED:** five runtime localization catalogs and complete new-control translation; new controls currently contain Portuguese text. Owner will perform UI acceptance when multilingual runtime is built. No new release/tag or end-user ZIP has been created.
+- **OWNER-APPROVED:** existing preferences behavior prior to these changes. New Save/Restore/ignore behavior is not covered by that approval. **OUT OF SCOPE:** cross-version migration testing. No upgrade guarantee is inferred.
+- **Known implementation caveats to evaluate in review:** the patch removes fixed app filters but uses the existing window-enumeration heuristics, so it does not yet prove phantom entries are absent; HWND plus process lifetime reduces but may not categorically eliminate alias reuse in rapidly recreated windows; process-name fallback in ignore rules can be ambiguous and is labeled as such; multi-file Save/Restore cannot promise global atomicity and reports/attempts recovery. Review all these before merging or calling the product complete.
+
+## Integration / release rule
+
+Keep draft PR #1 open until the behavior and implementation are reviewed. Even if merged into `develop` for further i18n work, do not merge development docs, one-off patch script or workflow into final `main`; selectively promote shipping source after five-locale/UI acceptance. `README.md` and historical release v1.0.0 must not claim these prototype features already ship.
