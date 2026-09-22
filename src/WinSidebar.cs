@@ -277,12 +277,29 @@ internal sealed class SidebarWindow : Form
             if (!internalSelection && e.Node != null && e.Node.Tag is IntPtr)
                 selectedHandle = (IntPtr)e.Node.Tag;
         };
+        // Tree rows have their own context route. Otherwise WM_CONTEXTMENU can
+        // bubble to content and replace the window actions with the global menu.
+        // Do not show a drop-down while the native context message is in flight.
         tree.NodeMouseClick += delegate(object sender, TreeNodeMouseClickEventArgs e) {
             if (e.Button == MouseButtons.Right && e.Node != null && e.Node.Tag is IntPtr) {
                 tree.SelectedNode = e.Node;
                 selectedHandle = (IntPtr)e.Node.Tag;
-                windows.ShowWindowMenu(this, tree, selectedHandle, e.Location, delegate { RefreshWindows(true); });
             }
+        };
+        ContextMenuStrip windowContextRouter = new ContextMenuStrip();
+        tree.ContextMenuStrip = windowContextRouter;
+        windowContextRouter.Opening += delegate(object sender, System.ComponentModel.CancelEventArgs e) {
+            e.Cancel = true; // Router is never itself shown, including on empty rows.
+            Point clicked = tree.PointToClient(Cursor.Position);
+            TreeNode node = tree.GetNodeAt(clicked);
+            if (node == null || !(node.Tag is IntPtr)) return;
+            tree.SelectedNode = node;
+            IntPtr hwnd = (IntPtr)node.Tag;
+            selectedHandle = hwnd;
+            tree.BeginInvoke((MethodInvoker)delegate {
+                if (IsDisposed || tree.IsDisposed || !Native.IsWindow(hwnd)) return;
+                windows.ShowWindowMenu(this, tree, hwnd, clicked, delegate { RefreshWindows(true); });
+            });
         };
         tree.NodeMouseDoubleClick += delegate(object sender, TreeNodeMouseClickEventArgs e)
         {
@@ -292,8 +309,12 @@ internal sealed class SidebarWindow : Form
         {
             if ((e.KeyCode == Keys.Apps || (e.Shift && e.KeyCode == Keys.F10)) && tree.SelectedNode != null && tree.SelectedNode.Tag is IntPtr) {
                 TreeNode selected = tree.SelectedNode;
-                windows.ShowWindowMenu(this, tree, (IntPtr)selected.Tag,
-                    new Point(selected.Bounds.Left + 12, selected.Bounds.Bottom), delegate { RefreshWindows(true); });
+                IntPtr hwnd = (IntPtr)selected.Tag;
+                Point position = new Point(selected.Bounds.Left + 12, selected.Bounds.Bottom);
+                tree.BeginInvoke((MethodInvoker)delegate {
+                    if (IsDisposed || tree.IsDisposed || !Native.IsWindow(hwnd)) return;
+                    windows.ShowWindowMenu(this, tree, hwnd, position, delegate { RefreshWindows(true); });
+                });
                 e.Handled = true; e.SuppressKeyPress = true;
             }
             else if (e.KeyCode == Keys.Enter) { ActivateSelected(); e.Handled = true; e.SuppressKeyPress = true; }
@@ -415,6 +436,7 @@ internal sealed class SidebarWindow : Form
             poll.Stop(); poll.Dispose();
             tray.Visible = false; tray.Dispose();
 
+            windowContextRouter.Dispose();
             tips.Dispose();
             foreach (Image icon in icons) if (icon != null) icon.Dispose();
             regular.Dispose(); bold.Dispose();
