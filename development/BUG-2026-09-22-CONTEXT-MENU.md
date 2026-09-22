@@ -1,16 +1,19 @@
-# BUG — right-click on window shows the wrong menu (2026-09-22)
+# BUG — window versus global context menus (2026-09-22)
 
-## Actual owner observations
+## Owner-observed sequence
 
-1. Initial functional preview: right-click on a window row caused unhandled `System.ObjectDisposedException`, object `System.Windows.Forms.ContextMenuStrip`, with `ToolStripDropDown.Show` / `Control.WmContextMenu` in the stack. Owner supplied screenshot and dump in the conversation; they are not republished in the public repo.
-2. After the menu-lifetime mitigation, owner supplied a screenshot of a **selected window row** with the *global sidebar* menu visible (primary/secondary monitor, manage ignored applications, language, exit), **without** per-window Rename, Reset Name or Ignore Application. This is a separate, observed GUI failure. The previous assistant incorrectly told the owner the actions should already be available; the screenshot establishes otherwise.
+1. Initial right-click on a window row caused an unhandled `System.ObjectDisposedException` for `System.Windows.Forms.ContextMenuStrip`. Screenshot and dump remain in the conversation, not the public repository.
+2. After deferring menu disposal, a selected window row instead showed the *global* sidebar menu, with no window-specific Rename / Reset Name / Ignore Application. The owner's screenshot confirmed the failure.
+3. After the owner ran the dedicated TreeView context-routing patch, the **window-specific popup now works**, and Rename and Reset Name were both explicitly tested successfully. This is a limited GUI PASS only for those interactions; Ignore, undo, keyboard invocation, other layouts and the original crash's recurrence were not separately confirmed.
+4. **New observed regression:** clicking outside a window item does not show the formerly available global sidebar menu. The shared TreeView router cancels the native context menu for *all* tree clicks, then immediately returns for blank areas or monitor headings. The global/tray menu is still attached to the parent content and tray, but the tree no longer inherits it. Thus the user cannot access its general commands from the list's empty space.
 
-## Source diagnosis and pending fix
+## Narrow patch staged; not yet validated
 
-`src/WinSidebar.cs` shows a window popup directly from `tree.NodeMouseClick`, but the tree itself does not own a `ContextMenuStrip`. Its parent `content` does own the global/tray menu. The native `WM_CONTEXTMENU` processing can therefore also show the inherited global menu, displacing the per-window popup. This diagnosis is based on source and screenshot; no instrumented WinForms trace is available. The earlier change deferred popup disposal in `WindowManagement.cs`, but did not address this routing conflict.
+`feature/functional-dialog-placement` contains the development-only one-shot script [`development/fix-empty-space-context-menu-20260922.ps1`](https://github.com/hamthet/WinSidebar/blob/feature/functional-dialog-placement/development/fix-empty-space-context-menu-20260922.ps1). It changes only the blank/root branch of the TreeView's `Opening` handler: after canceling the native event, post `content.ContextMenuStrip.Show(tree, clicked)` to the UI message queue. The currently working window-item route is unchanged. The script guards the exact source blob/branch and clean checkout, runs local five-language smoke and a fresh WinForms self-contained publish with the portable SDK, optionally commits and pushes, then auto-opens the new preview if the old instance is closed. Its existence is NOT source-fix execution or a GUI PASS; do not rerun previous patch scripts.
 
-On `feature/functional-dialog-placement`, the development-only `development/fix-window-context-routing-20260922.ps1` stages an anchored patch to `src/WinSidebar.cs`: explicitly attach a dedicated, non-displayed router menu to the TreeView, cancel its native Opening, defer the window popup via UI `BeginInvoke` after the context message, and handle keyboard context activation similarly. Blank/root clicks should not open window actions. The script checks exact branch/blob/clean tree, runs five-language smoke and Windows publish using the owner's portable .NET SDK, optionally commits/pushes, and starts the new executable automatically only after the older instance exits. Source patch, build and GUI fix are **NOT YET VERIFIED**. Never rerun the prior lifetime/placement scripts.
+## Required retest
 
-## Retest and release gate
-
-Exit current preview through tray; run the new script once on a clean functional branch; confirm a window item opens Rename / Reset Name / Ignore Application, while blank space and tray do not expose window actions. Repeat right-click and keyboard Shift+F10/Apps and test Rename, Ignore and undo; check no disposal exception, duplicate popup, or clipping on both screen edges. Preserve existing settings and other repositories. Record genuine Windows PASS/FAIL separately from a .NET compile. No GitHub Actions, FILEBRIDGE, merge, or official release. `main`/v1.0.0 unchanged.
+- Right-click a real window row: window-specific Rename / Reset Name / Ignore Application; rename/reset remain correct.
+- Right-click **blank list space** and a **monitor heading**: shared global menu (monitor controls, ignored-app management, language, exit); no window commands.
+- Right-click other non-item sidebar surfaces and tray: shared global menu. Repeat clicks and test Shift+F10/Apps, Ignore and undo, without duplicates/exceptions.
+- Record exact failures separately. Preserve all preferences and local changes; do not publish screenshots with personal window names. No GitHub Actions, FILEBRIDGE, merge or release. `main`/v1.0.0 remains unchanged.
