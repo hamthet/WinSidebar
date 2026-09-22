@@ -11,6 +11,7 @@ internal static class Native
 {
     internal delegate bool EnumProc(IntPtr hwnd, IntPtr state);
     [DllImport("user32.dll")] internal static extern bool EnumWindows(EnumProc callback, IntPtr state);
+    [DllImport("user32.dll")] internal static extern bool EnumChildWindows(IntPtr hwnd, EnumProc callback, IntPtr state);
     [DllImport("user32.dll")] internal static extern bool IsWindowVisible(IntPtr hwnd);
     [DllImport("user32.dll")] internal static extern bool IsWindow(IntPtr hwnd);
     [DllImport("user32.dll")] internal static extern bool IsIconic(IntPtr hwnd);
@@ -153,6 +154,9 @@ internal sealed class SidebarWindow : Form
     private readonly Button[] shortcuts = new Button[4];
     private readonly Image[] icons = new Image[4];
     private readonly ShortcutEntry[] entries = new ShortcutEntry[4];
+    private readonly WindowManagement windows = new WindowManagement();
+    private readonly Button savePreferencesButton = new Button();
+    private readonly Button restoreDefaultsButton = new Button();
     private readonly List<int> registered = new List<int>();
     private readonly string settingsPath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -190,6 +194,8 @@ internal sealed class SidebarWindow : Form
             configurationError = "A configuração de atalhos não pôde ser carregada. " +
                 "O arquivo original foi preservado.\n\n" + ex.Message;
         }
+        try { windows.Load(); }
+        catch (Exception ex) { configurationError += "\n\nA lista de aplicativos ignorados não pôde ser carregada. O arquivo foi preservado.\n" + ex.Message; }
         Text = "WinSidebar";
         FormBorderStyle = FormBorderStyle.None;
         ShowInTaskbar = false;
@@ -260,13 +266,26 @@ internal sealed class SidebarWindow : Form
             if (!internalSelection && e.Node != null && e.Node.Tag is IntPtr)
                 selectedHandle = (IntPtr)e.Node.Tag;
         };
+        tree.NodeMouseClick += delegate(object sender, TreeNodeMouseClickEventArgs e) {
+            if (e.Button == MouseButtons.Right && e.Node != null && e.Node.Tag is IntPtr) {
+                tree.SelectedNode = e.Node;
+                selectedHandle = (IntPtr)e.Node.Tag;
+                windows.ShowWindowMenu(this, tree, selectedHandle, e.Location, delegate { RefreshWindows(true); });
+            }
+        };
         tree.NodeMouseDoubleClick += delegate(object sender, TreeNodeMouseClickEventArgs e)
         {
             if (e.Node != null && e.Node.Tag is IntPtr) Activate((IntPtr)e.Node.Tag);
         };
         tree.KeyDown += delegate(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter) { ActivateSelected(); e.Handled = true; e.SuppressKeyPress = true; }
+            if ((e.KeyCode == Keys.Apps || (e.Shift && e.KeyCode == Keys.F10)) && tree.SelectedNode != null && tree.SelectedNode.Tag is IntPtr) {
+                TreeNode selected = tree.SelectedNode;
+                windows.ShowWindowMenu(this, tree, (IntPtr)selected.Tag,
+                    new Point(selected.Bounds.Left + 12, selected.Bounds.Bottom), delegate { RefreshWindows(true); });
+                e.Handled = true; e.SuppressKeyPress = true;
+            }
+            else if (e.KeyCode == Keys.Enter) { ActivateSelected(); e.Handled = true; e.SuppressKeyPress = true; }
             else if (e.KeyCode == Keys.Escape) { Expand(false); e.Handled = true; e.SuppressKeyPress = true; }
             else if (e.KeyCode == Keys.F5) { RefreshWindows(true); e.Handled = true; e.SuppressKeyPress = true; }
         };
@@ -282,7 +301,7 @@ internal sealed class SidebarWindow : Form
         folderHeader.Dock = DockStyle.Top;
         folderHeader.Height = 20;
         folders.Controls.Add(folderHeader);
-        folderTitle.Text = " PASTAS / WEB";
+        folderTitle.Text = " ATALHOS";
         folderTitle.BackColor = Navy;
         folderTitle.ForeColor = Color.White;
         folderTitle.Font = bold;
@@ -300,6 +319,8 @@ internal sealed class SidebarWindow : Form
         folderHeader.Controls.Add(configureButton);
         configureButton.BringToFront();
         tips.SetToolTip(configureButton, "Entrar ou sair do modo Configurar");
+        ConfigureShortcutHeaderButton(savePreferencesButton, "S", "Salvar preferências", delegate { SavePreferences(); });
+        ConfigureShortcutHeaderButton(restoreDefaultsButton, "↺", "Restaurar configurações padrão", delegate { RestoreDefaults(); });
         for (int i = 0; i < 4; i++)
         {
             int slot = i;
@@ -326,7 +347,10 @@ internal sealed class SidebarWindow : Form
         exit.Click += delegate { RequestExit(); };
         menu.Items.Add(main);
         menu.Items.Add(other);
+        ToolStripMenuItem manageIgnored = new ToolStripMenuItem("Gerenciar aplicativos ignorados...");
+        manageIgnored.Click += delegate { windows.ManageIgnored(this, delegate { RefreshWindows(true); }); };
         menu.Items.Add(new ToolStripSeparator());
+        menu.Items.Add(manageIgnored);
         menu.Items.Add(exit);
         tab.ContextMenuStrip = menu;
         content.ContextMenuStrip = menu;
@@ -375,6 +399,18 @@ internal sealed class SidebarWindow : Form
         tips.SetToolTip(button, tooltip);
     }
 
+    private void ConfigureShortcutHeaderButton(Button button, string caption, string tooltip, Action action)
+    {
+        button.Text = caption;
+        button.Width = 26; button.Height = 20; button.Dock = DockStyle.Right;
+        button.FlatStyle = FlatStyle.Standard; button.BackColor = Face;
+        button.TabStop = true; button.AccessibleName = tooltip;
+        tips.SetToolTip(button, tooltip);
+        button.Click += delegate { action(); };
+        folderHeader.Controls.Add(button);
+        button.BringToFront();
+    }
+
     private void LoadSettings()
     {
         try
@@ -411,6 +447,90 @@ internal sealed class SidebarWindow : Form
         catch (IOException) { }
         catch (UnauthorizedAccessException) { }
     }
+    // Unlike legacy auto-save, explicit Save reports errors and replaces the file atomically.
+    private void SaveSettingsStrict()
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(settingsPath));
+        string temporary = settingsPath + "." + Guid.NewGuid().ToString("N") + ".tmp";
+        try
+        {
+            File.WriteAllLines(temporary, new string[] {
+                "width=" + widthIndex, "left=" + (leftSide ? "1" : "0"),
+                "secondary=" + (secondary ? "1" : "0"),
+                "browser=" + browserExecutable,
+                "browserSystem=" + (browserUseSystem ? "1" : "0")
+            });
+            if (File.Exists(settingsPath)) File.Replace(temporary, settingsPath, settingsPath + ".bak", true);
+            else File.Move(temporary, settingsPath);
+        }
+        finally { if (File.Exists(temporary)) File.Delete(temporary); }
+    }
+
+    private static byte[] SnapshotFile(string path) { return File.Exists(path) ? File.ReadAllBytes(path) : null; }
+    private static void RestoreFile(string path, byte[] bytes)
+    {
+        if (bytes == null) { if (File.Exists(path)) File.Delete(path); }
+        else { Directory.CreateDirectory(Path.GetDirectoryName(path)); File.WriteAllBytes(path, bytes); }
+    }
+
+    private void SavePreferences()
+    {
+        try
+        {
+            SaveSettingsStrict();
+            ShortcutStore.Write(entries);
+            windows.Save();
+            MessageBox.Show(this, "Preferências salvas.", "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, "Não foi possível salvar todas as preferências. Algumas alterações podem já estar gravadas.\n\n" + ex.Message,
+                "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+    }
+
+    private void RestoreDefaults()
+    {
+        if (MessageBox.Show(this, "Restaurar atalhos, posição, navegador e aplicativos ignorados aos padrões?\nO idioma atual será mantido.",
+            "WinSidebar", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) != DialogResult.Yes) return;
+        byte[] oldSettings, oldShortcuts, oldIgnored;
+        try {
+            oldSettings = SnapshotFile(settingsPath);
+            oldShortcuts = SnapshotFile(ShortcutStore.FilePath);
+            oldIgnored = SnapshotFile(windows.FilePath);
+        }
+        catch (Exception ex) { MessageBox.Show(this, "Não foi possível preparar a restauração: " + ex.Message, "WinSidebar"); return; }
+        ShortcutEntry[] previous = new ShortcutEntry[4];
+        for (int i = 0; i < 4; i++) previous[i] = entries[i].Copy();
+        int oldWidth = widthIndex; bool oldLeft = leftSide, oldSecondary = secondary;
+        string oldBrowser = browserExecutable; bool oldUseSystem = browserUseSystem;
+        try
+        {
+            ShortcutEntry[] defaults = ShortcutStore.Defaults();
+            ShortcutStore.Write(defaults);
+            widthIndex = 0; leftSide = false; secondary = false;
+            browserExecutable = ""; browserUseSystem = true;
+            SaveSettingsStrict();
+            windows.ResetRules();
+            Array.Copy(defaults, entries, 4);
+            configureMode = false; folderTitle.Text = " ATALHOS"; configureButton.Text = "⚙";
+            RefreshShortcutVisuals(); Reposition(); RefreshWindows(true);
+            MessageBox.Show(this, "Configurações padrão restauradas.", "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        catch (Exception ex)
+        {
+            widthIndex = oldWidth; leftSide = oldLeft; secondary = oldSecondary;
+            browserExecutable = oldBrowser; browserUseSystem = oldUseSystem;
+            Array.Copy(previous, entries, 4);
+            string recoveryError = "";
+            try { RestoreFile(settingsPath, oldSettings); RestoreFile(ShortcutStore.FilePath, oldShortcuts); RestoreFile(windows.FilePath, oldIgnored); windows.Load(); }
+            catch (Exception recovery) { recoveryError = "\nFalha adicional ao recuperar arquivos: " + recovery.Message; }
+            RefreshShortcutVisuals(); Reposition(); RefreshWindows(true);
+            MessageBox.Show(this, "Não foi possível concluir a restauração; foi tentada a recuperação das preferências anteriores.\n" + ex.Message + recoveryError,
+                "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+    }
+
     private Screen TargetScreen()
     {
         if (secondary)
@@ -468,7 +588,7 @@ internal sealed class SidebarWindow : Form
     private void ToggleConfigure()
     {
         configureMode = !configureMode;
-        folderTitle.Text = configureMode ? " CONFIGURANDO" : " PASTAS / WEB";
+        folderTitle.Text = configureMode ? " CONFIGURANDO" : " ATALHOS";
         configureButton.Text = configureMode ? "✓" : "⚙";
         tips.SetToolTip(configureButton, configureMode ? "Concluir configuração" : "Configurar atalhos");
         RefreshShortcutVisuals();
@@ -589,7 +709,6 @@ internal sealed class SidebarWindow : Form
         List<WindowItem> list = new List<WindowItem>();
         IntPtr shell = Native.GetShellWindow();
         uint ownPid = (uint)Process.GetCurrentProcess().Id;
-        Dictionary<uint, string> names = new Dictionary<uint, string>();
         Native.EnumProc callback = delegate(IntPtr hwnd, IntPtr ignored)
         {
             if (hwnd == shell || hwnd == Handle || !Native.IsWindowVisible(hwnd) || Native.IsCloaked(hwnd)) return true;
@@ -602,30 +721,10 @@ internal sealed class SidebarWindow : Form
             if (Native.GetWindowText(hwnd, sb, sb.Capacity) == 0) return true;
             string name = sb.ToString().Trim();
             if (name.Length == 0) return true;
-            if (name.Equals("Calculadora", StringComparison.OrdinalIgnoreCase) ||
-                name.Equals("Calculator", StringComparison.OrdinalIgnoreCase) ||
-                name.Equals("Configurações", StringComparison.OrdinalIgnoreCase) ||
-                name.Equals("Settings", StringComparison.OrdinalIgnoreCase)) return true;
             uint pid;
             Native.GetWindowThreadProcessId(hwnd, out pid);
             if (pid == ownPid) return true;
-            if (pid != 0)
-            {
-                string processName;
-                if (!names.TryGetValue(pid, out processName))
-                {
-                    processName = "";
-                    try { using (Process p = Process.GetProcessById((int)pid)) processName = p.ProcessName; }
-                    catch (ArgumentException) { return true; }
-                    catch (InvalidOperationException) { return true; }
-                    catch (System.ComponentModel.Win32Exception) { }
-                    names[pid] = processName;
-                }
-                if (processName.Equals("CalculatorApp", StringComparison.OrdinalIgnoreCase) ||
-                    processName.Equals("WindowsCalculator", StringComparison.OrdinalIgnoreCase) ||
-                    processName.Equals("Win32Calc", StringComparison.OrdinalIgnoreCase) ||
-                    processName.Equals("SystemSettings", StringComparison.OrdinalIgnoreCase)) return true;
-            }
+            if (windows.IsIgnored(hwnd)) return true;
             list.Add(new WindowItem { Handle = hwnd, Title = name,
                 Monitor = Screen.FromHandle(hwnd).DeviceName, Minimized = Native.IsIconic(hwnd) });
             return true;
@@ -640,9 +739,12 @@ internal sealed class SidebarWindow : Form
         try
         {
             List<WindowItem> items = Snapshot();
+            List<IntPtr> live = new List<IntPtr>();
+            foreach (WindowItem w in items) live.Add(w.Handle);
+            windows.RetainAliases(live);
             StringBuilder sb = new StringBuilder();
             foreach (WindowItem w in items)
-                sb.Append(w.Handle.ToInt64()).Append('|').Append(w.Title).Append('|')
+                sb.Append(w.Handle.ToInt64()).Append('|').Append(windows.DisplayTitle(w.Handle, w.Title)).Append('|')
                   .Append(w.Monitor).Append('|').Append(w.Minimized ? '1' : '0').Append(';');
             string current = sb.ToString();
             if (!force && signature == current) return;
@@ -665,9 +767,10 @@ internal sealed class SidebarWindow : Form
                     foreach (WindowItem w in items)
                     {
                         if (w.Monitor != screen.DeviceName) continue;
-                        TreeNode node = new TreeNode((w.Minimized ? "_ " : "") + w.Title);
+                        string displayTitle = windows.DisplayTitle(w.Handle, w.Title);
+                        TreeNode node = new TreeNode((w.Minimized ? "_ " : "") + displayTitle);
                         node.Tag = w.Handle;
-                        node.ToolTipText = w.Title;
+                        node.ToolTipText = displayTitle == w.Title ? w.Title : displayTitle + " — " + w.Title;
                         root.Nodes.Add(node);
                         if (first == null) first = node;
                         if (w.Handle == prior) selected = node;

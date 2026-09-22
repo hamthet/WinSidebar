@@ -27,5 +27,6 @@
   <ItemGroup>
     <Compile Include="src/WinSidebar.cs" />
     <Compile Include="src/ShortcutConfig.cs" />
+    <Compile Include="src/WindowManagement.cs" />
   </ItemGroup>
 </Project>
