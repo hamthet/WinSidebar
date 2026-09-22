@@ -1,0 +1,51 @@
+name: Verify runtime localization behavior
+on:
+  push:
+    branches: [feature/runtime-i18n-en]
+    paths:
+      - 'tests/**'
+      - 'src/**'
+      - 'i18n/**'
+      - '.github/workflows/localization-tests.yml'
+      - WinSidebar.csproj
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  locale-smoke:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Verify all referenced localization keys exist
+        shell: pwsh
+        run: |
+          @'
+          import json, re
+          from pathlib import Path
+          catalog = json.loads(Path('i18n/catalog.json').read_text(encoding='utf-8'))
+          keys = set()
+          for path in (Path('src/WinSidebar.cs'), Path('src/ShortcutConfig.cs'), Path('src/WindowManagement.cs')):
+              text = path.read_text(encoding='utf-8')
+              keys.update(re.findall(r'Localization\.Text\("([\w.]+)"\)', text))
+          missing = keys - catalog.keys()
+          assert not missing, f'Undefined runtime localization keys: {sorted(missing)}'
+          assert len(keys) >= 90, f'Unexpectedly small localized source coverage: {len(keys)}'
+          for key, entry in catalog.items():
+              assert set(entry) == {'en-US', 'pt-BR'}, key
+              assert all(isinstance(x, str) and x.strip() for x in entry.values()), key
+          print(f'PASS: {len(keys)} localized source keys, {len(catalog)} complete bilingual catalog entries')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'Locale source parity audit failed.' }
+      - name: Exercise embedded catalog and locale-selection behavior
+        shell: pwsh
+        run: |
+          dotnet run --project tests/LocalizationSmoke.csproj -c Release
+          if ($LASTEXITCODE -ne 0) { throw 'Runtime locale smoke test failed.' }
+      - name: Compile complete WinForms program
+        shell: pwsh
+        run: |
+          dotnet build WinSidebar.csproj -c Release
+          if ($LASTEXITCODE -ne 0) { throw 'WinSidebar compile failed.' }
