@@ -80,8 +80,8 @@
     "en-US": "Save preferences"
   },
   "sidebar.restore_defaults": {
-    "pt-BR": "Restaurar configurações padrão",
-    "en-US": "Restore default settings"
+    "pt-BR": "Restaurar atalhos padrão",
+    "en-US": "Restore default shortcuts"
   },
   "sidebar.primary_monitor": {
     "pt-BR": "Usar monitor principal",
@@ -160,16 +160,16 @@
     "en-US": "Could not save the shortcut. Previous data was preserved.\n\n"
   },
   "sidebar.shortcut_missing": {
-    "pt-BR": "Atalho não configurado. Clique na engrenagem para escolher o destino.",
-    "en-US": "Shortcut not configured. Click the gear icon to choose a destination."
+    "pt-BR": "Atalho não configurado. Clique com o botão direito para escolher o destino.",
+    "en-US": "Shortcut not configured. Right-click to choose a destination."
   },
   "sidebar.folder_missing": {
     "pt-BR": "Pasta não encontrada:\n",
     "en-US": "Folder not found:\n"
   },
   "sidebar.choose_browser": {
-    "pt-BR": "Escolha um navegador no modo Configurar antes de abrir este site.\n",
-    "en-US": "Choose a browser in editing mode before opening this website.\n"
+    "pt-BR": "Clique com o botão direito em um atalho de site para escolher o navegador.\n",
+    "en-US": "Right-click a website shortcut to choose the browser.\n"
   },
   "sidebar.default_browser_not_used": {
     "pt-BR": "O navegador padrão não será usado automaticamente.",
@@ -192,8 +192,8 @@
     "en-US": " - secondary"
   },
   "sidebar.window_count_suffix": {
-    "pt-BR": " janelas | Shift+F1-F4",
-    "en-US": " windows | Shift+F1-F4"
+    "pt-BR": " janelas | F1-F4 atalhos | Shift+F1-F4 scripts",
+    "en-US": " windows | F1-F4 shortcuts | Shift+F1-F4 scripts"
   },
   "sidebar.error_prefix": {
     "pt-BR": "Erro: ",
@@ -554,5 +554,33 @@
   "snippets.add_row": {
     "pt-BR": "Adicionar script",
     "en-US": "Add script"
+  },
+  "sidebar.remove_shortcut_row": {
+    "pt-BR": "Remover última linha de atalhos",
+    "en-US": "Remove last shortcut row"
+  },
+  "sidebar.restore_shortcuts_question": {
+    "pt-BR": "Restaurar os atalhos padrão? As linhas extras e configurações personalizadas de atalhos serão removidas.",
+    "en-US": "Restore default shortcuts? Extra rows and custom shortcut settings will be removed."
+  },
+  "sidebar.restore_shortcuts_success": {
+    "pt-BR": "Atalhos padrão restaurados.",
+    "en-US": "Default shortcuts restored."
+  },
+  "snippets.remove_row": {
+    "pt-BR": "Remover último script",
+    "en-US": "Remove last script"
+  },
+  "snippets.restore_defaults": {
+    "pt-BR": "Restaurar scripts padrão",
+    "en-US": "Restore default scripts"
+  },
+  "snippets.restore_question": {
+    "pt-BR": "Restaurar os scripts padrão? Os textos salvos e scripts extras serão removidos.",
+    "en-US": "Restore default scripts? Saved text and extra scripts will be removed."
+  },
+  "snippets.restore_success": {
+    "pt-BR": "Scripts padrão restaurados.",
+    "en-US": "Default scripts restored."
   }
 }
