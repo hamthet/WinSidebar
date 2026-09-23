@@ -140,8 +140,10 @@ internal sealed class SidebarWindow : Form
     private readonly Panel content = new Panel();
     private readonly Panel header = new Panel();
     private readonly Panel folders = new Panel();
+    private readonly Panel shortcutBody = new Panel();
     private readonly Panel snippetsPanel = new Panel();
     private readonly Panel snippetHeader = new Panel();
+    private readonly Panel snippetBody = new Panel();
     private readonly Label snippetTitle = new Label();
     private readonly Label title = new Label();
     private readonly Label status = new Label();
@@ -150,7 +152,8 @@ internal sealed class SidebarWindow : Form
     private readonly Button sideButton = new Button();
     private readonly Button horizontalSizeButton = new Button();
     private readonly Button verticalSizeButton = new Button();
-    private readonly Button configureButton = new Button();
+    private readonly Button addShortcutRowButton = new Button();
+    private readonly Button addSnippetButton = new Button();
     private readonly Label folderTitle = new Label();
     private readonly Panel folderHeader = new Panel();
     private readonly Button closeButton = new Button();
@@ -159,12 +162,12 @@ internal sealed class SidebarWindow : Form
     private readonly Timer poll = new Timer();
     private readonly Timer foregroundPoll = new Timer();
     private readonly ToolTip tips = new ToolTip();
-    private readonly Button[] shortcuts = new Button[4];
-    private readonly Image[] icons = new Image[4];
-    private readonly ShortcutEntry[] entries = new ShortcutEntry[4];
-    private readonly Button[] snippetPasteButtons = new Button[4];
-    private readonly Button[] snippetEditButtons = new Button[4];
-    private readonly SnippetEntry[] snippetEntries = new SnippetEntry[4];
+    private readonly Button[] shortcuts = new Button[ShortcutStore.MaxEntries];
+    private readonly Image[] icons = new Image[ShortcutStore.MaxEntries];
+    private ShortcutEntry[] entries;
+    private readonly Button[] snippetPasteButtons = new Button[SnippetStore.MaxSlots];
+    private readonly Button[] snippetEditButtons = new Button[SnippetStore.MaxSlots];
+    private SnippetEntry[] snippetEntries;
     private readonly WindowManagement windows = new WindowManagement();
     private readonly TextInjector textInjector = new TextInjector();
     private readonly Button languageButton = new Button();
@@ -200,7 +203,6 @@ internal sealed class SidebarWindow : Form
     private string hotkeyErrors = "";
     private string browserExecutable = "";
     private bool browserUseSystem;
-    private bool configureMode;
     private string configurationError = "";
 
     internal SidebarWindow()
@@ -208,25 +210,17 @@ internal sealed class SidebarWindow : Form
         Localization.Initialize(settingsPath);
         browserUseSystem = !File.Exists(settingsPath); // primeira instalação: navegador padrão
         LoadSettings();
-        try
-        {
-            ShortcutEntry[] loaded = ShortcutStore.Read();
-            Array.Copy(loaded, entries, 4);
-        }
+        try { entries = ShortcutStore.Read(); }
         catch (Exception ex)
         {
-            Array.Copy(ShortcutStore.Defaults(), entries, 4);
+            entries = ShortcutStore.Defaults();
             configurationError = Localization.Text("config.shortcuts_unreadable") +
                 Localization.Text("config.original_preserved") + ex.Message;
         }
-        try
-        {
-            SnippetEntry[] loadedSnippets = SnippetStore.Read();
-            Array.Copy(loadedSnippets, snippetEntries, SnippetStore.SlotCount);
-        }
+        try { snippetEntries = SnippetStore.Read(); }
         catch (Exception)
         {
-            Array.Copy(SnippetStore.Defaults(), snippetEntries, SnippetStore.SlotCount);
+            snippetEntries = SnippetStore.Defaults();
             configurationError += Localization.Text("config.snippets_unreadable") +
                 Localization.Text("config.original_preserved");
         }
