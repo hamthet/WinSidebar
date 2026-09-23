@@ -7,7 +7,7 @@ Set-StrictMode -Version Latest
 
 $expectedBranch = 'feature/text-snippets'
 $expected = @{
-    'src/WinSidebar.cs'   = 'fcb9cfb1c716d335a9966637064511677cf21923'
+    'src/WinSidebar.cs'   = '224ba64b2c85a830bd954685568276df2a97b53e'
     'src/SnippetStore.cs' = '66d38ce07b0555d66fa954eb8867d021ccf8c2b7'
     'src/SnippetEditor.cs'= '7477fb7eacafee41cb63b66cb4941ff9306621a7'
     'src/TextInjection.cs'= '4b5e893363a4e4f9827dd003552252c2f84b526d'
@@ -69,13 +69,14 @@ if (-not (Test-Path -LiteralPath $exe -PathType Leaf)) {
 Write-Host ''
 Write-Host 'Preview ready. No source or profile data was changed by this runner.'
 Write-Host 'Test plan:'
-Write-Host '  A. Open the sidebar: four SCRIPT rows must appear below ATALHOS.'
-Write-Host '  B. Gear on Script 1: rename it and save multiline Unicode text.'
-Write-Host '  C. Restart later and verify the saved name/content persists.'
-Write-Host '  D. In ChatGPT/Notepad, Ctrl+Shift+F1 must paste Script 1.'
-Write-Host '  E. Rapid repeated hotkey while one paste is active must be silently ignored.'
-Write-Host '  F. With ChatGPT focused, click the Script 1 row: focus should return and paste there.'
-Write-Host '  G. Existing Shift+F1..F4 and right-click menus must still work.'
+Write-Host '  A. Confirm the four SCRIPT rows still render below ATALHOS.'
+Write-Host '  B. The ⇔ header button must cycle width: narrow -> medium -> wide -> narrow.'
+Write-Host '  C. The ⇕ header button must cycle height: compact -> medium -> tall -> compact.'
+Write-Host '  D. Restart later and verify the chosen width/height and saved snippet content persist.'
+Write-Host '  E. In ChatGPT/Notepad, Ctrl+Shift+F1 must still paste Script 1.'
+Write-Host '  F. With ChatGPT focused, move the pointer to WinSidebar and click Script 1: focus must return to ChatGPT and paste there.'
+Write-Host '  G. Rapid repeated hotkey while one paste is active must remain silent.'
+Write-Host '  H. Existing Shift+F1..F4 and right-click menus must still work.'
 Write-Host ''
 Write-Host "Opening: $exe"
 Start-Process -FilePath $exe
