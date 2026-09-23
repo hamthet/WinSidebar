@@ -761,6 +761,7 @@ internal sealed class SidebarWindow : Form
             SnippetStore.Write(defaults);
             snippetEntries = defaults;
             EnsureSnippetControls();
+            ReloadHotkeys();
             RefreshSnippetVisuals();
             Reposition();
             MessageBox.Show(this, Localization.Text("snippets.restore_success"),
@@ -1010,6 +1011,7 @@ internal sealed class SidebarWindow : Form
             SnippetStore.Write(candidate);
             snippetEntries = candidate;
             EnsureSnippetControls();
+            ReloadHotkeys();
             RefreshSnippetVisuals();
             Reposition();
         }
@@ -1052,6 +1054,7 @@ internal sealed class SidebarWindow : Form
             SnippetStore.Write(candidate);
             snippetEntries = candidate;
             EnsureSnippetControls();
+            ReloadHotkeys();
             RefreshSnippetVisuals();
             Reposition();
         }
@@ -1275,27 +1278,47 @@ internal sealed class SidebarWindow : Form
     {
         get { CreateParams p = base.CreateParams; p.ExStyle |= 0x00000080; return p; }
     }
+    private void ReloadHotkeys()
+    {
+        if (hotkeyHandle == IntPtr.Zero) return;
+        foreach (int id in registered) Native.UnregisterHotKey(hotkeyHandle, id);
+        registered.Clear();
+        hotkeyErrors = "";
+
+        for (int i = 0; i < 4; i++)
+        {
+            int id = ShortcutHotkeyBase + i;
+            if (Native.RegisterHotKey(hotkeyHandle, id, NoRepeat, (uint)((int)Keys.F1 + i)))
+                registered.Add(id);
+            else hotkeyErrors += (hotkeyErrors.Length == 0 ? "" : ", ") + "F" + (i + 1);
+        }
+
+        for (int i = 0; i < snippetEntries.Length; i++)
+        {
+            string hotkey = snippetEntries[i].Hotkey ?? "";
+            int functionNumber = SnippetStore.HotkeyFunctionNumber(hotkey);
+            if (functionNumber == 0) continue;
+            int id = SnippetHotkeyBase + i;
+            if (Native.RegisterHotKey(hotkeyHandle, id, ShiftNoRepeat,
+                (uint)((int)Keys.F1 + functionNumber - 1)))
+                registered.Add(id);
+            else hotkeyErrors += (hotkeyErrors.Length == 0 ? "" : ", ") + hotkey;
+        }
+
+        if (hotkeyErrors.Length > 0)
+            status.Text = Localization.Text("sidebar.hotkeys_unavailable") + hotkeyErrors;
+        else if (expanded)
+        {
+            signature = "";
+            RefreshWindows(true);
+        }
+    }
+
     protected override void OnHandleCreated(EventArgs e)
     {
         base.OnHandleCreated(e);
         hotkeyHandle = Handle;
-        hotkeyErrors = "";
-        registered.Clear();
-        for (int i = 0; i < 4; i++)
-        {
-            int id = ShortcutHotkeyBase + i;
-            if (Native.RegisterHotKey(Handle, id, NoRepeat, (uint)((int)Keys.F1 + i)))
-                registered.Add(id);
-            else hotkeyErrors += (hotkeyErrors.Length == 0 ? "" : ", ") + "F" + (i + 1);
-        }
-        for (int i = 0; i < SnippetStore.HotkeySlots; i++)
-        {
-            int id = SnippetHotkeyBase + i;
-            if (Native.RegisterHotKey(Handle, id, ShiftNoRepeat, (uint)((int)Keys.F1 + i)))
-                registered.Add(id);
-            else hotkeyErrors += (hotkeyErrors.Length == 0 ? "" : ", ") +
-                "Shift+F" + (i + 1);
-        }
+        ReloadHotkeys();
     }
     protected override void OnHandleDestroyed(EventArgs e)
     {
@@ -1313,8 +1336,12 @@ internal sealed class SidebarWindow : Form
             int id = m.WParam.ToInt32();
             if (id >= ShortcutHotkeyBase && id < ShortcutHotkeyBase + 4)
                 OpenShortcut(id - ShortcutHotkeyBase);
-            else if (id >= SnippetHotkeyBase && id < SnippetHotkeyBase + SnippetStore.HotkeySlots)
-                PasteSnippet(id - SnippetHotkeyBase, false);
+            else if (id >= SnippetHotkeyBase && id < SnippetHotkeyBase + SnippetStore.MaxSlots)
+            {
+                int slot = id - SnippetHotkeyBase;
+                if (slot >= 0 && slot < snippetEntries.Length)
+                    PasteSnippet(slot, false);
+            }
             return;
         }
         base.WndProc(ref m);
