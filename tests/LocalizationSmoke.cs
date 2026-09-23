@@ -94,6 +94,13 @@ internal static class LocalizationSmoke
             File.WriteAllLines(path, new[] { "width=1", "left=1" });
             Localization.Initialize(path);
             Check(Localization.Current == "pt-BR", "existing profile without language retains Portuguese");
+            File.Delete(path);
+            Localization.SaveInitialSelection(path, "es-ES");
+            Localization.Initialize(path);
+            Check(Localization.Current == "es-ES" &&
+                Array.Exists(File.ReadAllLines(path), line => line == "language=es-ES"),
+                "first-run language selection persists atomically");
+
             File.WriteAllLines(path, new[] { "width=1", "language=en-US", "left=1" });
             Localization.Initialize(path);
             Check(Localization.Current == "en-US" && Localization.Text("sidebar.shortcuts") == " SHORTCUTS",
