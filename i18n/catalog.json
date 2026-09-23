@@ -582,5 +582,17 @@
   "snippets.restore_success": {
     "pt-BR": "Scripts padrão restaurados.",
     "en-US": "Default scripts restored."
+  },
+  "snippets.hotkey": {
+    "pt-BR": "Atalho de teclado",
+    "en-US": "Keyboard shortcut"
+  },
+  "snippets.hotkey_none": {
+    "pt-BR": "Sem atalho",
+    "en-US": "No shortcut"
+  },
+  "snippets.hotkey_duplicate": {
+    "pt-BR": "Esse atalho já está atribuído a outro script.",
+    "en-US": "That shortcut is already assigned to another script."
   }
 }
