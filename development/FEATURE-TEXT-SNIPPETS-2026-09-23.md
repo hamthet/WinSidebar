@@ -57,7 +57,7 @@ Each of four fixed slots should store stable fields equivalent to:
 
 Requirements:
 
-- exactly four slots;
+- four default slots, expandable up to eight scripts;
 - names trimmed and bounded;
 - content supports multiline Unicode;
 - malformed/oversized storage is rejected safely;
@@ -74,7 +74,14 @@ Detailed architecture and risk analysis: [`SNIPPET-IMPLEMENTATION-INVESTIGATION-
 
 ## Hotkeys
 
-Reserve four new IDs for `Ctrl+Shift+F1..F4`. Existing `Shift+F1..F4` behavior remains untouched. Report conflicts in the existing hotkey-error UX rather than silently failing.
+The owner later replaced the initial hotkey plan. Current contract:
+
+- global `F1..F4` open shortcut buttons 1..4;
+- global `Shift+F1..F4` paste scripts 1..4;
+- scripts 5..8 and shortcuts 5..12 are fully configurable/clickable but receive no default global hotkey;
+- the previous window-navigation use of `Shift+F1..F4` is retired.
+
+Report registration conflicts in the existing hotkey-error UX rather than silently failing.
 
 ## Acceptance scenarios
 
@@ -83,10 +90,21 @@ Reserve four new IDs for `Ctrl+Shift+F1..F4`. Existing `Shift+F1..F4` behavior r
 - SNIP-03: clicking a snippet row returns focus to the previously active external target and inserts there, never into WinSidebar.
 - SNIP-04: each row's gear opens a fully visible editor above/beside the topmost sidebar; Save updates one slot, Cancel changes nothing.
 - SNIP-05: Unicode, accented Portuguese, Cyrillic, Simplified Chinese, emoji and multiline text survive save/restart/insertion.
-- SNIP-06: the user's existing Shift+F1..F4 navigation hotkeys remain unchanged.
+- SNIP-06: F1..F4 open shortcuts 1..4; Shift+F1..F4 paste scripts 1..4; extra rows receive no implicit hotkeys.
 - SNIP-07: hotkey conflict, unavailable target, invalid/oversized store and denied write produce a controlled localized error rather than data loss or crash.
 - SNIP-08: right-click window/global menus, renaming, ignored-app management, five languages and existing shortcuts remain regression-free.
 
 ## Scope boundary
 
 This feature starts **after** the frozen functional-menu checkpoint. Do not modify the checkpoint branch. No GitHub Actions, FILEBRIDGE, merge to `main`, or release is authorized by this proposal.
+
+## Later owner UI decisions — 2026-09-23
+
+- Product limits: 12 shortcut buttons (3 rows of 4) and 8 scripts.
+- Each section has `+`, `-`, and its own restore-defaults control.
+- `-` removes only the last added row/item and never removes the four default entries.
+- Restore actions are independent and require confirmation: shortcut restore does not alter scripts/preferences; script restore does not alter shortcuts/preferences.
+- The shortcuts section no longer has the original editing gear/mode. Left-click opens; right-click edits any shortcut, including folder shortcuts.
+- Script rows retain their individual gear editor buttons.
+- The language globe is removed; language remains available from the general right-click menu.
+- A mandatory language chooser appears only when no WinSidebar `settings.ini` exists yet (first use), then persists the selected locale.
