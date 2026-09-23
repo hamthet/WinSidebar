@@ -10,10 +10,12 @@ $expectedWinSidebarBlob = '29475bbc16dddfce5004e2860a54f632521bdcd7'
 $expectedInjectionBlob = 'cd3fe79d609840112399140faedb5b1187242870'
 $expectedProjectBlob = '08c0a4ede3953ac2f37dcc4366b23d8fac54f413'
 
-$root = (git rev-parse --show-toplevel).Trim().Replace('/', '\\').TrimEnd('\\')
-if ($LASTEXITCODE -ne 0 -or
-    -not [string]::Equals($root, (Get-Location).Path.TrimEnd('\\'), [StringComparison]::OrdinalIgnoreCase)) {
-    throw 'Run this script from C:\git\WinSidebar.'
+$rootFromGit = (git rev-parse --show-toplevel).Trim()
+if ($LASTEXITCODE -ne 0) { throw 'Unable to resolve the Git repository root.' }
+$root = (Resolve-Path -LiteralPath $rootFromGit).ProviderPath.TrimEnd('\')
+$current = (Resolve-Path -LiteralPath '.').ProviderPath.TrimEnd('\')
+if (-not [string]::Equals($root, $current, [StringComparison]::OrdinalIgnoreCase)) {
+    throw "Run this script from the WinSidebar repository root. Git root: $root ; current: $current"
 }
 $branch = (git branch --show-current).Trim()
 if ($LASTEXITCODE -ne 0 -or $branch -ne $expectedBranch) {
