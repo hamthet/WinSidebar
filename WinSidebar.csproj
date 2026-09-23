@@ -29,6 +29,8 @@
     <Compile Include="src/ShortcutConfig.cs" />
     <Compile Include="src/WindowManagement.cs" />
     <Compile Include="src/Localization.cs" />
+    <Compile Include="src/SnippetStore.cs" />
+    <Compile Include="src/SnippetEditor.cs" />
     <Compile Include="src/TextInjection.cs" />
     <EmbeddedResource Include="i18n/catalog.json" LogicalName="WinSidebar.i18n.catalog.json" />
     <EmbeddedResource Include="i18n/es-ES.json" LogicalName="WinSidebar.i18n.es-ES.json" />
