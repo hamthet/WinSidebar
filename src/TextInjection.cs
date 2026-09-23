@@ -215,7 +215,7 @@ internal sealed class TextInjectionProbe : IDisposable
             KeyboardInput(Keys.V, true),
             KeyboardInput(Keys.ControlKey, true)
         };
-        return SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(INPUT))) == inputs.Length;
+        return SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(INPUT))) == (uint)inputs.Length;
     }
 
     private bool ClipboardStillOwned()
