@@ -22,8 +22,25 @@ internal sealed class TextInjectionProbe : IDisposable
     [StructLayout(LayoutKind.Explicit)]
     private struct InputUnion
     {
+        // MOUSEINPUT is intentionally present even though this feature only sends
+        // keyboard input. It gives the union the native INPUT union size on x64.
+        [FieldOffset(0)]
+        internal MOUSEINPUT mouse;
         [FieldOffset(0)]
         internal KEYBDINPUT keyboard;
+        [FieldOffset(0)]
+        internal HARDWAREINPUT hardware;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MOUSEINPUT
+    {
+        internal int dx;
+        internal int dy;
+        internal uint mouseData;
+        internal uint flags;
+        internal uint time;
+        internal IntPtr extraInfo;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -34,6 +51,14 @@ internal sealed class TextInjectionProbe : IDisposable
         internal uint flags;
         internal uint time;
         internal IntPtr extraInfo;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct HARDWAREINPUT
+    {
+        internal uint message;
+        internal ushort parameterLow;
+        internal ushort parameterHigh;
     }
 
     [DllImport("user32.dll")]
