@@ -144,5 +144,8 @@
   "snippets.remove_row": "Удалить последний скрипт",
   "snippets.restore_defaults": "Восстановить стандартные скрипты",
   "snippets.restore_question": "Восстановить стандартные скрипты? Сохранённый текст и дополнительные скрипты будут удалены.",
-  "snippets.restore_success": "Стандартные скрипты восстановлены."
+  "snippets.restore_success": "Стандартные скрипты восстановлены.",
+  "snippets.hotkey": "Сочетание клавиш",
+  "snippets.hotkey_none": "Без сочетания",
+  "snippets.hotkey_duplicate": "Это сочетание уже назначено другому скрипту."
 }
