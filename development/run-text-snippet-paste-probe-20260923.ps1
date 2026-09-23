@@ -6,8 +6,8 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
 $expectedBranch = 'feature/text-snippets'
-$expectedWinSidebarBlob = '29475bbc16dddfce5004e2860a54f632521bdcd7'
-$expectedInjectionBlob = 'cd3fe79d609840112399140faedb5b1187242870'
+$expectedWinSidebarBlob = '1b9403fdd49f5cfe915d1176c1baee1c63a5f6df'
+$expectedInjectionBlob = 'a6fd374dac8a50c382974ca337b57b8ac526ed4c'
 $expectedProjectBlob = '54e8b0fafd513bdf8a878fc45903a751665bb06b'
 
 $rootFromGit = (git rev-parse --show-toplevel).Trim()
