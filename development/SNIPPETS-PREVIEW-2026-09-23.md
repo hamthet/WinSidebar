@@ -16,7 +16,7 @@
 - `Ctrl+Shift+F1..F4` mapped to slots 1..4 without replacing existing `Shift+F1..F4`.
 - Reusable Clipboard + SendInput injector based on the owner-passed spike.
 - Busy paste requests are silently ignored; no modal popup.
-- Mouse-driven row paste remembers the prior external foreground window through `WM_MOUSEACTIVATE`, returns focus to it, confirms foreground ownership and only then pastes.
+- Mouse-driven row paste now continuously remembers the last eligible external foreground window and also samples it on mouse entry/`WM_MOUSEACTIVATE`; it returns focus, confirms foreground ownership and only then pastes.
 - Five-language UI strings for the snippet section/editor/errors.
 - User snippet names/content remain literal user data and are never translated.
 - No script execution; content is text only.
@@ -26,6 +26,26 @@
 - Existing Restore Defaults does **not** clear `snippets.json` in this preview. Deleting user-authored snippets is deferred until the owner chooses the desired reset semantics.
 - No public docs/release/main integration.
 - No GitHub Actions or FILEBRIDGE.
+
+## Owner result — first four-slot preview
+
+Owner GUI test on branch state `34444baf3bacf9cfd6b500872901f83937bc6fb1`:
+
+- **PASS:** configured snippet hotkey path works in the real chat/editor workflow.
+- **FAIL:** clicking the snippet row did not paste. WinSidebar took foreground focus and reported that no paste target window was available; the `WM_MOUSEACTIVATE`-only target capture was therefore insufficient on the owner's machine.
+- **Requested UI change:** replace the former decrease/increase-width pair with two one-way cyclic controls: one cycles horizontal width and one cycles vertical height.
+
+Source correction is now staged on `feature/text-snippets`:
+
+- a 100 ms foreground watcher continuously remembers the last eligible external foreground HWND; mouse-enter capture remains an additional pre-click signal;
+- mouse-triggered paste still validates the remembered HWND and lets `TextInjector` restore/confirm focus before Ctrl+V;
+- horizontal sizes cycle `211 -> 260 -> 324 -> 211`;
+- vertical sizes cycle `504 -> 640 -> 780 -> 504`, clamped to the current monitor working area;
+- both size indices persist in `settings.ini`;
+- Restore Defaults now resets and rolls back the vertical size index together with the existing width state;
+- new cyclic size tooltips are localized in all five catalogs.
+
+These corrections are **SOURCE STAGED / OWNER RETEST PENDING**. Do not mark mouse-click paste or vertical sizing accepted until the owner runs the updated preview.
 
 ## Owner-run preview
 
@@ -38,13 +58,14 @@ The historical paste-probe runner is no longer the current feature preview.
 Required acceptance:
 
 1. Four rows render below Atalhos/Shortcuts without clipping at the narrow width.
-2. Gear opens a visible editor; Save/Cancel work.
-3. Name/content persist after app restart.
-4. Ctrl+Shift+F1..F4 paste the corresponding content.
-5. Rapid repeat while a transaction is active produces no modal.
-6. Clicking a snippet row while a browser/chat field was active returns focus to that field and pastes there.
-7. Unicode/multiline content remains exact.
-8. Existing Shift+F1..F4, language selection and window/global context menus remain functional.
-9. Clipboard restoration remains a separate explicit observation.
+2. The `⇔` header control cycles the three widths in one direction; the `⇕` control cycles the three heights in one direction.
+3. Gear opens a visible editor; Save/Cancel work.
+4. Name/content and selected width/height persist after app restart.
+5. Ctrl+Shift+F1..F4 paste the corresponding content.
+6. Rapid repeat while a transaction is active produces no modal.
+7. Clicking a snippet row while a browser/chat field was active returns focus to that field and pastes there.
+8. Unicode/multiline content remains exact.
+9. Existing Shift+F1..F4, language selection and window/global context menus remain functional.
+10. Clipboard restoration remains a separate explicit observation.
 
 Do not merge or release on compile success alone.
