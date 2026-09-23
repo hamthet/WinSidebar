@@ -65,8 +65,22 @@ internal static class SnippetStoreSmoke
             Check(backup[3].Content == "", "backup preserves previous generation");
             Check(SnippetStore.Read(path)[3].Content == "second version", "replacement writes new generation");
 
-            SnippetEntry[] badCount = new SnippetEntry[3];
-            ExpectInvalid(delegate { SnippetStore.Write(path, badCount); }, "writer rejects non-four-slot array");
+            SnippetEntry[] tooFew = new SnippetEntry[SnippetStore.MinimumSlots - 1];
+            ExpectInvalid(delegate { SnippetStore.Write(path, tooFew); }, "writer rejects fewer than four slots");
+
+            SnippetEntry[] expanded = new SnippetEntry[8];
+            for (int i = 0; i < expanded.Length; i++)
+                expanded[i] = i < roundTrip.Length ? roundTrip[i].Copy() : SnippetStore.CreateDefault(i);
+            expanded[7].Name = "Script extra";
+            expanded[7].Content = "slot eight";
+            SnippetStore.Write(path, expanded);
+            SnippetEntry[] expandedRoundTrip = SnippetStore.Read(path);
+            Check(expandedRoundTrip.Length == 8, "version 2 round-trips additional slots");
+            Check(expandedRoundTrip[7].Content == "slot eight", "additional slot content round-trips");
+
+            SnippetEntry[] tooMany = new SnippetEntry[SnippetStore.MaxSlots + 1];
+            for (int i = 0; i < tooMany.Length; i++) tooMany[i] = SnippetStore.CreateDefault(i);
+            ExpectInvalid(delegate { SnippetStore.Write(path, tooMany); }, "writer rejects more than maximum slots");
 
             SnippetEntry[] badName = SnippetStore.Defaults();
             badName[0].Name = new string('n', SnippetStore.MaxNameLength + 1);
@@ -81,11 +95,18 @@ internal static class SnippetStoreSmoke
             ExpectInvalid(delegate { SnippetStore.Write(path, badContent); }, "writer rejects oversized content");
 
             File.WriteAllText(path,
-                "{\"version\":2,\"items\":[" +
+                "{\"version\":3,\"items\":[" +
                 ItemJson(0, "Script 1", "") + "," + ItemJson(1, "Script 2", "") + "," +
                 ItemJson(2, "Script 3", "") + "," + ItemJson(3, "Script 4", "") + "]}",
                 new UTF8Encoding(false));
             ExpectInvalid(delegate { SnippetStore.Read(path); }, "reader rejects unknown version");
+
+            File.WriteAllText(path,
+                "{\"version\":1,\"items\":[" +
+                ItemJson(0, "Script 1", "") + "," + ItemJson(1, "Script 2", "") + "," +
+                ItemJson(2, "Script 3", "") + "," + ItemJson(3, "Script 4", "") + "]}",
+                new UTF8Encoding(false));
+            Check(SnippetStore.Read(path).Length == 4, "legacy version 1 remains readable");
 
             File.WriteAllText(path,
                 "{\"version\":1,\"items\":[" +
