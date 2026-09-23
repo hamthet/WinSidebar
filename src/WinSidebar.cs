@@ -130,7 +130,8 @@ internal sealed class SidebarWindow : Form
     private const uint ShiftNoRepeat = 0x4004;
     private const uint CtrlShiftNoRepeat = 0x4006;
     private const int SnippetHotkeyBase = 9811;
-    private static readonly int[] Widths = { 211, 260, 324 }; // 211 = -35% de 324
+    private static readonly int[] Widths = { 211, 260, 324 }; // one-way cycle
+    private static readonly int[] Heights = { HeightDefault, 640, 780 }; // one-way cycle, clamped to work area
     private static readonly Color Face = Color.FromArgb(212, 208, 200);
     private static readonly Color Navy = Color.FromArgb(0, 0, 128);
 
@@ -147,8 +148,8 @@ internal sealed class SidebarWindow : Form
     private readonly Button tab = new Button();
 
     private readonly Button sideButton = new Button();
-    private readonly Button smallerButton = new Button();
-    private readonly Button largerButton = new Button();
+    private readonly Button horizontalSizeButton = new Button();
+    private readonly Button verticalSizeButton = new Button();
     private readonly Button configureButton = new Button();
     private readonly Label folderTitle = new Label();
     private readonly Panel folderHeader = new Panel();
@@ -156,6 +157,7 @@ internal sealed class SidebarWindow : Form
     private readonly VerticalTree tree = new VerticalTree();
     private readonly NotifyIcon tray = new NotifyIcon();
     private readonly Timer poll = new Timer();
+    private readonly Timer foregroundPoll = new Timer();
     private readonly ToolTip tips = new ToolTip();
     private readonly Button[] shortcuts = new Button[4];
     private readonly Image[] icons = new Image[4];
@@ -183,6 +185,7 @@ internal sealed class SidebarWindow : Form
     private ToolStripMenuItem russianItem;
     private ToolStripMenuItem chineseItem;
     private int widthIndex;
+    private int heightIndex;
     private bool leftSide;
     private bool secondary;
     private bool expanded;
@@ -247,6 +250,7 @@ internal sealed class SidebarWindow : Form
         content.BackColor = Face;
         content.BorderStyle = BorderStyle.Fixed3D;
         content.Visible = false;
+        content.MouseEnter += delegate { RememberExternalForeground(); };
         Controls.Add(content);
         tab.FlatStyle = FlatStyle.Standard;
         tab.BackColor = Face;
@@ -271,24 +275,24 @@ internal sealed class SidebarWindow : Form
         closeButton.BackColor = Color.FromArgb(185, 38, 38);
         closeButton.ForeColor = Color.White;
         closeButton.AccessibleName = Localization.Text("sidebar.exit_accessible");
-        ConfigureHeaderButton(smallerButton, "◀", Localization.Text("sidebar.shrink"));
-        smallerButton.AccessibleName = Localization.Text("sidebar.shrink");
-        ConfigureHeaderButton(largerButton, "▶", Localization.Text("sidebar.expand"));
-        largerButton.AccessibleName = Localization.Text("sidebar.expand");
+        ConfigureHeaderButton(horizontalSizeButton, "⇔", Localization.Text("sidebar.next_width"));
+        horizontalSizeButton.AccessibleName = Localization.Text("sidebar.next_width");
+        ConfigureHeaderButton(verticalSizeButton, "⇕", Localization.Text("sidebar.next_height"));
+        verticalSizeButton.AccessibleName = Localization.Text("sidebar.next_height");
         ConfigureHeaderButton(sideButton, "↔", Localization.Text("sidebar.other_edge"));
         sideButton.AccessibleName = Localization.Text("sidebar.move_accessible");
         closeButton.Click += delegate { RequestExit(); };
-        smallerButton.Click += delegate { ChangeWidth(-1); };
-        largerButton.Click += delegate { ChangeWidth(1); };
+        horizontalSizeButton.Click += delegate { CycleWidth(); };
+        verticalSizeButton.Click += delegate { CycleHeight(); };
         sideButton.Click += delegate { leftSide = !leftSide; Reposition(); SaveSettings(); };
-        // Controles na ordem visual: mover, diminuir, aumentar, encerrar.
+        // Visual order: move edge, cycle width, cycle height, exit.
         header.Controls.Add(closeButton);
-        header.Controls.Add(largerButton);
-        header.Controls.Add(smallerButton);
+        header.Controls.Add(verticalSizeButton);
+        header.Controls.Add(horizontalSizeButton);
         header.Controls.Add(sideButton);
         closeButton.BringToFront();
-        largerButton.BringToFront();
-        smallerButton.BringToFront();
+        verticalSizeButton.BringToFront();
+        horizontalSizeButton.BringToFront();
         sideButton.BringToFront();
 
         tree.BackColor = Color.White;
@@ -432,6 +436,7 @@ internal sealed class SidebarWindow : Form
             paste.UseVisualStyleBackColor = false;
             paste.TextAlign = ContentAlignment.MiddleLeft;
             paste.AutoEllipsis = true;
+            paste.MouseEnter += delegate { RememberExternalForeground(); };
             paste.Click += delegate { PasteSnippet(slot, true); };
             snippetsPanel.Controls.Add(paste);
             snippetPasteButtons[i] = paste;
@@ -493,6 +498,9 @@ internal sealed class SidebarWindow : Form
         poll.Interval = 1800;
         poll.Tick += delegate { if (expanded) RefreshWindows(false); };
         poll.Start();
+        foregroundPoll.Interval = 100;
+        foregroundPoll.Tick += delegate { RememberExternalForeground(); };
+        foregroundPoll.Start();
         Shown += delegate
         {
             Reposition();
@@ -510,6 +518,7 @@ internal sealed class SidebarWindow : Form
         FormClosed += delegate
         {
             poll.Stop(); poll.Dispose();
+            foregroundPoll.Stop(); foregroundPoll.Dispose();
             tray.Visible = false; tray.Dispose();
 
             windowContextRouter.Dispose();
@@ -567,10 +576,10 @@ internal sealed class SidebarWindow : Form
         tips.SetToolTip(tab, Localization.Text("sidebar.tab_hint"));
         tips.SetToolTip(closeButton, Localization.Text("sidebar.exit_hint"));
         closeButton.AccessibleName = Localization.Text("sidebar.exit_accessible");
-        tips.SetToolTip(smallerButton, Localization.Text("sidebar.shrink"));
-        smallerButton.AccessibleName = Localization.Text("sidebar.shrink");
-        tips.SetToolTip(largerButton, Localization.Text("sidebar.expand"));
-        largerButton.AccessibleName = Localization.Text("sidebar.expand");
+        tips.SetToolTip(horizontalSizeButton, Localization.Text("sidebar.next_width"));
+        horizontalSizeButton.AccessibleName = Localization.Text("sidebar.next_width");
+        tips.SetToolTip(verticalSizeButton, Localization.Text("sidebar.next_height"));
+        verticalSizeButton.AccessibleName = Localization.Text("sidebar.next_height");
         tips.SetToolTip(sideButton, Localization.Text("sidebar.other_edge"));
         sideButton.AccessibleName = Localization.Text("sidebar.move_accessible");
         folderTitle.Text = Localization.Text(configureMode ? "sidebar.configuring" : "sidebar.shortcuts");
@@ -612,6 +621,7 @@ internal sealed class SidebarWindow : Form
                 if (pair.Length != 2) continue;
                 int n;
                 if (pair[0] == "width" && int.TryParse(pair[1], out n) && n >= 0 && n < Widths.Length) widthIndex = n;
+                if (pair[0] == "height" && int.TryParse(pair[1], out n) && n >= 0 && n < Heights.Length) heightIndex = n;
                 if (pair[0] == "left") leftSide = pair[1] == "1";
 
                 if (pair[0] == "secondary") secondary = pair[1] == "1";
@@ -628,7 +638,8 @@ internal sealed class SidebarWindow : Form
         {
             Directory.CreateDirectory(Path.GetDirectoryName(settingsPath));
             File.WriteAllLines(settingsPath, new string[] {
-                "width=" + widthIndex, "left=" + (leftSide ? "1" : "0"),
+                "width=" + widthIndex, "height=" + heightIndex,
+                "left=" + (leftSide ? "1" : "0"),
                 "secondary=" + (secondary ? "1" : "0"),
                 "browser=" + browserExecutable,
                 "browserSystem=" + (browserUseSystem ? "1" : "0"),
@@ -646,7 +657,8 @@ internal sealed class SidebarWindow : Form
         try
         {
             File.WriteAllLines(temporary, new string[] {
-                "width=" + widthIndex, "left=" + (leftSide ? "1" : "0"),
+                "width=" + widthIndex, "height=" + heightIndex,
+                "left=" + (leftSide ? "1" : "0"),
                 "secondary=" + (secondary ? "1" : "0"),
                 "browser=" + browserExecutable,
                 "browserSystem=" + (browserUseSystem ? "1" : "0"),
@@ -679,13 +691,14 @@ internal sealed class SidebarWindow : Form
         catch (Exception ex) { MessageBox.Show(this, Localization.Text("sidebar.restore_prepare_error") + ex.Message, "WinSidebar"); return; }
         ShortcutEntry[] previous = new ShortcutEntry[4];
         for (int i = 0; i < 4; i++) previous[i] = entries[i].Copy();
-        int oldWidth = widthIndex; bool oldLeft = leftSide, oldSecondary = secondary;
+        int oldWidth = widthIndex, oldHeight = heightIndex;
+        bool oldLeft = leftSide, oldSecondary = secondary;
         string oldBrowser = browserExecutable; bool oldUseSystem = browserUseSystem;
         try
         {
             ShortcutEntry[] defaults = ShortcutStore.Defaults();
             ShortcutStore.Write(defaults);
-            widthIndex = 0; leftSide = false; secondary = false;
+            widthIndex = 0; heightIndex = 0; leftSide = false; secondary = false;
             browserExecutable = ""; browserUseSystem = true;
             SaveSettingsStrict();
             windows.ResetRules();
@@ -696,7 +709,7 @@ internal sealed class SidebarWindow : Form
         }
         catch (Exception ex)
         {
-            widthIndex = oldWidth; leftSide = oldLeft; secondary = oldSecondary;
+            widthIndex = oldWidth; heightIndex = oldHeight; leftSide = oldLeft; secondary = oldSecondary;
             browserExecutable = oldBrowser; browserUseSystem = oldUseSystem;
             Array.Copy(previous, entries, 4);
             string recoveryError = "";
@@ -718,7 +731,7 @@ internal sealed class SidebarWindow : Form
     private void Reposition()
     {
         Rectangle work = TargetScreen().WorkingArea;
-        int height = Math.Min(HeightDefault, Math.Max(130, work.Height - 16));
+        int height = Math.Min(Heights[heightIndex], Math.Max(130, work.Height - 16));
         int width = expanded ? Math.Min(Widths[widthIndex], work.Width) : TabWidth;
         Bounds = new Rectangle(leftSide ? work.Left : work.Right - width,
             work.Top + Math.Max(0, (work.Height - height) / 2), width, height);
@@ -726,8 +739,8 @@ internal sealed class SidebarWindow : Form
         content.SetBounds(leftSide ? TabWidth : 0, 0, Math.Max(0, width - TabWidth), height);
         tab.Text = leftSide ? (expanded ? "<" : ">") : (expanded ? ">" : "<");
         tips.SetToolTip(sideButton, leftSide ? Localization.Text("sidebar.move_right") : Localization.Text("sidebar.move_left"));
-        smallerButton.Enabled = widthIndex > 0;
-        largerButton.Enabled = widthIndex < Widths.Length - 1;
+        horizontalSizeButton.Enabled = true;
+        verticalSizeButton.Enabled = true;
         title.Text = " WinSidebar";
         int inside = content.ClientSize.Width;
         header.SetBounds(3, 3, Math.Max(0, inside - 6), 25);
@@ -770,11 +783,16 @@ internal sealed class SidebarWindow : Form
             MessageBoxButtons.YesNo, MessageBoxIcon.Question,
             MessageBoxDefaultButton.Button2) == DialogResult.Yes) Close();
     }
-    private void ChangeWidth(int direction)
+    private void CycleWidth()
     {
-        int next = Math.Max(0, Math.Min(Widths.Length - 1, widthIndex + direction));
-        if (next == widthIndex) return;
-        widthIndex = next;
+        widthIndex = (widthIndex + 1) % Widths.Length;
+        Reposition();
+        SaveSettings();
+    }
+
+    private void CycleHeight()
+    {
+        heightIndex = (heightIndex + 1) % Heights.Length;
         Reposition();
         SaveSettings();
     }
@@ -870,7 +888,8 @@ internal sealed class SidebarWindow : Form
     private void RememberExternalForeground()
     {
         IntPtr hwnd = Native.GetForegroundWindow();
-        if (hwnd == IntPtr.Zero || !Native.IsWindow(hwnd)) return;
+        if (hwnd == IntPtr.Zero || hwnd == Native.GetShellWindow() ||
+            !Native.IsWindow(hwnd) || !Native.IsWindowVisible(hwnd)) return;
         uint pid;
         Native.GetWindowThreadProcessId(hwnd, out pid);
         if (pid != (uint)Process.GetCurrentProcess().Id)
