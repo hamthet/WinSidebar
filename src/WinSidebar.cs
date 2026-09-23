@@ -132,7 +132,7 @@ internal sealed class SidebarWindow : Form
     private const uint CtrlShiftNoRepeat = 0x4006;
     private const int PasteProbeHotkeyId = 9811;
     private const string PasteProbeText =
-        "WinSidebar paste probe\\r\\nPortuguês: ação e configuração\\r\\nРусский: тест\\r\\n简体中文：测试\\r\\nEmoji: 🙂";
+        "WinSidebar paste probe\r\nPortuguês: ação e configuração\r\nРусский: тест\r\n简体中文：测试\r\nEmoji: 🙂";
     private static readonly int[] Widths = { 211, 260, 324 }; // 211 = -35% de 324
     private static readonly Color Face = Color.FromArgb(212, 208, 200);
     private static readonly Color Navy = Color.FromArgb(0, 0, 128);
@@ -216,7 +216,7 @@ internal sealed class SidebarWindow : Form
         catch (Exception ex) { configurationError += Localization.Text("config.ignored_unreadable") + ex.Message; }
         pasteProbe.Failed += delegate(string message) {
             if (!IsDisposed)
-                MessageBox.Show(this, "Ctrl+Shift+F1 paste probe failed:\\n" + message,
+                MessageBox.Show(this, "Ctrl+Shift+F1 paste probe failed:\n" + message,
                     "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         };
         pasteProbe.Completed += delegate {
@@ -839,7 +839,7 @@ internal sealed class SidebarWindow : Form
             {
                 string error;
                 if (!pasteProbe.Begin(Native.GetForegroundWindow(), Keys.F1, PasteProbeText, out error))
-                    MessageBox.Show(this, "Ctrl+Shift+F1 paste probe could not start:\\n" + error,
+                    MessageBox.Show(this, "Ctrl+Shift+F1 paste probe could not start:\n" + error,
                         "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             return;
