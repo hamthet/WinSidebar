@@ -1239,18 +1239,18 @@ internal sealed class SidebarWindow : Form
         registered.Clear();
         for (int i = 0; i < 4; i++)
         {
-            int id = 9801 + i;
-            if (Native.RegisterHotKey(Handle, id, ShiftNoRepeat, (uint)((int)Keys.F1 + i)))
+            int id = ShortcutHotkeyBase + i;
+            if (Native.RegisterHotKey(Handle, id, NoRepeat, (uint)((int)Keys.F1 + i)))
                 registered.Add(id);
-            else hotkeyErrors += (hotkeyErrors.Length == 0 ? "" : ", ") + "Shift+F" + (i + 1);
+            else hotkeyErrors += (hotkeyErrors.Length == 0 ? "" : ", ") + "F" + (i + 1);
         }
         for (int i = 0; i < SnippetStore.HotkeySlots; i++)
         {
             int id = SnippetHotkeyBase + i;
-            if (Native.RegisterHotKey(Handle, id, CtrlShiftNoRepeat, (uint)((int)Keys.F1 + i)))
+            if (Native.RegisterHotKey(Handle, id, ShiftNoRepeat, (uint)((int)Keys.F1 + i)))
                 registered.Add(id);
             else hotkeyErrors += (hotkeyErrors.Length == 0 ? "" : ", ") +
-                "Ctrl+Shift+F" + (i + 1);
+                "Shift+F" + (i + 1);
         }
     }
     protected override void OnHandleDestroyed(EventArgs e)
@@ -1267,10 +1267,8 @@ internal sealed class SidebarWindow : Form
         if (m.Msg == WmHotkey)
         {
             int id = m.WParam.ToInt32();
-            if (id == 9801) Expand(!expanded);
-            else if (id == 9802) Step(-1);
-            else if (id == 9803) Step(1);
-            else if (id == 9804) ActivateSelected();
+            if (id >= ShortcutHotkeyBase && id < ShortcutHotkeyBase + 4)
+                OpenShortcut(id - ShortcutHotkeyBase);
             else if (id >= SnippetHotkeyBase && id < SnippetHotkeyBase + SnippetStore.HotkeySlots)
                 PasteSnippet(id - SnippetHotkeyBase, false);
             return;
