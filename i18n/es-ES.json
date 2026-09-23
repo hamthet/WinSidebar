@@ -144,5 +144,8 @@
   "snippets.remove_row": "Quitar el último script",
   "snippets.restore_defaults": "Restaurar scripts predeterminados",
   "snippets.restore_question": "¿Restaurar los scripts predeterminados? Se eliminarán los textos guardados y los scripts adicionales.",
-  "snippets.restore_success": "Scripts predeterminados restaurados."
+  "snippets.restore_success": "Scripts predeterminados restaurados.",
+  "snippets.hotkey": "Atajo de teclado",
+  "snippets.hotkey_none": "Sin atajo",
+  "snippets.hotkey_duplicate": "Ese atajo ya está asignado a otro script."
 }
