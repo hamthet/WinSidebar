@@ -19,7 +19,7 @@ internal static class SnippetStore
 {
     internal const int MinimumSlots = 4;
     internal const int HotkeySlots = 4;
-    internal const int MaxSlots = 40;
+    internal const int MaxSlots = 8;
     internal const int MaxNameLength = 48;
     internal const int MaxContentLength = 65536;
     internal const long MaxFileBytes = 2L * 1024L * 1024L;
