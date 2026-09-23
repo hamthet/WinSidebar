@@ -1039,12 +1039,15 @@ internal sealed class SidebarWindow : Form
         EnsureShortcutControls();
         for (int i = 0; i < entries.Length; i++)
         {
+            string hotkey = i < 4 ? "F" + (i + 1) : "";
             shortcuts[i].Image = null;
             if (icons[i] != null) icons[i].Dispose();
             icons[i] = ShortcutStore.MakeIcon(entries[i]);
             shortcuts[i].Image = icons[i];
-            shortcuts[i].AccessibleName = entries[i].Name;
+            shortcuts[i].AccessibleName = entries[i].Name +
+                (hotkey.Length == 0 ? "" : " — " + hotkey);
             tips.SetToolTip(shortcuts[i], Localization.Text("sidebar.open_prefix") + entries[i].Name +
+                (hotkey.Length == 0 ? "" : "\n" + hotkey) +
                 "\n" + Localization.Text("sidebar.edit_right_click") + "\n" +
                 (entries[i].Target.Length == 0 ? Localization.Text("sidebar.not_configured") : entries[i].Target));
         }
@@ -1056,7 +1059,7 @@ internal sealed class SidebarWindow : Form
         for (int i = 0; i < snippetEntries.Length; i++)
         {
             string name = snippetEntries[i].Name;
-            string hotkey = i < SnippetStore.HotkeySlots ? "Ctrl+Shift+F" + (i + 1) : "";
+            string hotkey = i < SnippetStore.HotkeySlots ? "Shift+F" + (i + 1) : "";
             snippetPasteButtons[i].Text = name;
             snippetPasteButtons[i].AccessibleName =
                 Localization.Text("snippets.paste_hint_prefix") + name +
