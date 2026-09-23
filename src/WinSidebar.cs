@@ -905,6 +905,7 @@ internal sealed class SidebarWindow : Form
             }
         }
         addShortcutRowButton.Enabled = entries.Length < ShortcutStore.MaxEntries;
+        removeShortcutRowButton.Enabled = entries.Length > ShortcutStore.MinimumEntries;
     }
 
     private void EnsureSnippetControls()
@@ -946,6 +947,7 @@ internal sealed class SidebarWindow : Form
             }
         }
         addSnippetButton.Enabled = snippetEntries.Length < SnippetStore.MaxSlots;
+        removeSnippetButton.Enabled = snippetEntries.Length > SnippetStore.MinimumSlots;
     }
 
     private void AddShortcutRow()
@@ -975,6 +977,48 @@ internal sealed class SidebarWindow : Form
         SnippetEntry[] candidate = new SnippetEntry[snippetEntries.Length + 1];
         for (int i = 0; i < snippetEntries.Length; i++) candidate[i] = snippetEntries[i].Copy();
         candidate[candidate.Length - 1] = SnippetStore.CreateDefault(candidate.Length - 1);
+        try
+        {
+            SnippetStore.Write(candidate);
+            snippetEntries = candidate;
+            EnsureSnippetControls();
+            RefreshSnippetVisuals();
+            Reposition();
+        }
+        catch (Exception)
+        {
+            MessageBox.Show(this, Localization.Text("snippets.save_failed"), "WinSidebar",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+    }
+
+    private void RemoveShortcutRow()
+    {
+        if (entries.Length <= ShortcutStore.MinimumEntries) return;
+        int nextLength = entries.Length - ShortcutStore.EntriesPerRow;
+        ShortcutEntry[] candidate = new ShortcutEntry[nextLength];
+        for (int i = 0; i < nextLength; i++) candidate[i] = entries[i].Copy();
+        try
+        {
+            ShortcutStore.Write(candidate);
+            entries = candidate;
+            EnsureShortcutControls();
+            RefreshShortcutVisuals();
+            Reposition();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, Localization.Text("sidebar.save_shortcut_failed") + ex.Message,
+                "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+    }
+
+    private void RemoveSnippetRow()
+    {
+        if (snippetEntries.Length <= SnippetStore.MinimumSlots) return;
+        int nextLength = snippetEntries.Length - 1;
+        SnippetEntry[] candidate = new SnippetEntry[nextLength];
+        for (int i = 0; i < nextLength; i++) candidate[i] = snippetEntries[i].Copy();
         try
         {
             SnippetStore.Write(candidate);
