@@ -846,6 +846,7 @@ internal sealed class SidebarWindow : Form
         shortcutBody.AutoScroll = constrained && shortcutBlockHeight < shortcutFullHeight;
         shortcutBody.AutoScrollMinSize = shortcutBody.AutoScroll
             ? new Size(0, shortcutRows * 31 + 4) : Size.Empty;
+        if (!shortcutBody.AutoScroll) shortcutBody.AutoScrollPosition = Point.Empty;
         int available = Math.Max(4, shortcutBody.ClientSize.Width - 8);
         int each = Math.Max(1, available / ShortcutStore.EntriesPerRow);
         for (int i = 0; i < entries.Length; i++)
@@ -863,6 +864,7 @@ internal sealed class SidebarWindow : Form
         snippetBody.AutoScroll = constrained && snippetBlockHeight < snippetFullHeight;
         snippetBody.AutoScrollMinSize = snippetBody.AutoScroll
             ? new Size(0, snippetEntries.Length * 23 + 4) : Size.Empty;
+        if (!snippetBody.AutoScroll) snippetBody.AutoScrollPosition = Point.Empty;
         int snippetWidth = Math.Max(0, snippetBody.ClientSize.Width);
         int editWidth = 29;
         int rowLeft = 4;
