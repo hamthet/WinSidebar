@@ -8,10 +8,11 @@ internal sealed class SnippetEntry
 {
     internal string Name;
     internal string Content;
+    internal string Hotkey;
 
     internal SnippetEntry Copy()
     {
-        return new SnippetEntry { Name = Name, Content = Content };
+        return new SnippetEntry { Name = Name, Content = Content, Hotkey = Hotkey };
     }
 }
 
@@ -20,6 +21,7 @@ internal static class SnippetStore
     internal const int MinimumSlots = 4;
     internal const int HotkeySlots = 4;
     internal const int MaxSlots = 8;
+    internal const int MaxHotkeyFunction = 12;
     internal const int MaxNameLength = 48;
     internal const int MaxContentLength = 65536;
     internal const long MaxFileBytes = 2L * 1024L * 1024L;
@@ -43,11 +45,31 @@ internal static class SnippetStore
         public int id { get; set; }
         public string name { get; set; }
         public string content { get; set; }
+        public string hotkey { get; set; }
     }
 
     internal static SnippetEntry CreateDefault(int index)
     {
-        return new SnippetEntry { Name = "Script " + (index + 1), Content = "" };
+        return new SnippetEntry {
+            Name = "Script " + (index + 1),
+            Content = "",
+            Hotkey = index < HotkeySlots ? "Shift+F" + (index + 1) : ""
+        };
+    }
+
+    internal static bool IsValidHotkey(string hotkey)
+    {
+        if (string.IsNullOrEmpty(hotkey)) return true;
+        if (!hotkey.StartsWith("Shift+F", StringComparison.Ordinal)) return false;
+        int number;
+        return int.TryParse(hotkey.Substring("Shift+F".Length), out number) &&
+            number >= 1 && number <= MaxHotkeyFunction;
+    }
+
+    internal static int HotkeyFunctionNumber(string hotkey)
+    {
+        if (!IsValidHotkey(hotkey) || string.IsNullOrEmpty(hotkey)) return 0;
+        return int.Parse(hotkey.Substring("Shift+F".Length));
     }
 
     internal static SnippetEntry[] Defaults()
@@ -100,7 +122,10 @@ internal static class SnippetStore
             seen[item.id] = true;
             result[item.id] = NormalizeAndValidate(new SnippetEntry {
                 Name = item.name,
-                Content = item.content
+                Content = item.content,
+                // Older files predate configurable hotkeys. Preserve the approved
+                // default contract only when the property is genuinely absent.
+                Hotkey = item.hotkey ?? (item.id < HotkeySlots ? "Shift+F" + (item.id + 1) : "")
             });
         }
         for (int i = 0; i < result.Length; i++)
@@ -127,7 +152,9 @@ internal static class SnippetStore
         for (int i = 0; i < entries.Length; i++)
         {
             SnippetEntry normalized = NormalizeAndValidate(entries[i]);
-            document.items.Add(new Item { id = i, name = normalized.Name, content = normalized.Content });
+            document.items.Add(new Item {
+                id = i, name = normalized.Name, content = normalized.Content, hotkey = normalized.Hotkey
+            });
         }
 
         string directory = Path.GetDirectoryName(Path.GetFullPath(path));
@@ -157,11 +184,14 @@ internal static class SnippetStore
             throw new InvalidDataException("Snippet name and content are required.");
 
         string name = entry.Name.Trim();
+        string hotkey = entry.Hotkey ?? "";
         if (name.Length == 0 || name.Length > MaxNameLength)
             throw new InvalidDataException("Snippet name length is invalid.");
         if (entry.Content.Length > MaxContentLength)
             throw new InvalidDataException("Snippet content is too large.");
+        if (!IsValidHotkey(hotkey))
+            throw new InvalidDataException("Snippet hotkey is invalid.");
 
-        return new SnippetEntry { Name = name, Content = entry.Content };
+        return new SnippetEntry { Name = name, Content = entry.Content, Hotkey = hotkey };
     }
 }
