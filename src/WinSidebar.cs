@@ -1399,8 +1399,12 @@ internal static class Program
     [STAThread]
     private static void Main()
     {
-        Localization.Initialize(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "WinSidebar", "settings.ini"));
+        string settingsFile = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "WinSidebar", "settings.ini");
+        bool firstUse = !File.Exists(settingsFile);
+        Localization.Initialize(settingsFile);
+
         bool first;
         using (System.Threading.Mutex mutex = new System.Threading.Mutex(true,
             @"Local\WinSidebarPublic", out first))
@@ -1409,6 +1413,21 @@ internal static class Program
             try
             {
                 Application.SetCompatibleTextRenderingDefault(false);
+                if (firstUse)
+                {
+                    using (FirstRunLanguageDialog dialog = new FirstRunLanguageDialog(Localization.Current))
+                    {
+                        if (dialog.ShowDialog() == DialogResult.OK)
+                        {
+                            try { Localization.SaveInitialSelection(settingsFile, dialog.SelectedCode); }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show(Localization.Text("sidebar.language_save_failed") + ex.Message,
+                                    "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            }
+                        }
+                    }
+                }
                 Application.Run(new SidebarWindow());
             }
             catch (Exception ex)
