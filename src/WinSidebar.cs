@@ -292,7 +292,17 @@ internal sealed class SidebarWindow : Form
             e.Cancel = true; // Router is never itself shown, including on empty rows.
             Point clicked = tree.PointToClient(Cursor.Position);
             TreeNode node = tree.GetNodeAt(clicked);
-            if (node == null || !(node.Tag is IntPtr)) return;
+            if (node == null || !(node.Tag is IntPtr)) {
+                // The tree router canceled the native menu. For an empty area or
+                // monitor heading, display the existing global menu after WM_CONTEXTMENU.
+                tree.BeginInvoke((MethodInvoker)delegate {
+                    if (IsDisposed || tree.IsDisposed) return;
+                    ContextMenuStrip generalMenu = content.ContextMenuStrip;
+                    if (generalMenu != null && !generalMenu.IsDisposed)
+                        generalMenu.Show(tree, clicked);
+                });
+                return;
+            }
             tree.SelectedNode = node;
             IntPtr hwnd = (IntPtr)node.Tag;
             selectedHandle = hwnd;
