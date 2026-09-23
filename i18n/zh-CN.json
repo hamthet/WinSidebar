@@ -131,5 +131,7 @@
   "snippets.send_failed": "Windows 阻止了模拟粘贴。目标应用可能正以管理员身份运行。",
   "snippets.clipboard_restore_failed": "文本已粘贴，但无法恢复之前的剪贴板内容。",
   "snippets.pasted": "文本已粘贴。",
-  "config.snippets_unreadable": "无法读取文本脚本。已加载默认值。 "
+  "config.snippets_unreadable": "无法读取文本脚本。已加载默认值。 ",
+  "sidebar.next_width": "下一档宽度",
+  "sidebar.next_height": "下一档高度"
 }
