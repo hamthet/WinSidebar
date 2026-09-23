@@ -131,5 +131,7 @@
   "snippets.send_failed": "Windows bloqueó el pegado simulado. La aplicación de destino puede estar ejecutándose como administrador.",
   "snippets.clipboard_restore_failed": "El texto se pegó, pero no se pudo restaurar el portapapeles anterior.",
   "snippets.pasted": "Texto pegado.",
-  "config.snippets_unreadable": "No se pudieron leer los scripts de texto. Se cargaron los valores predeterminados. "
+  "config.snippets_unreadable": "No se pudieron leer los scripts de texto. Se cargaron los valores predeterminados. ",
+  "sidebar.next_width": "Siguiente ancho",
+  "sidebar.next_height": "Siguiente altura"
 }
