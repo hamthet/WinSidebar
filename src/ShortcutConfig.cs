@@ -22,6 +22,11 @@ internal sealed class ShortcutEntry
 
 internal static class ShortcutStore
 {
+    internal const int MinimumEntries = 4;
+    internal const int EntriesPerRow = 4;
+    internal const int MaxEntries = 40;
+    internal const long MaxFileBytes = 256L * 1024L;
+
     internal static readonly string Root = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WinSidebar");
     internal static readonly string FilePath = Path.Combine(Root, "shortcuts.xml");
@@ -40,10 +45,24 @@ internal static class ShortcutStore
         };
     }
 
+    internal static ShortcutEntry CreateEmpty(int index)
+    {
+        return new ShortcutEntry {
+            Name = Localization.Text("defaults.shortcut_prefix") + " " + (index + 1),
+            Type = "folder", Target = "", Icon = "folder", IconFile = ""
+        };
+    }
+
+    private static void ValidateCount(int count)
+    {
+        if (count < MinimumEntries || count > MaxEntries || count % EntriesPerRow != 0)
+            throw new InvalidDataException(Localization.Text("store.invalid_entry"));
+    }
+
     internal static ShortcutEntry[] Read()
     {
         if (!File.Exists(FilePath)) return Defaults();
-        if (new FileInfo(FilePath).Length > 65536)
+        if (new FileInfo(FilePath).Length > MaxFileBytes)
             throw new InvalidDataException(Localization.Text("store.too_large"));
         XmlReaderSettings settings = new XmlReaderSettings();
         settings.DtdProcessing = DtdProcessing.Prohibit;
@@ -51,21 +70,26 @@ internal static class ShortcutStore
         XmlDocument xml = new XmlDocument();
         xml.XmlResolver = null;
         using (XmlReader reader = XmlReader.Create(FilePath, settings)) xml.Load(reader);
-        if (xml.DocumentElement == null || xml.DocumentElement.Name != "shortcuts" ||
-            xml.DocumentElement.GetAttribute("version") != "1")
+        if (xml.DocumentElement == null || xml.DocumentElement.Name != "shortcuts")
             throw new InvalidDataException(Localization.Text("store.unknown_version"));
+        string version = xml.DocumentElement.GetAttribute("version");
         XmlNodeList elements = xml.DocumentElement.SelectNodes("item");
-        if (elements.Count != 4)
-            throw new InvalidDataException(Localization.Text("store.four_entries"));
-        ShortcutEntry[] result = new ShortcutEntry[4];
-        bool[] seen = new bool[4];
+        if (version == "1")
+        {
+            if (elements.Count != MinimumEntries)
+                throw new InvalidDataException(Localization.Text("store.four_entries"));
+        }
+        else if (version == "2") ValidateCount(elements.Count);
+        else throw new InvalidDataException(Localization.Text("store.unknown_version"));
+        ShortcutEntry[] result = new ShortcutEntry[elements.Count];
+        bool[] seen = new bool[elements.Count];
         foreach (XmlNode node in elements)
         {
             XmlElement item = node as XmlElement;
             if (item == null) throw new InvalidDataException(Localization.Text("store.invalid_entry"));
             int id;
             if (!int.TryParse(item.GetAttribute("id"), out id) ||
-                id < 0 || id > 3 || seen[id])
+                id < 0 || id >= result.Length || seen[id])
                 throw new InvalidDataException(Localization.Text("store.invalid_id"));
             seen[id] = true;
             ShortcutEntry entry = new ShortcutEntry {
@@ -109,13 +133,14 @@ internal static class ShortcutStore
 
     internal static void Write(ShortcutEntry[] entries)
     {
-        if (entries == null || entries.Length != 4)
-            throw new InvalidDataException(Localization.Text("store.requires_four"));
+        if (entries == null) throw new InvalidDataException(Localization.Text("store.invalid_entry"));
+        ValidateCount(entries.Length);
         foreach (ShortcutEntry entry in entries) Validate(entry);
         Directory.CreateDirectory(Root);
         XmlDocument document = new XmlDocument();
         XmlElement root = document.CreateElement("shortcuts");
-        root.SetAttribute("version", "1");
+        // Keep the legacy format while exactly four entries exist; older builds can still read it.
+        root.SetAttribute("version", entries.Length == MinimumEntries ? "1" : "2");
         document.AppendChild(root);
         for (int i = 0; i < entries.Length; i++)
         {
