@@ -538,5 +538,21 @@
   "sidebar.next_height": {
     "pt-BR": "Próxima altura",
     "en-US": "Next height"
+  },
+  "sidebar.add_shortcut_row": {
+    "pt-BR": "Adicionar linha de atalhos",
+    "en-US": "Add shortcut row"
+  },
+  "sidebar.edit_right_click": {
+    "pt-BR": "Clique direito para editar",
+    "en-US": "Right-click to edit"
+  },
+  "defaults.shortcut_prefix": {
+    "pt-BR": "Atalho",
+    "en-US": "Shortcut"
+  },
+  "snippets.add_row": {
+    "pt-BR": "Adicionar script",
+    "en-US": "Add script"
   }
 }
