@@ -530,5 +530,13 @@
   "config.snippets_unreadable": {
     "pt-BR": "Os scripts de texto não puderam ser lidos. Os padrões foram carregados. ",
     "en-US": "Text scripts could not be read. Defaults were loaded. "
+  },
+  "sidebar.next_width": {
+    "pt-BR": "Próxima largura",
+    "en-US": "Next width"
+  },
+  "sidebar.next_height": {
+    "pt-BR": "Próxima altura",
+    "en-US": "Next height"
   }
 }
