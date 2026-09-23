@@ -144,5 +144,8 @@
   "snippets.remove_row": "删除最后一个脚本",
   "snippets.restore_defaults": "恢复默认脚本",
   "snippets.restore_question": "恢复默认脚本？已保存的文本和额外脚本将被删除。",
-  "snippets.restore_success": "已恢复默认脚本。"
+  "snippets.restore_success": "已恢复默认脚本。",
+  "snippets.hotkey": "键盘快捷键",
+  "snippets.hotkey_none": "无快捷键",
+  "snippets.hotkey_duplicate": "此快捷键已分配给另一个脚本。"
 }
