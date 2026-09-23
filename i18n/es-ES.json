@@ -133,5 +133,9 @@
   "snippets.pasted": "Texto pegado.",
   "config.snippets_unreadable": "No se pudieron leer los scripts de texto. Se cargaron los valores predeterminados. ",
   "sidebar.next_width": "Siguiente ancho",
-  "sidebar.next_height": "Siguiente altura"
+  "sidebar.next_height": "Siguiente altura",
+  "sidebar.add_shortcut_row": "Añadir fila de accesos directos",
+  "sidebar.edit_right_click": "Clic derecho para editar",
+  "defaults.shortcut_prefix": "Acceso",
+  "snippets.add_row": "Añadir script"
 }
