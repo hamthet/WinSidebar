@@ -126,13 +126,10 @@ internal sealed class SidebarWindow : Form
     private const int TabWidth = 21;
     private const int HeightDefault = 504;
     private const int WmHotkey = 0x0312;
+    private const int WmMouseActivate = 0x0021;
     private const uint ShiftNoRepeat = 0x4004;
-    // Development-only snippet injection probe. Remove the hardcoded payload once
-    // the four editable snippet slots are integrated.
     private const uint CtrlShiftNoRepeat = 0x4006;
-    private const int PasteProbeHotkeyId = 9811;
-    private const string PasteProbeText =
-        "WinSidebar paste probe\r\nPortuguês: ação e configuração\r\nРусский: тест\r\n简体中文：测试\r\nEmoji: 🙂";
+    private const int SnippetHotkeyBase = 9811;
     private static readonly int[] Widths = { 211, 260, 324 }; // 211 = -35% de 324
     private static readonly Color Face = Color.FromArgb(212, 208, 200);
     private static readonly Color Navy = Color.FromArgb(0, 0, 128);
@@ -142,6 +139,9 @@ internal sealed class SidebarWindow : Form
     private readonly Panel content = new Panel();
     private readonly Panel header = new Panel();
     private readonly Panel folders = new Panel();
+    private readonly Panel snippetsPanel = new Panel();
+    private readonly Panel snippetHeader = new Panel();
+    private readonly Label snippetTitle = new Label();
     private readonly Label title = new Label();
     private readonly Label status = new Label();
     private readonly Button tab = new Button();
@@ -160,8 +160,11 @@ internal sealed class SidebarWindow : Form
     private readonly Button[] shortcuts = new Button[4];
     private readonly Image[] icons = new Image[4];
     private readonly ShortcutEntry[] entries = new ShortcutEntry[4];
+    private readonly Button[] snippetPasteButtons = new Button[4];
+    private readonly Button[] snippetEditButtons = new Button[4];
+    private readonly SnippetEntry[] snippetEntries = new SnippetEntry[4];
     private readonly WindowManagement windows = new WindowManagement();
-    private readonly TextInjectionProbe pasteProbe = new TextInjectionProbe();
+    private readonly TextInjector textInjector = new TextInjector();
     private readonly Button languageButton = new Button();
     private readonly Button restoreDefaultsButton = new Button();
     private readonly List<int> registered = new List<int>();
@@ -187,6 +190,7 @@ internal sealed class SidebarWindow : Form
     private bool internalSelection;
     private bool firstRefresh = true;
     private IntPtr selectedHandle = IntPtr.Zero;
+    private IntPtr lastExternalForeground = IntPtr.Zero;
     private IntPtr hotkeyHandle = IntPtr.Zero;
     private string signature = "";
 
@@ -212,15 +216,24 @@ internal sealed class SidebarWindow : Form
             configurationError = Localization.Text("config.shortcuts_unreadable") +
                 Localization.Text("config.original_preserved") + ex.Message;
         }
+        try
+        {
+            SnippetEntry[] loadedSnippets = SnippetStore.Read();
+            Array.Copy(loadedSnippets, snippetEntries, SnippetStore.SlotCount);
+        }
+        catch (Exception)
+        {
+            Array.Copy(SnippetStore.Defaults(), snippetEntries, SnippetStore.SlotCount);
+            configurationError += Localization.Text("config.snippets_unreadable") +
+                Localization.Text("config.original_preserved");
+        }
         try { windows.Load(); }
         catch (Exception ex) { configurationError += Localization.Text("config.ignored_unreadable") + ex.Message; }
-        pasteProbe.Failed += delegate(string message) {
-            if (!IsDisposed)
-                MessageBox.Show(this, "Ctrl+Shift+F1 paste probe failed:\n" + message,
-                    "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        textInjector.Failed += delegate(TextInjectionFailure failure) {
+            if (!IsDisposed) ShowTextInjectionFailure(failure);
         };
-        pasteProbe.Completed += delegate {
-            if (!IsDisposed) status.Text = "Paste probe completed; verify text and clipboard.";
+        textInjector.Completed += delegate {
+            if (!IsDisposed) status.Text = Localization.Text("snippets.pasted");
         };
         Text = "WinSidebar";
         FormBorderStyle = FormBorderStyle.None;
@@ -396,6 +409,44 @@ internal sealed class SidebarWindow : Form
         }
         RefreshShortcutVisuals();
 
+        snippetsPanel.BackColor = Face;
+        snippetsPanel.BorderStyle = BorderStyle.Fixed3D;
+        content.Controls.Add(snippetsPanel);
+        snippetHeader.BackColor = Navy;
+        snippetHeader.Dock = DockStyle.Top;
+        snippetHeader.Height = 20;
+        snippetsPanel.Controls.Add(snippetHeader);
+        snippetTitle.Text = Localization.Text("snippets.title");
+        snippetTitle.BackColor = Navy;
+        snippetTitle.ForeColor = Color.White;
+        snippetTitle.Font = bold;
+        snippetTitle.TextAlign = ContentAlignment.MiddleLeft;
+        snippetTitle.Dock = DockStyle.Fill;
+        snippetHeader.Controls.Add(snippetTitle);
+        for (int i = 0; i < SnippetStore.SlotCount; i++)
+        {
+            int slot = i;
+            Button paste = new Button();
+            paste.FlatStyle = FlatStyle.Standard;
+            paste.BackColor = Face;
+            paste.UseVisualStyleBackColor = false;
+            paste.TextAlign = ContentAlignment.MiddleLeft;
+            paste.AutoEllipsis = true;
+            paste.Click += delegate { PasteSnippet(slot, true); };
+            snippetsPanel.Controls.Add(paste);
+            snippetPasteButtons[i] = paste;
+
+            Button edit = new Button();
+            edit.Text = "⚙";
+            edit.FlatStyle = FlatStyle.Standard;
+            edit.BackColor = Face;
+            edit.UseVisualStyleBackColor = false;
+            edit.Click += delegate { EditSnippet(slot); };
+            snippetsPanel.Controls.Add(edit);
+            snippetEditButtons[i] = edit;
+        }
+        RefreshSnippetVisuals();
+
         ContextMenuStrip menu = new ContextMenuStrip();
         ToolStripMenuItem main = new ToolStripMenuItem(Localization.Text("sidebar.primary_monitor"));
         ToolStripMenuItem other = new ToolStripMenuItem(Localization.Text("sidebar.secondary_monitor"));
@@ -462,7 +513,7 @@ internal sealed class SidebarWindow : Form
             tray.Visible = false; tray.Dispose();
 
             windowContextRouter.Dispose();
-            pasteProbe.Dispose();
+            textInjector.Dispose();
             tips.Dispose();
             foreach (Image icon in icons) if (icon != null) icon.Dispose();
             regular.Dispose(); bold.Dispose();
@@ -544,7 +595,9 @@ internal sealed class SidebarWindow : Form
             status.Text = Localization.Text("sidebar.hotkeys_unavailable") + hotkeyErrors;
             tray.BalloonTipText = Localization.Text("sidebar.hotkeys_in_use") + hotkeyErrors;
         }
+        snippetTitle.Text = Localization.Text("snippets.title");
         RefreshShortcutVisuals();
+        RefreshSnippetVisuals();
         Reposition();
     }
 
@@ -678,13 +731,29 @@ internal sealed class SidebarWindow : Form
         title.Text = " WinSidebar";
         int inside = content.ClientSize.Width;
         header.SetBounds(3, 3, Math.Max(0, inside - 6), 25);
-        folders.SetBounds(3, Math.Max(0, height - 67), Math.Max(0, inside - 6), 61);
+        const int snippetBlockHeight = 116;
+        snippetsPanel.SetBounds(3, Math.Max(0, height - snippetBlockHeight - 6),
+            Math.Max(0, inside - 6), snippetBlockHeight);
+        folders.SetBounds(3, Math.Max(0, snippetsPanel.Top - 65), Math.Max(0, inside - 6), 61);
         status.SetBounds(5, Math.Max(0, folders.Top - 22), Math.Max(0, inside - 10), 19);
         tree.SetBounds(3, 34, Math.Max(0, inside - 6), Math.Max(35, status.Top - 37));
+
         int available = Math.Max(4, folders.ClientSize.Width - 8);
         int each = Math.Max(1, available / 4);
         for (int i = 0; i < 4; i++)
             shortcuts[i].SetBounds(4 + i * each, 25, (i == 3 ? available - i * each : each) - 3, 29);
+
+        int snippetWidth = Math.Max(0, snippetsPanel.ClientSize.Width);
+        int editWidth = 29;
+        int rowLeft = 4;
+        int rowRight = Math.Max(rowLeft, snippetWidth - 4);
+        for (int i = 0; i < SnippetStore.SlotCount; i++)
+        {
+            int y = 22 + i * 23;
+            int editX = Math.Max(rowLeft, rowRight - editWidth);
+            snippetPasteButtons[i].SetBounds(rowLeft, y, Math.Max(1, editX - rowLeft - 2), 22);
+            snippetEditButtons[i].SetBounds(editX, y, editWidth, 22);
+        }
     }
     private void Expand(bool show)
     {
@@ -730,6 +799,105 @@ internal sealed class SidebarWindow : Form
                 entries[i].Name + "\n" + (entries[i].Target.Length == 0 ? Localization.Text("sidebar.not_configured") : entries[i].Target));
         }
     }
+    private void RefreshSnippetVisuals()
+    {
+        for (int i = 0; i < SnippetStore.SlotCount; i++)
+        {
+            string name = snippetEntries[i].Name;
+            snippetPasteButtons[i].Text = name;
+            snippetPasteButtons[i].AccessibleName =
+                Localization.Text("snippets.paste_hint_prefix") + name + " — Ctrl+Shift+F" + (i + 1);
+            tips.SetToolTip(snippetPasteButtons[i],
+                Localization.Text("snippets.paste_hint_prefix") + name + "\nCtrl+Shift+F" + (i + 1));
+            snippetEditButtons[i].AccessibleName =
+                Localization.Text("snippets.configure_hint_prefix") + name;
+            tips.SetToolTip(snippetEditButtons[i],
+                Localization.Text("snippets.configure_hint_prefix") + name);
+        }
+    }
+
+    private void EditSnippet(int slot)
+    {
+        using (SnippetEditor editor = new SnippetEditor(snippetEntries[slot]))
+        {
+            Rectangle workArea = Screen.FromControl(this).WorkingArea;
+            int preferredX = leftSide ? Right + 12 : Left - editor.Width - 12;
+            int editorX = Math.Max(workArea.Left,
+                Math.Min(preferredX, Math.Max(workArea.Left, workArea.Right - editor.Width)));
+            int preferredY = Top + (Height - editor.Height) / 2;
+            int editorY = Math.Max(workArea.Top,
+                Math.Min(preferredY, Math.Max(workArea.Top, workArea.Bottom - editor.Height)));
+            editor.StartPosition = FormStartPosition.Manual;
+            editor.Location = new Point(editorX, editorY);
+            editor.TopMost = true;
+            if (editor.ShowDialog(this) != DialogResult.OK) return;
+
+            SnippetEntry[] candidate = new SnippetEntry[SnippetStore.SlotCount];
+            for (int i = 0; i < candidate.Length; i++) candidate[i] = snippetEntries[i].Copy();
+            candidate[slot] = editor.Result;
+            try
+            {
+                SnippetStore.Write(candidate);
+                snippetEntries[slot] = editor.Result;
+                RefreshSnippetVisuals();
+            }
+            catch (Exception)
+            {
+                MessageBox.Show(this, Localization.Text("snippets.save_failed"), "WinSidebar",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+    }
+
+    private void PasteSnippet(int slot, bool restoreExternalFocus)
+    {
+        if (slot < 0 || slot >= SnippetStore.SlotCount || textInjector.IsBusy) return;
+        SnippetEntry entry = snippetEntries[slot];
+        if (entry == null || string.IsNullOrEmpty(entry.Content))
+        {
+            status.Text = Localization.Text("snippets.empty");
+            return;
+        }
+
+        IntPtr target = restoreExternalFocus ? lastExternalForeground : Native.GetForegroundWindow();
+        TextInjectionFailure failure;
+        Keys trigger = restoreExternalFocus ? Keys.None : (Keys)((int)Keys.F1 + slot);
+        if (!textInjector.Begin(target, trigger, entry.Content, restoreExternalFocus, out failure) &&
+            failure != TextInjectionFailure.Busy)
+            ShowTextInjectionFailure(failure);
+    }
+
+    private void RememberExternalForeground()
+    {
+        IntPtr hwnd = Native.GetForegroundWindow();
+        if (hwnd == IntPtr.Zero || !Native.IsWindow(hwnd)) return;
+        uint pid;
+        Native.GetWindowThreadProcessId(hwnd, out pid);
+        if (pid != (uint)Process.GetCurrentProcess().Id)
+            lastExternalForeground = hwnd;
+    }
+
+    private void ShowTextInjectionFailure(TextInjectionFailure failure)
+    {
+        if (failure == TextInjectionFailure.None || failure == TextInjectionFailure.Busy) return;
+        string key;
+        MessageBoxIcon icon = MessageBoxIcon.Warning;
+        if (failure == TextInjectionFailure.EmptyText)
+        {
+            status.Text = Localization.Text("snippets.empty");
+            return;
+        }
+        if (failure == TextInjectionFailure.ModifierTimeout) key = "snippets.modifier_timeout";
+        else if (failure == TextInjectionFailure.TargetChanged) key = "snippets.target_changed";
+        else if (failure == TextInjectionFailure.FocusFailed) key = "snippets.focus_failed";
+        else if (failure == TextInjectionFailure.ClipboardPrepareFailed) key = "snippets.clipboard_failed";
+        else if (failure == TextInjectionFailure.SendInputFailed) key = "snippets.send_failed";
+        else if (failure == TextInjectionFailure.ClipboardRestoreFailed) key = "snippets.clipboard_restore_failed";
+        else key = "snippets.target_unavailable";
+        MessageBox.Show(this, Localization.Text(key), "WinSidebar",
+            MessageBoxButtons.OK, icon);
+    }
+
     private void EditShortcut(int slot)
     {
         using (ShortcutEditor editor = new ShortcutEditor(entries[slot], browserExecutable, browserUseSystem))
@@ -816,9 +984,14 @@ internal sealed class SidebarWindow : Form
                 registered.Add(id);
             else hotkeyErrors += (hotkeyErrors.Length == 0 ? "" : ", ") + "Shift+F" + (i + 1);
         }
-        if (Native.RegisterHotKey(Handle, PasteProbeHotkeyId, CtrlShiftNoRepeat, (uint)Keys.F1))
-            registered.Add(PasteProbeHotkeyId);
-        else hotkeyErrors += (hotkeyErrors.Length == 0 ? "" : ", ") + "Ctrl+Shift+F1 (paste probe)";
+        for (int i = 0; i < SnippetStore.SlotCount; i++)
+        {
+            int id = SnippetHotkeyBase + i;
+            if (Native.RegisterHotKey(Handle, id, CtrlShiftNoRepeat, (uint)((int)Keys.F1 + i)))
+                registered.Add(id);
+            else hotkeyErrors += (hotkeyErrors.Length == 0 ? "" : ", ") +
+                "Ctrl+Shift+F" + (i + 1);
+        }
     }
     protected override void OnHandleDestroyed(EventArgs e)
     {
@@ -828,6 +1001,9 @@ internal sealed class SidebarWindow : Form
     }
     protected override void WndProc(ref Message m)
     {
+        if (m.Msg == WmMouseActivate)
+            RememberExternalForeground();
+
         if (m.Msg == WmHotkey)
         {
             int id = m.WParam.ToInt32();
@@ -835,18 +1011,8 @@ internal sealed class SidebarWindow : Form
             else if (id == 9802) Step(-1);
             else if (id == 9803) Step(1);
             else if (id == 9804) ActivateSelected();
-            else if (id == PasteProbeHotkeyId)
-            {
-                // Repeated presses while a paste transaction is still restoring the
-                // clipboard are normal input noise. Ignore them without stealing focus.
-                if (!pasteProbe.IsBusy)
-                {
-                    string error;
-                    if (!pasteProbe.Begin(Native.GetForegroundWindow(), Keys.F1, PasteProbeText, out error))
-                        MessageBox.Show(this, "Ctrl+Shift+F1 paste probe could not start:\n" + error,
-                            "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
-            }
+            else if (id >= SnippetHotkeyBase && id < SnippetHotkeyBase + SnippetStore.SlotCount)
+                PasteSnippet(id - SnippetHotkeyBase, false);
             return;
         }
         base.WndProc(ref m);
