@@ -64,6 +64,22 @@ The next refinement is now source-staged:
 
 This refinement is **SOURCE STAGED / OWNER BUILD + GUI RETEST PENDING**. Removal of added rows is not implemented in this preview because destructive semantics were not requested.
 
+## Owner result — expandable rows preview and final UI corrections
+
+The owner tested the expandable preview and supplied a screenshot showing 12 shortcuts and 8 scripts rendered with scroll. The next product decisions are explicit:
+
+- cap the product at **12 shortcuts / 8 scripts**;
+- add `-` beside each `+`; shortcuts remove one last row of four, scripts remove the last script, never below four;
+- add an independent script restore button and keep shortcut/script restores independent, each with confirmation;
+- remove the language globe because Language already exists in the general context menu;
+- add a first-use language chooser;
+- retain right-click editing for all shortcut buttons, including folders; scripts retain per-row gears;
+- revise default global keys to `F1..F4` for shortcut buttons 1..4 and `Shift+F1..F4` for scripts 1..4. Extra rows have no default global key.
+
+The pre-change expandable state is preserved at `checkpoint/expandable-rows-tested-20260923` (`b87e34510dc9d435ee096c6cd9a4dd6cce96afe6`).
+
+The requested changes are now **SOURCE STAGED / OWNER BUILD + GUI RETEST PENDING**. No Actions, FILEBRIDGE, main merge or release.
+
 ## Owner-run preview
 
 Use only:
