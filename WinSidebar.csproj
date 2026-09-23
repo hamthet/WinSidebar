@@ -28,7 +28,8 @@
     <Compile Include="src/WinSidebar.cs" />
     <Compile Include="src/ShortcutConfig.cs" />
     <Compile Include="src/WindowManagement.cs" />
-    <Compile Include="src/Localization.cs" />\n    <Compile Include="src/TextInjection.cs" />
+    <Compile Include="src/Localization.cs" />
+    <Compile Include="src/TextInjection.cs" />
     <EmbeddedResource Include="i18n/catalog.json" LogicalName="WinSidebar.i18n.catalog.json" />
     <EmbeddedResource Include="i18n/es-ES.json" LogicalName="WinSidebar.i18n.es-ES.json" />
     <EmbeddedResource Include="i18n/ru-RU.json" LogicalName="WinSidebar.i18n.ru-RU.json" />
