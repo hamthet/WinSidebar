@@ -613,8 +613,8 @@ internal sealed class SidebarWindow : Form
         folderTitle.Text = Localization.Text("sidebar.shortcuts");
         addShortcutRowButton.AccessibleName = Localization.Text("sidebar.add_shortcut_row");
         tips.SetToolTip(addShortcutRowButton, Localization.Text("sidebar.add_shortcut_row"));
-        languageButton.AccessibleName = Localization.Text("sidebar.language");
-        tips.SetToolTip(languageButton, Localization.Text("sidebar.language"));
+        removeShortcutRowButton.AccessibleName = Localization.Text("sidebar.remove_shortcut_row");
+        tips.SetToolTip(removeShortcutRowButton, Localization.Text("sidebar.remove_shortcut_row"));
         restoreDefaultsButton.AccessibleName = Localization.Text("sidebar.restore_defaults");
         tips.SetToolTip(restoreDefaultsButton, Localization.Text("sidebar.restore_defaults"));
         monitorPrimaryItem.Text = Localization.Text("sidebar.primary_monitor");
@@ -635,6 +635,10 @@ internal sealed class SidebarWindow : Form
         snippetTitle.Text = Localization.Text("snippets.title");
         addSnippetButton.AccessibleName = Localization.Text("snippets.add_row");
         tips.SetToolTip(addSnippetButton, Localization.Text("snippets.add_row"));
+        removeSnippetButton.AccessibleName = Localization.Text("snippets.remove_row");
+        tips.SetToolTip(removeSnippetButton, Localization.Text("snippets.remove_row"));
+        restoreSnippetDefaultsButton.AccessibleName = Localization.Text("snippets.restore_defaults");
+        tips.SetToolTip(restoreSnippetDefaultsButton, Localization.Text("snippets.restore_defaults"));
         RefreshShortcutVisuals();
         RefreshSnippetVisuals();
         Reposition();
