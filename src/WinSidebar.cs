@@ -837,10 +837,15 @@ internal sealed class SidebarWindow : Form
             else if (id == 9804) ActivateSelected();
             else if (id == PasteProbeHotkeyId)
             {
-                string error;
-                if (!pasteProbe.Begin(Native.GetForegroundWindow(), Keys.F1, PasteProbeText, out error))
-                    MessageBox.Show(this, "Ctrl+Shift+F1 paste probe could not start:\n" + error,
-                        "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                // Repeated presses while a paste transaction is still restoring the
+                // clipboard are normal input noise. Ignore them without stealing focus.
+                if (!pasteProbe.IsBusy)
+                {
+                    string error;
+                    if (!pasteProbe.Begin(Native.GetForegroundWindow(), Keys.F1, PasteProbeText, out error))
+                        MessageBox.Show(this, "Ctrl+Shift+F1 paste probe could not start:\n" + error,
+                            "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
             return;
         }
