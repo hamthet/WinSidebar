@@ -801,13 +801,37 @@ internal sealed class SidebarWindow : Form
         title.Text = " WinSidebar";
         int inside = content.ClientSize.Width;
         header.SetBounds(3, 3, Math.Max(0, inside - 6), 25);
-        int extraHeight = Math.Max(0, height - HeightDefault);
         int shortcutRows = Math.Max(1,
             (entries.Length + ShortcutStore.EntriesPerRow - 1) / ShortcutStore.EntriesPerRow);
-        int shortcutVisibleRows = Math.Min(shortcutRows, 1 + extraHeight / 90);
-        int snippetVisibleRows = Math.Min(snippetEntries.Length, 4 + extraHeight / 45);
-        int shortcutBlockHeight = 30 + shortcutVisibleRows * 31;
-        int snippetBlockHeight = 26 + snippetVisibleRows * 23;
+        int shortcutFullHeight = 30 + shortcutRows * 31;
+        int snippetFullHeight = 26 + snippetEntries.Length * 23;
+        const int minimumTreeHeight = 70;
+        int requiredHeight = 34 + minimumTreeHeight + 22 +
+            shortcutFullHeight + 4 + snippetFullHeight + 6;
+        int maximumHeight = Math.Max(130, work.Height - 16);
+        int desiredHeight = Math.Max(Heights[heightIndex], requiredHeight);
+        height = Math.Min(desiredHeight, maximumHeight);
+        if (Height != height || Top != work.Top + Math.Max(0, (work.Height - height) / 2))
+        {
+            Bounds = new Rectangle(leftSide ? work.Left : work.Right - width,
+                work.Top + Math.Max(0, (work.Height - height) / 2), width, height);
+            tab.SetBounds(leftSide ? 0 : width - TabWidth, 0, TabWidth, height);
+            content.SetBounds(leftSide ? TabWidth : 0, 0, Math.Max(0, width - TabWidth), height);
+            inside = content.ClientSize.Width;
+            header.SetBounds(3, 3, Math.Max(0, inside - 6), 25);
+        }
+
+        bool constrained = height < requiredHeight;
+        int shortcutBlockHeight = shortcutFullHeight;
+        int snippetBlockHeight = snippetFullHeight;
+        if (constrained)
+        {
+            int extraHeight = Math.Max(0, height - HeightDefault);
+            int shortcutVisibleRows = Math.Min(shortcutRows, 1 + extraHeight / 90);
+            int snippetVisibleRows = Math.Min(snippetEntries.Length, 4 + extraHeight / 45);
+            shortcutBlockHeight = 30 + shortcutVisibleRows * 31;
+            snippetBlockHeight = 26 + snippetVisibleRows * 23;
+        }
 
         snippetsPanel.SetBounds(3, Math.Max(0, height - snippetBlockHeight - 6),
             Math.Max(0, inside - 6), snippetBlockHeight);
@@ -818,7 +842,9 @@ internal sealed class SidebarWindow : Form
 
         shortcutBody.SetBounds(0, 20, Math.Max(0, folders.ClientSize.Width),
             Math.Max(0, folders.ClientSize.Height - 20));
-        shortcutBody.AutoScrollMinSize = new Size(0, shortcutRows * 31 + 4);
+        shortcutBody.AutoScroll = constrained && shortcutBlockHeight < shortcutFullHeight;
+        shortcutBody.AutoScrollMinSize = shortcutBody.AutoScroll
+            ? new Size(0, shortcutRows * 31 + 4) : Size.Empty;
         int available = Math.Max(4, shortcutBody.ClientSize.Width - 8);
         int each = Math.Max(1, available / ShortcutStore.EntriesPerRow);
         for (int i = 0; i < entries.Length; i++)
@@ -833,7 +859,9 @@ internal sealed class SidebarWindow : Form
 
         snippetBody.SetBounds(0, 20, Math.Max(0, snippetsPanel.ClientSize.Width),
             Math.Max(0, snippetsPanel.ClientSize.Height - 20));
-        snippetBody.AutoScrollMinSize = new Size(0, snippetEntries.Length * 23 + 4);
+        snippetBody.AutoScroll = constrained && snippetBlockHeight < snippetFullHeight;
+        snippetBody.AutoScrollMinSize = snippetBody.AutoScroll
+            ? new Size(0, snippetEntries.Length * 23 + 4) : Size.Empty;
         int snippetWidth = Math.Max(0, snippetBody.ClientSize.Width);
         int editWidth = 29;
         int rowLeft = 4;
@@ -1059,7 +1087,7 @@ internal sealed class SidebarWindow : Form
         for (int i = 0; i < snippetEntries.Length; i++)
         {
             string name = snippetEntries[i].Name;
-            string hotkey = i < SnippetStore.HotkeySlots ? "Shift+F" + (i + 1) : "";
+            string hotkey = snippetEntries[i].Hotkey ?? "";
             snippetPasteButtons[i].Text = name;
             snippetPasteButtons[i].AccessibleName =
                 Localization.Text("snippets.paste_hint_prefix") + name +
@@ -1089,6 +1117,20 @@ internal sealed class SidebarWindow : Form
             editor.Location = new Point(editorX, editorY);
             editor.TopMost = true;
             if (editor.ShowDialog(this) != DialogResult.OK) return;
+            if (!string.IsNullOrEmpty(editor.Result.Hotkey))
+            {
+                for (int i = 0; i < snippetEntries.Length; i++)
+                {
+                    if (i == slot) continue;
+                    if (string.Equals(snippetEntries[i].Hotkey, editor.Result.Hotkey,
+                        StringComparison.Ordinal))
+                    {
+                        MessageBox.Show(this, Localization.Text("snippets.hotkey_duplicate"), "WinSidebar",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                }
+            }
 
             SnippetEntry[] candidate = new SnippetEntry[snippetEntries.Length];
             for (int i = 0; i < candidate.Length; i++) candidate[i] = snippetEntries[i].Copy();
@@ -1097,6 +1139,7 @@ internal sealed class SidebarWindow : Form
             {
                 SnippetStore.Write(candidate);
                 snippetEntries[slot] = editor.Result;
+                ReloadHotkeys();
                 RefreshSnippetVisuals();
             }
             catch (Exception)
@@ -1119,8 +1162,9 @@ internal sealed class SidebarWindow : Form
 
         IntPtr target = restoreExternalFocus ? lastExternalForeground : Native.GetForegroundWindow();
         TextInjectionFailure failure;
-        Keys trigger = restoreExternalFocus || slot >= SnippetStore.HotkeySlots
-            ? Keys.None : (Keys)((int)Keys.F1 + slot);
+        int functionNumber = SnippetStore.HotkeyFunctionNumber(entry.Hotkey);
+        Keys trigger = restoreExternalFocus || functionNumber == 0
+            ? Keys.None : (Keys)((int)Keys.F1 + functionNumber - 1);
         if (!textInjector.Begin(target, trigger, entry.Content, restoreExternalFocus, out failure) &&
             failure != TextInjectionFailure.Busy)
             ShowTextInjectionFailure(failure);
