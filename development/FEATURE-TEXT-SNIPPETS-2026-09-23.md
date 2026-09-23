@@ -66,12 +66,11 @@ Requirements:
 
 ## Text injection design gate
 
-The implementation must be tested against browser text fields and ordinary Windows edit controls. Two viable approaches exist:
+Investigation now recommends **temporary Clipboard + Win32 SendInput Ctrl+V as the primary v1 path**, because the owner's main target is a browser/chat editor and multiline text must retain paste semantics without synthesizing Enter. Direct KEYEVENTF_UNICODE remains an experimental spike, not an automatic fallback.
 
-1. temporary clipboard + synthetic Ctrl+V, with careful clipboard preservation/restoration; or
-2. direct Unicode input using Win32 `SendInput`, avoiding clipboard mutation.
+The paste path must wait for the triggering Ctrl/Shift/F-key to be released, validate/restore the intended foreground HWND, and use a sequence-number/private-marker guard before restoring the previous clipboard so a newer user clipboard value is never overwritten. Prototype against multiline text, Unicode/emoji, long snippets, browser editors, ordinary Windows edit controls and non-text clipboard contents.
 
-Do not select purely on convenience. Prototype against multiline text, Unicode/emoji, long snippets and browser editors. The chosen method must not execute the text and must minimize interference with the user's clipboard.
+Detailed architecture and risk analysis: [`SNIPPET-IMPLEMENTATION-INVESTIGATION-2026-09-23.md`](SNIPPET-IMPLEMENTATION-INVESTIGATION-2026-09-23.md).
 
 ## Hotkeys
 
