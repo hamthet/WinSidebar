@@ -57,6 +57,12 @@ This is a **diagnostic spike**, not the final snippet UX. No snippet store, edit
 
 Do not test against an elevated/admin application yet; that is a later expected-failure scenario.
 
+## Owner-run result 1 — build configuration failure, injection not reached
+
+The owner ran the local runner on Windows. Both prerequisite commands completed far enough for the runner to enter the publish step, so the localization smoke and isolated SnippetStore smoke passed. The publish then failed before compiling product code with MSBuild error `MSB4067`: literal text `\\n` had been accidentally written between two `<Compile>` elements in `WinSidebar.csproj`. This was a project-file generation defect, not an observed failure of Clipboard/SendInput behavior.
+
+The feature branch was repaired by replacing the literal token with a real XML newline and repinning the runner to the corrected project blob. The paste probe remains **WINDOWS EXECUTION PENDING** until a new publish succeeds and Ctrl+Shift+F1 is exercised in a real editor.
+
 ## Gate after owner result
 
 If browser + Notepad + clipboard restoration pass, promote `TextInjectionProbe` into the reusable injector and proceed to `SnippetStore`, four-row UI/editor and mouse-click focus restoration. If the probe fails, fix injection semantics before adding the UI.
