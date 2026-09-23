@@ -80,6 +80,25 @@ The pre-change expandable state is preserved at `checkpoint/expandable-rows-test
 
 The requested changes are now **SOURCE STAGED / OWNER BUILD + GUI RETEST PENDING**. No Actions, FILEBRIDGE, main merge or release.
 
+## Owner result — fresh profile view and next retest
+
+The owner supplied a fresh-profile screenshot showing the revised independent section controls. The earlier shortcut-load error was not reported during that fresh launch, but recurrence has **not** been ruled out. The next run must preserve the newly created profile and reopen against it.
+
+New source-staged changes:
+
+- normal 12-shortcut / 8-script layouts allocate the full required section height and disable their internal scrollbars;
+- the overall sidebar height automatically grows when needed, capped by the monitor working area; only physically constrained desktops fall back to section scrolling;
+- the script gear editor now includes a persisted keyboard-shortcut selector: None or Shift+F1..Shift+F12;
+- scripts 1..4 migrate/default to Shift+F1..F4 when an older snippet file has no hotkey field; scripts 5..8 default to none;
+- duplicate script hotkeys are rejected before save;
+- runtime hotkey registrations are rebuilt after edit/add/remove/restore, so changes take effect without restarting;
+- the old window-list keyboard navigation remains intentionally removed;
+- the owner profile is explicitly preserved by the current runner so the load-error recurrence can be observed.
+
+The pre-change fresh-profile state is preserved at `checkpoint/fresh-profile-controls-pass-20260923` (`088b90e73960c662b530528d355fa260a9ed6c44`).
+
+**Status:** SOURCE STAGED / OWNER BUILD + PRESERVED-PROFILE RETEST PENDING.
+
 ## Owner-run preview
 
 Use only:
