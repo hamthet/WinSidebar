@@ -49,6 +49,10 @@ Write-Host 'Running five-language localization smoke...'
 & $dotnet run --project .\tests\LocalizationSmoke.csproj -c Release
 if ($LASTEXITCODE -ne 0) { throw 'Localization smoke failed.' }
 
+Write-Host 'Running isolated snippet-store smoke...'
+& $dotnet run --project .\tests\SnippetStoreSmoke.csproj -c Release
+if ($LASTEXITCODE -ne 0) { throw 'Snippet-store smoke failed.' }
+
 $output = Join-Path $env:TEMP ('WinSidebar-snippet-probe-' + [Guid]::NewGuid().ToString('N'))
 Write-Host "Publishing probe to: $output"
 & $dotnet publish .\WinSidebar.csproj -c Release -r win-x64 --self-contained true -o $output
