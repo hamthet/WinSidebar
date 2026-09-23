@@ -24,7 +24,7 @@ internal static class ShortcutStore
 {
     internal const int MinimumEntries = 4;
     internal const int EntriesPerRow = 4;
-    internal const int MaxEntries = 40;
+    internal const int MaxEntries = 12;
     internal const long MaxFileBytes = 256L * 1024L;
 
     internal static readonly string Root = Path.Combine(
