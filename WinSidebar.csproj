@@ -29,6 +29,7 @@
     <Compile Include="src/ShortcutConfig.cs" />
     <Compile Include="src/WindowManagement.cs" />
     <Compile Include="src/Localization.cs" />
+    <Compile Include="src/FirstRunLanguageDialog.cs" />
     <Compile Include="src/SnippetStore.cs" />
     <Compile Include="src/SnippetEditor.cs" />
     <Compile Include="src/TextInjection.cs" />
