@@ -712,46 +712,68 @@ internal sealed class SidebarWindow : Form
     }
 
 
-    private void RestoreDefaults()
+    private void RestoreShortcutDefaults()
     {
-        if (MessageBox.Show(this, Localization.Text("sidebar.restore_question"),
-            "WinSidebar", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) != DialogResult.Yes) return;
-        byte[] oldSettings, oldShortcuts, oldIgnored;
-        try {
-            oldSettings = SnapshotFile(settingsPath);
-            oldShortcuts = SnapshotFile(ShortcutStore.FilePath);
-            oldIgnored = SnapshotFile(windows.FilePath);
-        }
-        catch (Exception ex) { MessageBox.Show(this, Localization.Text("sidebar.restore_prepare_error") + ex.Message, "WinSidebar"); return; }
+        if (MessageBox.Show(this, Localization.Text("sidebar.restore_shortcuts_question"),
+            "WinSidebar", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+            MessageBoxDefaultButton.Button2) != DialogResult.Yes) return;
+
+        byte[] oldFile = null;
         ShortcutEntry[] previous = new ShortcutEntry[entries.Length];
         for (int i = 0; i < entries.Length; i++) previous[i] = entries[i].Copy();
-        int oldWidth = widthIndex, oldHeight = heightIndex;
-        bool oldLeft = leftSide, oldSecondary = secondary;
-        string oldBrowser = browserExecutable; bool oldUseSystem = browserUseSystem;
         try
         {
+            oldFile = SnapshotFile(ShortcutStore.FilePath);
             ShortcutEntry[] defaults = ShortcutStore.Defaults();
             ShortcutStore.Write(defaults);
-            widthIndex = 0; heightIndex = 0; leftSide = false; secondary = false;
-            browserExecutable = ""; browserUseSystem = true;
-            SaveSettingsStrict();
-            windows.ResetRules();
             entries = defaults;
             EnsureShortcutControls();
-            RefreshShortcutVisuals(); Reposition(); RefreshWindows(true);
-            MessageBox.Show(this, Localization.Text("sidebar.restore_success"), "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            RefreshShortcutVisuals();
+            Reposition();
+            MessageBox.Show(this, Localization.Text("sidebar.restore_shortcuts_success"),
+                "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch (Exception ex)
         {
-            widthIndex = oldWidth; heightIndex = oldHeight; leftSide = oldLeft; secondary = oldSecondary;
-            browserExecutable = oldBrowser; browserUseSystem = oldUseSystem;
             entries = previous;
             EnsureShortcutControls();
-            string recoveryError = "";
-            try { RestoreFile(settingsPath, oldSettings); RestoreFile(ShortcutStore.FilePath, oldShortcuts); RestoreFile(windows.FilePath, oldIgnored); windows.Load(); }
-            catch (Exception recovery) { recoveryError = Localization.Text("sidebar.recovery_error") + recovery.Message; }
-            RefreshShortcutVisuals(); Reposition(); RefreshWindows(true);
-            MessageBox.Show(this, Localization.Text("sidebar.restore_failed") + ex.Message + recoveryError,
+            try { RestoreFile(ShortcutStore.FilePath, oldFile); } catch (Exception) { }
+            RefreshShortcutVisuals();
+            Reposition();
+            MessageBox.Show(this, Localization.Text("sidebar.save_shortcut_failed") + ex.Message,
+                "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+    }
+
+    private void RestoreSnippetDefaults()
+    {
+        if (MessageBox.Show(this, Localization.Text("snippets.restore_question"),
+            "WinSidebar", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+            MessageBoxDefaultButton.Button2) != DialogResult.Yes) return;
+
+        byte[] oldFile = null;
+        SnippetEntry[] previous = new SnippetEntry[snippetEntries.Length];
+        for (int i = 0; i < snippetEntries.Length; i++) previous[i] = snippetEntries[i].Copy();
+        try
+        {
+            oldFile = SnapshotFile(SnippetStore.FilePath);
+            SnippetEntry[] defaults = SnippetStore.Defaults();
+            SnippetStore.Write(defaults);
+            snippetEntries = defaults;
+            EnsureSnippetControls();
+            RefreshSnippetVisuals();
+            Reposition();
+            MessageBox.Show(this, Localization.Text("snippets.restore_success"),
+                "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        catch (Exception)
+        {
+            snippetEntries = previous;
+            EnsureSnippetControls();
+            try { RestoreFile(SnippetStore.FilePath, oldFile); } catch (Exception) { }
+            RefreshSnippetVisuals();
+            Reposition();
+            MessageBox.Show(this, Localization.Text("snippets.save_failed"),
                 "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
