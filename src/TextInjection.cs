@@ -3,14 +3,29 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-// Development spike for the text-snippet feature.
-// It exercises the same clipboard + SendInput path intended for production,
-// but is currently wired only to Ctrl+Shift+F1 with diagnostic literal text.
-internal sealed class TextInjectionProbe : IDisposable
+internal enum TextInjectionFailure
+{
+    None,
+    Busy,
+    TargetUnavailable,
+    EmptyText,
+    ModifierTimeout,
+    TargetChanged,
+    FocusFailed,
+    ClipboardPrepareFailed,
+    SendInputFailed,
+    ClipboardRestoreFailed
+}
+
+// Cross-application literal text insertion for snippet slots.
+// The content is never executed. It is staged on the clipboard, pasted with
+// SendInput Ctrl+V, and the previous clipboard is restored only if WinSidebar
+// still owns the clipboard generation it created.
+internal sealed class TextInjector : IDisposable
 {
     private const uint InputKeyboard = 1;
     private const uint KeyEventKeyUp = 0x0002;
-    private const string MarkerFormat = "WinSidebar.TextInjectionProbe.Marker";
+    private const string MarkerFormat = "WinSidebar.TextInjector.Marker";
 
     [StructLayout(LayoutKind.Sequential)]
     private struct INPUT
@@ -22,8 +37,8 @@ internal sealed class TextInjectionProbe : IDisposable
     [StructLayout(LayoutKind.Explicit)]
     private struct InputUnion
     {
-        // MOUSEINPUT is intentionally present even though this feature only sends
-        // keyboard input. It gives the union the native INPUT union size on x64.
+        // MOUSEINPUT is intentionally present even though snippets only send
+        // keyboard input. The native INPUT union must retain its full x64 size.
         [FieldOffset(0)]
         internal MOUSEINPUT mouse;
         [FieldOffset(0)]
@@ -70,128 +85,174 @@ internal sealed class TextInjectionProbe : IDisposable
     [DllImport("user32.dll")]
     private static extern uint GetClipboardSequenceNumber();
 
-    private enum ProbeState
+    private enum PasteState
     {
         Idle,
         WaitingForModifierRelease,
+        WaitingForTargetFocus,
         WaitingToRestoreClipboard
     }
 
     private readonly Timer timer = new Timer();
-    private ProbeState state;
+    private PasteState state;
     private IntPtr target;
     private Keys triggerKey;
     private string text;
+    private bool restoreTargetFocus;
     private string markerToken;
     private DataObject previousClipboard;
     private bool previousClipboardWasEmpty;
     private bool ownsClipboard;
     private uint ownedClipboardSequence;
-    private DateTime releaseDeadlineUtc;
+    private DateTime stateDeadlineUtc;
     private DateTime restoreAtUtc;
 
-    internal event Action<string> Failed;
+    internal event Action<TextInjectionFailure> Failed;
     internal event Action Completed;
-    internal bool IsBusy { get { return state != ProbeState.Idle; } }
+    internal bool IsBusy { get { return state != PasteState.Idle; } }
 
-    internal TextInjectionProbe()
+    internal TextInjector()
     {
         timer.Interval = 20;
         timer.Tick += delegate { Advance(); };
     }
 
-    internal bool Begin(IntPtr targetWindow, Keys trigger, string literalText, out string error)
+    internal bool Begin(IntPtr targetWindow, Keys trigger, string literalText,
+        bool refocusTarget, out TextInjectionFailure failure)
     {
-        error = "";
-        if (state != ProbeState.Idle)
+        failure = TextInjectionFailure.None;
+        if (state != PasteState.Idle)
         {
-            error = "Another paste probe is still active.";
+            failure = TextInjectionFailure.Busy;
             return false;
         }
-        if (targetWindow == IntPtr.Zero || !Native.IsWindow(targetWindow))
+        if (!IsExternalTarget(targetWindow))
         {
-            error = "The foreground target is no longer available.";
-            return false;
-        }
-        uint pid;
-        Native.GetWindowThreadProcessId(targetWindow, out pid);
-        if (pid == (uint)Process.GetCurrentProcess().Id)
-        {
-            error = "WinSidebar itself cannot be the paste target.";
+            failure = TextInjectionFailure.TargetUnavailable;
             return false;
         }
         if (string.IsNullOrEmpty(literalText))
         {
-            error = "The diagnostic text is empty.";
+            failure = TextInjectionFailure.EmptyText;
             return false;
         }
 
         target = targetWindow;
         triggerKey = trigger;
         text = literalText;
-        releaseDeadlineUtc = DateTime.UtcNow.AddMilliseconds(1500);
-        state = ProbeState.WaitingForModifierRelease;
+        restoreTargetFocus = refocusTarget;
+        stateDeadlineUtc = DateTime.UtcNow.AddMilliseconds(1500);
+        state = PasteState.WaitingForModifierRelease;
         timer.Start();
         return true;
     }
 
     private static bool IsDown(Keys key)
     {
-        return (GetAsyncKeyState((int)key) & 0x8000) != 0;
+        return key != Keys.None && (GetAsyncKeyState((int)key) & 0x8000) != 0;
+    }
+
+    private static bool IsExternalTarget(IntPtr hwnd)
+    {
+        if (hwnd == IntPtr.Zero || !Native.IsWindow(hwnd)) return false;
+        uint pid;
+        Native.GetWindowThreadProcessId(hwnd, out pid);
+        return pid != (uint)Process.GetCurrentProcess().Id;
     }
 
     private void Advance()
     {
-        if (state == ProbeState.WaitingForModifierRelease)
+        if (state == PasteState.WaitingForModifierRelease)
         {
-            if (DateTime.UtcNow > releaseDeadlineUtc)
+            if (DateTime.UtcNow > stateDeadlineUtc)
             {
-                Fail("Timed out while waiting for Ctrl, Shift and the function key to be released.");
+                Fail(TextInjectionFailure.ModifierTimeout);
                 return;
             }
             if (IsDown(Keys.ControlKey) || IsDown(Keys.ShiftKey) || IsDown(triggerKey)) return;
-            if (!Native.IsWindow(target) || Native.GetForegroundWindow() != target)
+            if (!IsExternalTarget(target))
             {
-                Fail("The foreground window changed before the paste could start.");
+                Fail(TextInjectionFailure.TargetUnavailable);
                 return;
             }
 
-            try
+            if (restoreTargetFocus)
             {
-                CaptureClipboard();
-                PutDiagnosticTextOnClipboard();
+                if (Native.GetForegroundWindow() != target)
+                {
+                    Native.SetForegroundWindow(target);
+                    stateDeadlineUtc = DateTime.UtcNow.AddMilliseconds(800);
+                    state = PasteState.WaitingForTargetFocus;
+                    return;
+                }
             }
-            catch (Exception ex)
+            else if (Native.GetForegroundWindow() != target)
             {
-                Fail("The clipboard could not be prepared: " + ex.Message);
+                Fail(TextInjectionFailure.TargetChanged);
                 return;
             }
 
-            if (!SendPasteKeystroke())
-            {
-                TryRestoreAfterFailure();
-                Fail("Windows did not accept the simulated Ctrl+V. The target may be elevated or may block simulated input.");
-                return;
-            }
-
-            restoreAtUtc = DateTime.UtcNow.AddMilliseconds(350);
-            state = ProbeState.WaitingToRestoreClipboard;
+            StartPaste();
             return;
         }
 
-        if (state == ProbeState.WaitingToRestoreClipboard && DateTime.UtcNow >= restoreAtUtc)
+        if (state == PasteState.WaitingForTargetFocus)
+        {
+            if (!IsExternalTarget(target))
+            {
+                Fail(TextInjectionFailure.TargetUnavailable);
+                return;
+            }
+            if (Native.GetForegroundWindow() == target)
+            {
+                StartPaste();
+                return;
+            }
+            if (DateTime.UtcNow > stateDeadlineUtc)
+            {
+                Fail(TextInjectionFailure.FocusFailed);
+                return;
+            }
+            return;
+        }
+
+        if (state == PasteState.WaitingToRestoreClipboard && DateTime.UtcNow >= restoreAtUtc)
         {
             try
             {
                 RestoreClipboardIfStillOwned();
                 Complete();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 ownsClipboard = false;
-                Fail("The text was sent, but the previous clipboard could not be restored: " + ex.Message);
+                Fail(TextInjectionFailure.ClipboardRestoreFailed);
             }
         }
+    }
+
+    private void StartPaste()
+    {
+        try
+        {
+            CaptureClipboard();
+            PutTextOnClipboard();
+        }
+        catch (Exception)
+        {
+            Fail(TextInjectionFailure.ClipboardPrepareFailed);
+            return;
+        }
+
+        if (!SendPasteKeystroke())
+        {
+            TryRestoreAfterFailure();
+            Fail(TextInjectionFailure.SendInputFailed);
+            return;
+        }
+
+        restoreAtUtc = DateTime.UtcNow.AddMilliseconds(350);
+        state = PasteState.WaitingToRestoreClipboard;
     }
 
     private void CaptureClipboard()
@@ -213,7 +274,7 @@ internal sealed class TextInjectionProbe : IDisposable
         previousClipboardWasEmpty = !any;
     }
 
-    private void PutDiagnosticTextOnClipboard()
+    private void PutTextOnClipboard()
     {
         markerToken = Guid.NewGuid().ToString("N");
         DataObject payload = new DataObject();
@@ -258,7 +319,7 @@ internal sealed class TextInjectionProbe : IDisposable
         if (!ClipboardStillOwned())
         {
             ownsClipboard = false;
-            return; // Something newer owns the clipboard; never overwrite it.
+            return; // Never overwrite a clipboard generation created after ours.
         }
 
         if (previousClipboardWasEmpty) Clipboard.Clear();
@@ -275,19 +336,19 @@ internal sealed class TextInjectionProbe : IDisposable
     private void Complete()
     {
         timer.Stop();
-        state = ProbeState.Idle;
+        state = PasteState.Idle;
         ClearRequest();
         Action handler = Completed;
         if (handler != null) handler();
     }
 
-    private void Fail(string message)
+    private void Fail(TextInjectionFailure failure)
     {
         timer.Stop();
-        state = ProbeState.Idle;
+        state = PasteState.Idle;
         ClearRequest();
-        Action<string> handler = Failed;
-        if (handler != null) handler(message);
+        Action<TextInjectionFailure> handler = Failed;
+        if (handler != null) handler(failure);
     }
 
     private void ClearRequest()
@@ -295,6 +356,7 @@ internal sealed class TextInjectionProbe : IDisposable
         target = IntPtr.Zero;
         triggerKey = Keys.None;
         text = null;
+        restoreTargetFocus = false;
         markerToken = null;
         previousClipboard = null;
         previousClipboardWasEmpty = false;
@@ -307,7 +369,7 @@ internal sealed class TextInjectionProbe : IDisposable
         if (ownsClipboard) TryRestoreAfterFailure();
         timer.Stop();
         timer.Dispose();
-        state = ProbeState.Idle;
+        state = PasteState.Idle;
         ClearRequest();
     }
 }
