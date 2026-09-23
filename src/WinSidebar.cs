@@ -731,7 +731,7 @@ internal sealed class SidebarWindow : Form
         title.Text = " WinSidebar";
         int inside = content.ClientSize.Width;
         header.SetBounds(3, 3, Math.Max(0, inside - 6), 25);
-        const int snippetBlockHeight = 116;
+        const int snippetBlockHeight = 118;
         snippetsPanel.SetBounds(3, Math.Max(0, height - snippetBlockHeight - 6),
             Math.Max(0, inside - 6), snippetBlockHeight);
         folders.SetBounds(3, Math.Max(0, snippetsPanel.Top - 65), Math.Max(0, inside - 6), 61);
