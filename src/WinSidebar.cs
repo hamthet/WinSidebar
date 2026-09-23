@@ -127,8 +127,9 @@ internal sealed class SidebarWindow : Form
     private const int HeightDefault = 504;
     private const int WmHotkey = 0x0312;
     private const int WmMouseActivate = 0x0021;
+    private const uint NoRepeat = 0x4000;
     private const uint ShiftNoRepeat = 0x4004;
-    private const uint CtrlShiftNoRepeat = 0x4006;
+    private const int ShortcutHotkeyBase = 9801;
     private const int SnippetHotkeyBase = 9811;
     private static readonly int[] Widths = { 211, 260, 324 }; // one-way cycle
     private static readonly int[] Heights = { HeightDefault, 640, 780 }; // one-way cycle, clamped to work area
@@ -153,7 +154,9 @@ internal sealed class SidebarWindow : Form
     private readonly Button horizontalSizeButton = new Button();
     private readonly Button verticalSizeButton = new Button();
     private readonly Button addShortcutRowButton = new Button();
+    private readonly Button removeShortcutRowButton = new Button();
     private readonly Button addSnippetButton = new Button();
+    private readonly Button removeSnippetButton = new Button();
     private readonly Label folderTitle = new Label();
     private readonly Panel folderHeader = new Panel();
     private readonly Button closeButton = new Button();
@@ -171,8 +174,8 @@ internal sealed class SidebarWindow : Form
     private readonly WindowManagement windows = new WindowManagement();
     private readonly TextInjector textInjector = new TextInjector();
     private readonly ContextMenuStrip shortcutEditRouter = new ContextMenuStrip();
-    private readonly Button languageButton = new Button();
     private readonly Button restoreDefaultsButton = new Button();
+    private readonly Button restoreSnippetDefaultsButton = new Button();
     private readonly List<int> registered = new List<int>();
     private readonly string settingsPath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -208,8 +211,7 @@ internal sealed class SidebarWindow : Form
 
     internal SidebarWindow()
     {
-        Localization.Initialize(settingsPath);
-        browserUseSystem = !File.Exists(settingsPath); // primeira instalação: navegador padrão
+        browserUseSystem = true;
         LoadSettings();
         try { entries = ShortcutStore.Read(); }
         catch (Exception ex)
