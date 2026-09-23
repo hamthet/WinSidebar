@@ -63,6 +63,16 @@ The owner ran the local runner on Windows. Both prerequisite commands completed 
 
 The feature branch was repaired by replacing the literal token with a real XML newline and repinning the runner to the corrected project blob. The paste probe remains **WINDOWS EXECUTION PENDING** until a new publish succeeds and Ctrl+Shift+F1 is exercised in a real editor.
 
+## Owner-run result 2 — browser/chat insertion PASS; rapid-repeat modal defect observed
+
+After the project XML repair, the owner successfully exercised the hotkey injection path in the browser/chat composer. The pasted payload preserved Portuguese accents, Cyrillic, Simplified Chinese and emoji. This is a genuine Windows GUI PASS for the core Clipboard + SendInput insertion path.
+
+During rapid repeated activation, the diagnostic build displayed modal “Another paste probe is still active” dialogs and could stack them. The owner requested that repeated activation while a paste transaction is active be ignored without a popup. The feature branch now treats `busy` as a normal no-op before any dialog is created. This correction is source-staged but not separately owner-retested yet.
+
+The owner-provided pasted sample contained more than one diagnostic payload because the hotkey was activated multiple times. A fresh activation after the prior transaction has completed remains intentionally valid; only activations while the transaction is still active are discarded.
+
+Clipboard restoration was not explicitly reported in the owner message, so **do not mark clipboard preservation PASS yet**.
+
 ## Gate after owner result
 
 If browser + Notepad + clipboard restoration pass, promote `TextInjectionProbe` into the reusable injector and proceed to `SnippetStore`, four-row UI/editor and mouse-click focus restoration. If the probe fails, fix injection semantics before adding the UI.
