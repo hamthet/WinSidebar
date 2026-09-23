@@ -28,12 +28,16 @@ internal static class SnippetStore
 
     private sealed class Document
     {
+        // Explicit public constructors keep System.Text.Json deserialization
+        // independent from non-public-constructor behavior.
+        public Document() { }
         public int version { get; set; }
         public List<Item> items { get; set; }
     }
 
     private sealed class Item
     {
+        public Item() { }
         public int id { get; set; }
         public string name { get; set; }
         public string content { get; set; }
