@@ -108,6 +108,25 @@ internal static class Localization
         Select(chosen);
     }
 
+    internal static void SaveInitialSelection(string settingsFile, string code)
+    {
+        Select(code);
+        Directory.CreateDirectory(Path.GetDirectoryName(settingsFile));
+        string temporary = settingsFile + "." + Guid.NewGuid().ToString("N") + ".tmp";
+        try
+        {
+            File.WriteAllLines(temporary, new[] { "language=" + code });
+            if (File.Exists(settingsFile))
+                File.Replace(temporary, settingsFile, settingsFile + ".bak", true);
+            else
+                File.Move(temporary, settingsFile);
+        }
+        finally
+        {
+            if (File.Exists(temporary)) File.Delete(temporary);
+        }
+    }
+
     internal static void Select(string code)
     {
         // Only catalogs actually embedded in the application can be selected.
