@@ -17,7 +17,9 @@ internal sealed class SnippetEntry
 
 internal static class SnippetStore
 {
-    internal const int SlotCount = 4;
+    internal const int MinimumSlots = 4;
+    internal const int HotkeySlots = 4;
+    internal const int MaxSlots = 40;
     internal const int MaxNameLength = 48;
     internal const int MaxContentLength = 65536;
     internal const long MaxFileBytes = 2L * 1024L * 1024L;
@@ -43,12 +45,22 @@ internal static class SnippetStore
         public string content { get; set; }
     }
 
+    internal static SnippetEntry CreateDefault(int index)
+    {
+        return new SnippetEntry { Name = "Script " + (index + 1), Content = "" };
+    }
+
     internal static SnippetEntry[] Defaults()
     {
-        SnippetEntry[] result = new SnippetEntry[SlotCount];
-        for (int i = 0; i < result.Length; i++)
-            result[i] = new SnippetEntry { Name = "Script " + (i + 1), Content = "" };
+        SnippetEntry[] result = new SnippetEntry[MinimumSlots];
+        for (int i = 0; i < result.Length; i++) result[i] = CreateDefault(i);
         return result;
+    }
+
+    private static void ValidateCount(int count)
+    {
+        if (count < MinimumSlots || count > MaxSlots)
+            throw new InvalidDataException("Snippet file contains an invalid number of slots.");
     }
 
     internal static SnippetEntry[] Read()
@@ -69,15 +81,21 @@ internal static class SnippetStore
         using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
             document = JsonSerializer.Deserialize<Document>(stream);
 
-        if (document == null || document.version != 1 || document.items == null ||
-            document.items.Count != SlotCount)
+        if (document == null || document.items == null)
             throw new InvalidDataException("Snippet file has an unsupported structure or version.");
+        if (document.version == 1)
+        {
+            if (document.items.Count != MinimumSlots)
+                throw new InvalidDataException("Snippet file has an unsupported structure or version.");
+        }
+        else if (document.version == 2) ValidateCount(document.items.Count);
+        else throw new InvalidDataException("Snippet file has an unsupported structure or version.");
 
-        SnippetEntry[] result = new SnippetEntry[SlotCount];
-        bool[] seen = new bool[SlotCount];
+        SnippetEntry[] result = new SnippetEntry[document.items.Count];
+        bool[] seen = new bool[document.items.Count];
         foreach (Item item in document.items)
         {
-            if (item == null || item.id < 0 || item.id >= SlotCount || seen[item.id])
+            if (item == null || item.id < 0 || item.id >= result.Length || seen[item.id])
                 throw new InvalidDataException("Snippet file contains an invalid slot id.");
             seen[item.id] = true;
             result[item.id] = NormalizeAndValidate(new SnippetEntry {
@@ -85,9 +103,9 @@ internal static class SnippetStore
                 Content = item.content
             });
         }
-        for (int i = 0; i < SlotCount; i++)
+        for (int i = 0; i < result.Length; i++)
             if (!seen[i] || result[i] == null)
-                throw new InvalidDataException("Snippet file does not contain exactly four unique slots.");
+                throw new InvalidDataException("Snippet file contains missing or duplicate slots.");
         return result;
     }
 
@@ -99,11 +117,14 @@ internal static class SnippetStore
     internal static void Write(string path, SnippetEntry[] entries)
     {
         if (string.IsNullOrWhiteSpace(path)) throw new ArgumentException("Snippet path is required.", nameof(path));
-        if (entries == null || entries.Length != SlotCount)
-            throw new InvalidDataException("Exactly four snippet slots are required.");
+        if (entries == null) throw new InvalidDataException("Snippet slots are required.");
+        ValidateCount(entries.Length);
 
-        Document document = new Document { version = 1, items = new List<Item>(SlotCount) };
-        for (int i = 0; i < SlotCount; i++)
+        Document document = new Document {
+            version = entries.Length == MinimumSlots ? 1 : 2,
+            items = new List<Item>(entries.Length)
+        };
+        for (int i = 0; i < entries.Length; i++)
         {
             SnippetEntry normalized = NormalizeAndValidate(entries[i]);
             document.items.Add(new Item { id = i, name = normalized.Name, content = normalized.Content });
