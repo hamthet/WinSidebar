@@ -395,9 +395,20 @@ internal sealed class SidebarWindow : Form
         addShortcutRowButton.BringToFront();
         tips.SetToolTip(addShortcutRowButton, Localization.Text("sidebar.add_shortcut_row"));
 
-        ConfigureShortcutHeaderButton(languageButton, "\U0001F310", Localization.Text("sidebar.language"),
-            delegate { languageMenu.DropDown.Show(languageButton, new Point(0, languageButton.Height)); });
-        ConfigureShortcutHeaderButton(restoreDefaultsButton, "↺", Localization.Text("sidebar.restore_defaults"), delegate { RestoreDefaults(); });
+        removeShortcutRowButton.Text = "-";
+        removeShortcutRowButton.Dock = DockStyle.Right;
+        removeShortcutRowButton.Width = 27;
+        removeShortcutRowButton.Height = 20;
+        removeShortcutRowButton.BackColor = Face;
+        removeShortcutRowButton.FlatStyle = FlatStyle.Standard;
+        removeShortcutRowButton.AccessibleName = Localization.Text("sidebar.remove_shortcut_row");
+        removeShortcutRowButton.Click += delegate { RemoveShortcutRow(); };
+        folderHeader.Controls.Add(removeShortcutRowButton);
+        removeShortcutRowButton.BringToFront();
+        tips.SetToolTip(removeShortcutRowButton, Localization.Text("sidebar.remove_shortcut_row"));
+
+        ConfigureShortcutHeaderButton(restoreDefaultsButton, "↺",
+            Localization.Text("sidebar.restore_defaults"), delegate { RestoreShortcutDefaults(); });
 
         shortcutEditRouter.Opening += delegate(object sender, System.ComponentModel.CancelEventArgs e) {
             e.Cancel = true;
@@ -437,6 +448,30 @@ internal sealed class SidebarWindow : Form
         snippetHeader.Controls.Add(addSnippetButton);
         addSnippetButton.BringToFront();
         tips.SetToolTip(addSnippetButton, Localization.Text("snippets.add_row"));
+
+        removeSnippetButton.Text = "-";
+        removeSnippetButton.Dock = DockStyle.Right;
+        removeSnippetButton.Width = 27;
+        removeSnippetButton.Height = 20;
+        removeSnippetButton.BackColor = Face;
+        removeSnippetButton.FlatStyle = FlatStyle.Standard;
+        removeSnippetButton.AccessibleName = Localization.Text("snippets.remove_row");
+        removeSnippetButton.Click += delegate { RemoveSnippetRow(); };
+        snippetHeader.Controls.Add(removeSnippetButton);
+        removeSnippetButton.BringToFront();
+        tips.SetToolTip(removeSnippetButton, Localization.Text("snippets.remove_row"));
+
+        restoreSnippetDefaultsButton.Text = "↺";
+        restoreSnippetDefaultsButton.Dock = DockStyle.Right;
+        restoreSnippetDefaultsButton.Width = 27;
+        restoreSnippetDefaultsButton.Height = 20;
+        restoreSnippetDefaultsButton.BackColor = Face;
+        restoreSnippetDefaultsButton.FlatStyle = FlatStyle.Standard;
+        restoreSnippetDefaultsButton.AccessibleName = Localization.Text("snippets.restore_defaults");
+        restoreSnippetDefaultsButton.Click += delegate { RestoreSnippetDefaults(); };
+        snippetHeader.Controls.Add(restoreSnippetDefaultsButton);
+        restoreSnippetDefaultsButton.BringToFront();
+        tips.SetToolTip(restoreSnippetDefaultsButton, Localization.Text("snippets.restore_defaults"));
 
         snippetBody.AutoScroll = true;
         snippetBody.BackColor = Face;
