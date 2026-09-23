@@ -8,7 +8,7 @@ Set-StrictMode -Version Latest
 $expectedBranch = 'feature/text-snippets'
 $expectedWinSidebarBlob = '29475bbc16dddfce5004e2860a54f632521bdcd7'
 $expectedInjectionBlob = 'cd3fe79d609840112399140faedb5b1187242870'
-$expectedProjectBlob = '08c0a4ede3953ac2f37dcc4366b23d8fac54f413'
+$expectedProjectBlob = '54e8b0fafd513bdf8a878fc45903a751665bb06b'
 
 $rootFromGit = (git rev-parse --show-toplevel).Trim()
 if ($LASTEXITCODE -ne 0) { throw 'Unable to resolve the Git repository root.' }
