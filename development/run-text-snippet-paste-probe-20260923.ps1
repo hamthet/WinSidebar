@@ -6,7 +6,7 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
 $expectedBranch = 'feature/text-snippets'
-$expectedWinSidebarBlob = '8e5a5abf5f9e504496b6921696bb2c7a5db338d2'
+$expectedWinSidebarBlob = '29475bbc16dddfce5004e2860a54f632521bdcd7'
 $expectedInjectionBlob = 'cd3fe79d609840112399140faedb5b1187242870'
 $expectedProjectBlob = '08c0a4ede3953ac2f37dcc4366b23d8fac54f413'
 
