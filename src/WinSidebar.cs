@@ -170,6 +170,7 @@ internal sealed class SidebarWindow : Form
     private SnippetEntry[] snippetEntries;
     private readonly WindowManagement windows = new WindowManagement();
     private readonly TextInjector textInjector = new TextInjector();
+    private readonly ContextMenuStrip shortcutEditRouter = new ContextMenuStrip();
     private readonly Button languageButton = new Button();
     private readonly Button restoreDefaultsButton = new Button();
     private readonly List<int> registered = new List<int>();
@@ -376,35 +377,36 @@ internal sealed class SidebarWindow : Form
         folderTitle.TextAlign = ContentAlignment.MiddleLeft;
         folderTitle.Dock = DockStyle.Fill;
         folderHeader.Controls.Add(folderTitle);
-        configureButton.Text = "⚙";
-        configureButton.Dock = DockStyle.Right;
-        configureButton.Width = 27;
-        configureButton.Height = 20;
-        configureButton.BackColor = Face;
-        configureButton.FlatStyle = FlatStyle.Standard;
-        configureButton.AccessibleName = Localization.Text("sidebar.configure");
-        configureButton.Click += delegate { ToggleConfigure(); };
-        folderHeader.Controls.Add(configureButton);
-        configureButton.BringToFront();
-        tips.SetToolTip(configureButton, Localization.Text("sidebar.configure_mode"));
+        shortcutBody.AutoScroll = true;
+        shortcutBody.BackColor = Face;
+        folders.Controls.Add(shortcutBody);
+
+        addShortcutRowButton.Text = "+";
+        addShortcutRowButton.Dock = DockStyle.Right;
+        addShortcutRowButton.Width = 27;
+        addShortcutRowButton.Height = 20;
+        addShortcutRowButton.BackColor = Face;
+        addShortcutRowButton.FlatStyle = FlatStyle.Standard;
+        addShortcutRowButton.AccessibleName = Localization.Text("sidebar.add_shortcut_row");
+        addShortcutRowButton.Click += delegate { AddShortcutRow(); };
+        folderHeader.Controls.Add(addShortcutRowButton);
+        addShortcutRowButton.BringToFront();
+        tips.SetToolTip(addShortcutRowButton, Localization.Text("sidebar.add_shortcut_row"));
+
         ConfigureShortcutHeaderButton(languageButton, "\U0001F310", Localization.Text("sidebar.language"),
             delegate { languageMenu.DropDown.Show(languageButton, new Point(0, languageButton.Height)); });
         ConfigureShortcutHeaderButton(restoreDefaultsButton, "↺", Localization.Text("sidebar.restore_defaults"), delegate { RestoreDefaults(); });
-        for (int i = 0; i < 4; i++)
-        {
-            int slot = i;
-            shortcuts[i] = new Button();
-            shortcuts[i].FlatStyle = FlatStyle.Standard;
-            shortcuts[i].BackColor = Face;
-            shortcuts[i].UseVisualStyleBackColor = false;
-            shortcuts[i].Text = "";
-            shortcuts[i].ImageAlign = ContentAlignment.MiddleCenter;
-            shortcuts[i].Click += delegate {
-                if (configureMode) EditShortcut(slot);
-                else OpenShortcut(slot);
-            };
-            folders.Controls.Add(shortcuts[i]);
-        }
+
+        shortcutEditRouter.Opening += delegate(object sender, System.ComponentModel.CancelEventArgs e) {
+            e.Cancel = true;
+            Button source = shortcutEditRouter.SourceControl as Button;
+            if (source == null || !(source.Tag is int)) return;
+            int slot = (int)source.Tag;
+            BeginInvoke((MethodInvoker)delegate {
+                if (!IsDisposed && slot >= 0 && slot < entries.Length) EditShortcut(slot);
+            });
+        };
+        EnsureShortcutControls();
         RefreshShortcutVisuals();
 
         snippetsPanel.BackColor = Face;
@@ -421,29 +423,23 @@ internal sealed class SidebarWindow : Form
         snippetTitle.TextAlign = ContentAlignment.MiddleLeft;
         snippetTitle.Dock = DockStyle.Fill;
         snippetHeader.Controls.Add(snippetTitle);
-        for (int i = 0; i < SnippetStore.SlotCount; i++)
-        {
-            int slot = i;
-            Button paste = new Button();
-            paste.FlatStyle = FlatStyle.Standard;
-            paste.BackColor = Face;
-            paste.UseVisualStyleBackColor = false;
-            paste.TextAlign = ContentAlignment.MiddleLeft;
-            paste.AutoEllipsis = true;
-            paste.MouseEnter += delegate { RememberExternalForeground(); };
-            paste.Click += delegate { PasteSnippet(slot, true); };
-            snippetsPanel.Controls.Add(paste);
-            snippetPasteButtons[i] = paste;
 
-            Button edit = new Button();
-            edit.Text = "⚙";
-            edit.FlatStyle = FlatStyle.Standard;
-            edit.BackColor = Face;
-            edit.UseVisualStyleBackColor = false;
-            edit.Click += delegate { EditSnippet(slot); };
-            snippetsPanel.Controls.Add(edit);
-            snippetEditButtons[i] = edit;
-        }
+        addSnippetButton.Text = "+";
+        addSnippetButton.Dock = DockStyle.Right;
+        addSnippetButton.Width = 27;
+        addSnippetButton.Height = 20;
+        addSnippetButton.BackColor = Face;
+        addSnippetButton.FlatStyle = FlatStyle.Standard;
+        addSnippetButton.AccessibleName = Localization.Text("snippets.add_row");
+        addSnippetButton.Click += delegate { AddSnippetRow(); };
+        snippetHeader.Controls.Add(addSnippetButton);
+        addSnippetButton.BringToFront();
+        tips.SetToolTip(addSnippetButton, Localization.Text("snippets.add_row"));
+
+        snippetBody.AutoScroll = true;
+        snippetBody.BackColor = Face;
+        snippetsPanel.Controls.Add(snippetBody);
+        EnsureSnippetControls();
         RefreshSnippetVisuals();
 
         ContextMenuStrip menu = new ContextMenuStrip();
@@ -516,6 +512,7 @@ internal sealed class SidebarWindow : Form
             tray.Visible = false; tray.Dispose();
 
             windowContextRouter.Dispose();
+            shortcutEditRouter.Dispose();
             textInjector.Dispose();
             tips.Dispose();
             foreach (Image icon in icons) if (icon != null) icon.Dispose();
