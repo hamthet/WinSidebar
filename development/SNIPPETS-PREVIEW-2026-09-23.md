@@ -47,6 +47,23 @@ Source correction is now staged on `feature/text-snippets`:
 
 These corrections are **SOURCE STAGED / OWNER RETEST PENDING**. Do not mark mouse-click paste or vertical sizing accepted until the owner runs the updated preview.
 
+## Owner result — click-target and size-cycle retest
+
+The owner retested the corrected preview and reported **“parece ótimo”** before requesting the next UI refinement. Treat this as positive GUI acceptance of the previously failing mouse-click paste path plus the horizontal/vertical cyclic sizing behavior, not as final release acceptance.
+
+The next refinement is now source-staged:
+
+- the original shortcut-edit gear/mode is removed;
+- shortcut left-click keeps opening the target;
+- shortcut right-click (or context-menu key) directly opens that shortcut editor;
+- a `+` control in **Atalhos / Shortcuts** adds one new row of four shortcuts;
+- a `+` control in **Scripts** adds one additional script row;
+- storage remains backward-readable for the existing four-entry formats and switches to an expanded format only after extra rows are created;
+- additional snippet rows are mouse-driven only; global `Ctrl+Shift+F1..F4` remains reserved for the first four scripts;
+- each section is bounded at 40 entries and scrolls when its visible area is exceeded.
+
+This refinement is **SOURCE STAGED / OWNER BUILD + GUI RETEST PENDING**. Removal of added rows is not implemented in this preview because destructive semantics were not requested.
+
 ## Owner-run preview
 
 Use only:
