@@ -573,9 +573,9 @@ internal sealed class SidebarWindow : Form
         verticalSizeButton.AccessibleName = Localization.Text("sidebar.next_height");
         tips.SetToolTip(sideButton, Localization.Text("sidebar.other_edge"));
         sideButton.AccessibleName = Localization.Text("sidebar.move_accessible");
-        folderTitle.Text = Localization.Text(configureMode ? "sidebar.configuring" : "sidebar.shortcuts");
-        configureButton.AccessibleName = Localization.Text("sidebar.configure");
-        tips.SetToolTip(configureButton, Localization.Text(configureMode ? "sidebar.finish_editing" : "sidebar.configure_mode"));
+        folderTitle.Text = Localization.Text("sidebar.shortcuts");
+        addShortcutRowButton.AccessibleName = Localization.Text("sidebar.add_shortcut_row");
+        tips.SetToolTip(addShortcutRowButton, Localization.Text("sidebar.add_shortcut_row"));
         languageButton.AccessibleName = Localization.Text("sidebar.language");
         tips.SetToolTip(languageButton, Localization.Text("sidebar.language"));
         restoreDefaultsButton.AccessibleName = Localization.Text("sidebar.restore_defaults");
@@ -596,6 +596,8 @@ internal sealed class SidebarWindow : Form
             tray.BalloonTipText = Localization.Text("sidebar.hotkeys_in_use") + hotkeyErrors;
         }
         snippetTitle.Text = Localization.Text("snippets.title");
+        addSnippetButton.AccessibleName = Localization.Text("snippets.add_row");
+        tips.SetToolTip(addSnippetButton, Localization.Text("snippets.add_row"));
         RefreshShortcutVisuals();
         RefreshSnippetVisuals();
         Reposition();
@@ -680,8 +682,8 @@ internal sealed class SidebarWindow : Form
             oldIgnored = SnapshotFile(windows.FilePath);
         }
         catch (Exception ex) { MessageBox.Show(this, Localization.Text("sidebar.restore_prepare_error") + ex.Message, "WinSidebar"); return; }
-        ShortcutEntry[] previous = new ShortcutEntry[4];
-        for (int i = 0; i < 4; i++) previous[i] = entries[i].Copy();
+        ShortcutEntry[] previous = new ShortcutEntry[entries.Length];
+        for (int i = 0; i < entries.Length; i++) previous[i] = entries[i].Copy();
         int oldWidth = widthIndex, oldHeight = heightIndex;
         bool oldLeft = leftSide, oldSecondary = secondary;
         string oldBrowser = browserExecutable; bool oldUseSystem = browserUseSystem;
@@ -693,8 +695,8 @@ internal sealed class SidebarWindow : Form
             browserExecutable = ""; browserUseSystem = true;
             SaveSettingsStrict();
             windows.ResetRules();
-            Array.Copy(defaults, entries, 4);
-            configureMode = false; folderTitle.Text = Localization.Text("sidebar.shortcuts"); configureButton.Text = "⚙";
+            entries = defaults;
+            EnsureShortcutControls();
             RefreshShortcutVisuals(); Reposition(); RefreshWindows(true);
             MessageBox.Show(this, Localization.Text("sidebar.restore_success"), "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
@@ -702,7 +704,8 @@ internal sealed class SidebarWindow : Form
         {
             widthIndex = oldWidth; heightIndex = oldHeight; leftSide = oldLeft; secondary = oldSecondary;
             browserExecutable = oldBrowser; browserUseSystem = oldUseSystem;
-            Array.Copy(previous, entries, 4);
+            entries = previous;
+            EnsureShortcutControls();
             string recoveryError = "";
             try { RestoreFile(settingsPath, oldSettings); RestoreFile(ShortcutStore.FilePath, oldShortcuts); RestoreFile(windows.FilePath, oldIgnored); windows.Load(); }
             catch (Exception recovery) { recoveryError = Localization.Text("sidebar.recovery_error") + recovery.Message; }
@@ -735,25 +738,46 @@ internal sealed class SidebarWindow : Form
         title.Text = " WinSidebar";
         int inside = content.ClientSize.Width;
         header.SetBounds(3, 3, Math.Max(0, inside - 6), 25);
-        const int snippetBlockHeight = 118;
+        int extraHeight = Math.Max(0, height - HeightDefault);
+        int shortcutRows = Math.Max(1,
+            (entries.Length + ShortcutStore.EntriesPerRow - 1) / ShortcutStore.EntriesPerRow);
+        int shortcutVisibleRows = Math.Min(shortcutRows, 1 + extraHeight / 90);
+        int snippetVisibleRows = Math.Min(snippetEntries.Length, 4 + extraHeight / 45);
+        int shortcutBlockHeight = 30 + shortcutVisibleRows * 31;
+        int snippetBlockHeight = 26 + snippetVisibleRows * 23;
+
         snippetsPanel.SetBounds(3, Math.Max(0, height - snippetBlockHeight - 6),
             Math.Max(0, inside - 6), snippetBlockHeight);
-        folders.SetBounds(3, Math.Max(0, snippetsPanel.Top - 65), Math.Max(0, inside - 6), 61);
+        folders.SetBounds(3, Math.Max(0, snippetsPanel.Top - shortcutBlockHeight - 4),
+            Math.Max(0, inside - 6), shortcutBlockHeight);
         status.SetBounds(5, Math.Max(0, folders.Top - 22), Math.Max(0, inside - 10), 19);
         tree.SetBounds(3, 34, Math.Max(0, inside - 6), Math.Max(35, status.Top - 37));
 
-        int available = Math.Max(4, folders.ClientSize.Width - 8);
-        int each = Math.Max(1, available / 4);
-        for (int i = 0; i < 4; i++)
-            shortcuts[i].SetBounds(4 + i * each, 25, (i == 3 ? available - i * each : each) - 3, 29);
+        shortcutBody.SetBounds(0, 20, Math.Max(0, folders.ClientSize.Width),
+            Math.Max(0, folders.ClientSize.Height - 20));
+        shortcutBody.AutoScrollMinSize = new Size(0, shortcutRows * 31 + 4);
+        int available = Math.Max(4, shortcutBody.ClientSize.Width - 8);
+        int each = Math.Max(1, available / ShortcutStore.EntriesPerRow);
+        for (int i = 0; i < entries.Length; i++)
+        {
+            int row = i / ShortcutStore.EntriesPerRow;
+            int column = i % ShortcutStore.EntriesPerRow;
+            int cellWidth = column == ShortcutStore.EntriesPerRow - 1
+                ? available - column * each : each;
+            shortcuts[i].SetBounds(4 + column * each, 4 + row * 31,
+                Math.Max(1, cellWidth - 3), 29);
+        }
 
-        int snippetWidth = Math.Max(0, snippetsPanel.ClientSize.Width);
+        snippetBody.SetBounds(0, 20, Math.Max(0, snippetsPanel.ClientSize.Width),
+            Math.Max(0, snippetsPanel.ClientSize.Height - 20));
+        snippetBody.AutoScrollMinSize = new Size(0, snippetEntries.Length * 23 + 4);
+        int snippetWidth = Math.Max(0, snippetBody.ClientSize.Width);
         int editWidth = 29;
         int rowLeft = 4;
         int rowRight = Math.Max(rowLeft, snippetWidth - 4);
-        for (int i = 0; i < SnippetStore.SlotCount; i++)
+        for (int i = 0; i < snippetEntries.Length; i++)
         {
-            int y = 22 + i * 23;
+            int y = 2 + i * 23;
             int editX = Math.Max(rowLeft, rowRight - editWidth);
             snippetPasteButtons[i].SetBounds(rowLeft, y, Math.Max(1, editX - rowLeft - 2), 22);
             snippetEditButtons[i].SetBounds(editX, y, editWidth, 22);
@@ -787,37 +811,152 @@ internal sealed class SidebarWindow : Form
         Reposition();
         SaveSettings();
     }
-    private void ToggleConfigure()
+    private void EnsureShortcutControls()
     {
-        configureMode = !configureMode;
-        folderTitle.Text = configureMode ? Localization.Text("sidebar.configuring") : Localization.Text("sidebar.shortcuts");
-        configureButton.Text = configureMode ? "✓" : "⚙";
-        tips.SetToolTip(configureButton, configureMode ? Localization.Text("sidebar.finish_editing") : Localization.Text("sidebar.configure"));
-        RefreshShortcutVisuals();
+        for (int i = 0; i < ShortcutStore.MaxEntries; i++)
+        {
+            if (i < entries.Length)
+            {
+                if (shortcuts[i] == null)
+                {
+                    int slot = i;
+                    Button button = new Button();
+                    button.FlatStyle = FlatStyle.Standard;
+                    button.BackColor = Face;
+                    button.UseVisualStyleBackColor = false;
+                    button.Text = "";
+                    button.ImageAlign = ContentAlignment.MiddleCenter;
+                    button.Tag = slot;
+                    button.ContextMenuStrip = shortcutEditRouter;
+                    button.Click += delegate { OpenShortcut(slot); };
+                    shortcutBody.Controls.Add(button);
+                    shortcuts[i] = button;
+                }
+                shortcuts[i].Visible = true;
+            }
+            else if (shortcuts[i] != null)
+            {
+                shortcuts[i].Visible = false;
+                shortcuts[i].Image = null;
+                if (icons[i] != null) { icons[i].Dispose(); icons[i] = null; }
+            }
+        }
+        addShortcutRowButton.Enabled = entries.Length < ShortcutStore.MaxEntries;
     }
+
+    private void EnsureSnippetControls()
+    {
+        for (int i = 0; i < SnippetStore.MaxSlots; i++)
+        {
+            if (i < snippetEntries.Length)
+            {
+                if (snippetPasteButtons[i] == null)
+                {
+                    int slot = i;
+                    Button paste = new Button();
+                    paste.FlatStyle = FlatStyle.Standard;
+                    paste.BackColor = Face;
+                    paste.UseVisualStyleBackColor = false;
+                    paste.TextAlign = ContentAlignment.MiddleLeft;
+                    paste.AutoEllipsis = true;
+                    paste.MouseEnter += delegate { RememberExternalForeground(); };
+                    paste.Click += delegate { PasteSnippet(slot, true); };
+                    snippetBody.Controls.Add(paste);
+                    snippetPasteButtons[i] = paste;
+
+                    Button edit = new Button();
+                    edit.Text = "⚙";
+                    edit.FlatStyle = FlatStyle.Standard;
+                    edit.BackColor = Face;
+                    edit.UseVisualStyleBackColor = false;
+                    edit.Click += delegate { EditSnippet(slot); };
+                    snippetBody.Controls.Add(edit);
+                    snippetEditButtons[i] = edit;
+                }
+                snippetPasteButtons[i].Visible = true;
+                snippetEditButtons[i].Visible = true;
+            }
+            else
+            {
+                if (snippetPasteButtons[i] != null) snippetPasteButtons[i].Visible = false;
+                if (snippetEditButtons[i] != null) snippetEditButtons[i].Visible = false;
+            }
+        }
+        addSnippetButton.Enabled = snippetEntries.Length < SnippetStore.MaxSlots;
+    }
+
+    private void AddShortcutRow()
+    {
+        if (entries.Length >= ShortcutStore.MaxEntries) return;
+        ShortcutEntry[] candidate = new ShortcutEntry[entries.Length + ShortcutStore.EntriesPerRow];
+        for (int i = 0; i < entries.Length; i++) candidate[i] = entries[i].Copy();
+        for (int i = entries.Length; i < candidate.Length; i++) candidate[i] = ShortcutStore.CreateEmpty(i);
+        try
+        {
+            ShortcutStore.Write(candidate);
+            entries = candidate;
+            EnsureShortcutControls();
+            RefreshShortcutVisuals();
+            Reposition();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, Localization.Text("sidebar.save_shortcut_failed") + ex.Message,
+                "WinSidebar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+    }
+
+    private void AddSnippetRow()
+    {
+        if (snippetEntries.Length >= SnippetStore.MaxSlots) return;
+        SnippetEntry[] candidate = new SnippetEntry[snippetEntries.Length + 1];
+        for (int i = 0; i < snippetEntries.Length; i++) candidate[i] = snippetEntries[i].Copy();
+        candidate[candidate.Length - 1] = SnippetStore.CreateDefault(candidate.Length - 1);
+        try
+        {
+            SnippetStore.Write(candidate);
+            snippetEntries = candidate;
+            EnsureSnippetControls();
+            RefreshSnippetVisuals();
+            Reposition();
+        }
+        catch (Exception)
+        {
+            MessageBox.Show(this, Localization.Text("snippets.save_failed"), "WinSidebar",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+    }
+
     private void RefreshShortcutVisuals()
     {
-        for (int i = 0; i < 4; i++)
+        EnsureShortcutControls();
+        for (int i = 0; i < entries.Length; i++)
         {
             shortcuts[i].Image = null;
             if (icons[i] != null) icons[i].Dispose();
             icons[i] = ShortcutStore.MakeIcon(entries[i]);
             shortcuts[i].Image = icons[i];
             shortcuts[i].AccessibleName = entries[i].Name;
-            tips.SetToolTip(shortcuts[i], (configureMode ? Localization.Text("sidebar.edit_prefix") : Localization.Text("sidebar.open_prefix")) +
-                entries[i].Name + "\n" + (entries[i].Target.Length == 0 ? Localization.Text("sidebar.not_configured") : entries[i].Target));
+            tips.SetToolTip(shortcuts[i], Localization.Text("sidebar.open_prefix") + entries[i].Name +
+                "\n" + Localization.Text("sidebar.edit_right_click") + "\n" +
+                (entries[i].Target.Length == 0 ? Localization.Text("sidebar.not_configured") : entries[i].Target));
         }
     }
+
     private void RefreshSnippetVisuals()
     {
-        for (int i = 0; i < SnippetStore.SlotCount; i++)
+        EnsureSnippetControls();
+        for (int i = 0; i < snippetEntries.Length; i++)
         {
             string name = snippetEntries[i].Name;
+            string hotkey = i < SnippetStore.HotkeySlots ? "Ctrl+Shift+F" + (i + 1) : "";
             snippetPasteButtons[i].Text = name;
             snippetPasteButtons[i].AccessibleName =
-                Localization.Text("snippets.paste_hint_prefix") + name + " — Ctrl+Shift+F" + (i + 1);
+                Localization.Text("snippets.paste_hint_prefix") + name +
+                (hotkey.Length == 0 ? "" : " — " + hotkey);
             tips.SetToolTip(snippetPasteButtons[i],
-                Localization.Text("snippets.paste_hint_prefix") + name + "\nCtrl+Shift+F" + (i + 1));
+                Localization.Text("snippets.paste_hint_prefix") + name +
+                (hotkey.Length == 0 ? "" : "\n" + hotkey));
             snippetEditButtons[i].AccessibleName =
                 Localization.Text("snippets.configure_hint_prefix") + name;
             tips.SetToolTip(snippetEditButtons[i],
@@ -841,7 +980,7 @@ internal sealed class SidebarWindow : Form
             editor.TopMost = true;
             if (editor.ShowDialog(this) != DialogResult.OK) return;
 
-            SnippetEntry[] candidate = new SnippetEntry[SnippetStore.SlotCount];
+            SnippetEntry[] candidate = new SnippetEntry[snippetEntries.Length];
             for (int i = 0; i < candidate.Length; i++) candidate[i] = snippetEntries[i].Copy();
             candidate[slot] = editor.Result;
             try
@@ -860,7 +999,7 @@ internal sealed class SidebarWindow : Form
 
     private void PasteSnippet(int slot, bool restoreExternalFocus)
     {
-        if (slot < 0 || slot >= SnippetStore.SlotCount || textInjector.IsBusy) return;
+        if (slot < 0 || slot >= snippetEntries.Length || textInjector.IsBusy) return;
         SnippetEntry entry = snippetEntries[slot];
         if (entry == null || string.IsNullOrEmpty(entry.Content))
         {
@@ -870,7 +1009,8 @@ internal sealed class SidebarWindow : Form
 
         IntPtr target = restoreExternalFocus ? lastExternalForeground : Native.GetForegroundWindow();
         TextInjectionFailure failure;
-        Keys trigger = restoreExternalFocus ? Keys.None : (Keys)((int)Keys.F1 + slot);
+        Keys trigger = restoreExternalFocus || slot >= SnippetStore.HotkeySlots
+            ? Keys.None : (Keys)((int)Keys.F1 + slot);
         if (!textInjector.Begin(target, trigger, entry.Content, restoreExternalFocus, out failure) &&
             failure != TextInjectionFailure.Busy)
             ShowTextInjectionFailure(failure);
@@ -921,8 +1061,8 @@ internal sealed class SidebarWindow : Form
             editor.Location = new Point(editorX, editorY);
             editor.TopMost = true;
             if (editor.ShowDialog(this) != DialogResult.OK) return;
-            ShortcutEntry[] candidate = new ShortcutEntry[4];
-            for (int i = 0; i < 4; i++) candidate[i] = entries[i].Copy();
+            ShortcutEntry[] candidate = new ShortcutEntry[entries.Length];
+            for (int i = 0; i < entries.Length; i++) candidate[i] = entries[i].Copy();
             candidate[slot] = editor.Result;
             try
             {
@@ -994,7 +1134,7 @@ internal sealed class SidebarWindow : Form
                 registered.Add(id);
             else hotkeyErrors += (hotkeyErrors.Length == 0 ? "" : ", ") + "Shift+F" + (i + 1);
         }
-        for (int i = 0; i < SnippetStore.SlotCount; i++)
+        for (int i = 0; i < SnippetStore.HotkeySlots; i++)
         {
             int id = SnippetHotkeyBase + i;
             if (Native.RegisterHotKey(Handle, id, CtrlShiftNoRepeat, (uint)((int)Keys.F1 + i)))
@@ -1021,7 +1161,7 @@ internal sealed class SidebarWindow : Form
             else if (id == 9802) Step(-1);
             else if (id == 9803) Step(1);
             else if (id == 9804) ActivateSelected();
-            else if (id >= SnippetHotkeyBase && id < SnippetHotkeyBase + SnippetStore.SlotCount)
+            else if (id >= SnippetHotkeyBase && id < SnippetHotkeyBase + SnippetStore.HotkeySlots)
                 PasteSnippet(id - SnippetHotkeyBase, false);
             return;
         }
