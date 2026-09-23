@@ -108,3 +108,11 @@ This feature starts **after** the frozen functional-menu checkpoint. Do not modi
 - Script rows retain their individual gear editor buttons.
 - The language globe is removed; language remains available from the general right-click menu.
 - A mandatory language chooser appears only when no WinSidebar `settings.ini` exists yet (first use), then persists the selected locale.
+
+## Owner follow-up — preserved-profile retest and configurable script hotkeys
+
+- The owner completed a fresh-profile run far enough to show the revised 12-shortcut / script UI and now explicitly wants the **existing profile preserved** on the next opening to see whether the earlier “load shortcuts” error recurs. Test runners must not delete or reset `%LOCALAPPDATA%\\WinSidebar`.
+- The old keyboard navigation of the window list remains intentionally retired.
+- Shortcut/script sections should auto-fit vertically so their own scrollbars do not appear under the normal supported 12/8 product limits. If the monitor working area is physically too short, internal scrolling remains a fallback instead of overlapping controls.
+- Script configuration now requires a persisted keyboard-shortcut selector. Supported script hotkeys for this stage are **none** or **Shift+F1..Shift+F12**. Scripts 1..4 default to Shift+F1..F4; scripts 5..8 default to none. Duplicate script assignments are rejected before save.
+- F1..F4 remain the fixed global defaults for shortcut buttons 1..4.
