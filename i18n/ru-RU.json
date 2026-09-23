@@ -133,5 +133,9 @@
   "snippets.pasted": "Текст вставлен.",
   "config.snippets_unreadable": "Не удалось прочитать текстовые скрипты. Загружены значения по умолчанию. ",
   "sidebar.next_width": "Следующая ширина",
-  "sidebar.next_height": "Следующая высота"
+  "sidebar.next_height": "Следующая высота",
+  "sidebar.add_shortcut_row": "Добавить ряд ярлыков",
+  "sidebar.edit_right_click": "Щёлкните правой кнопкой для редактирования",
+  "defaults.shortcut_prefix": "Ярлык",
+  "snippets.add_row": "Добавить скрипт"
 }
