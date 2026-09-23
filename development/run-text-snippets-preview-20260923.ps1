@@ -7,12 +7,16 @@ Set-StrictMode -Version Latest
 
 $expectedBranch = 'feature/text-snippets'
 $expected = @{
-    'src/WinSidebar.cs'    = 'a13e32e8c65f94d7213dc3cbfe35de51ea1feb74'
-    'src/ShortcutConfig.cs'= 'ff96339e5830f60e9bb119d2154b1e60389e38bc'
-    'src/SnippetStore.cs'  = 'f4f9d08f2399b64e6f8bfdd4460d10d523214892'
-    'src/SnippetEditor.cs' = '7477fb7eacafee41cb63b66cb4941ff9306621a7'
-    'src/TextInjection.cs' = '4b5e893363a4e4f9827dd003552252c2f84b526d'
-    'WinSidebar.csproj'    = 'a7c5f14eaccefd2fb33d93166e51ab7bf445318c'
+    'src/WinSidebar.cs'            = '396fb3ff8eae93c5911bdc4382f1eb40ddd7b89a'
+    'src/Localization.cs'          = 'bb7f64977fc4dcc4791512ebc5bbd77ffcd5bb69'
+    'src/FirstRunLanguageDialog.cs'= 'a582010162cdd07f55f32ef4ff9b6ebb5ef957e7'
+    'src/ShortcutConfig.cs'        = 'a4db7728b8aeec6d48b2f4909524443e809a7a4c'
+    'src/SnippetStore.cs'          = 'bd2e8da43d2dbdf9b042ab046584f275637bd216'
+    'src/SnippetEditor.cs'         = '7477fb7eacafee41cb63b66cb4941ff9306621a7'
+    'src/TextInjection.cs'         = '4b5e893363a4e4f9827dd003552252c2f84b526d'
+    'WinSidebar.csproj'            = 'bb7d1acac365a5771e9e17534a2ed3ebbb5df17a'
+    'tests/LocalizationSmoke.cs'   = 'e28b60f87dd5555f9a7ab3dcc9f0c2282b17cfed'
+    'tests/SnippetStoreSmoke.cs'   = '3ec159d8b2234a4b156cd3c606131fac5432501a'
 }
 
 $rootFromGit = (git rev-parse --show-toplevel).Trim()
@@ -70,13 +74,16 @@ if (-not (Test-Path -LiteralPath $exe -PathType Leaf)) {
 Write-Host ''
 Write-Host 'Preview ready. No source or profile data was changed by this runner.'
 Write-Host 'Test plan:'
-Write-Host '  A. ATALHOS no longer has the original gear/edit mode.'
-Write-Host '  B. Left-click an existing shortcut: it opens normally. Right-click it: its editor opens directly.'
-Write-Host '  C. Click + in ATALHOS: a new row of four empty shortcuts appears and can be right-click edited.'
-Write-Host '  D. Click + in SCRIPTS: Script 5 appears; its gear edits it and its row click pastes it.'
-Write-Host '  E. Ctrl+Shift+F1..F4 still control only Scripts 1..4; extra scripts have no invented global hotkeys.'
-Write-Host '  F. The ⇔ and ⇕ size cycles, mouse-click paste focus restoration and existing context menus still work.'
-Write-Host '  G. Restart and verify extra rows, names, contents and selected width/height persist.'
+Write-Host '  A. ATALHOS must show ↺, -, + and no globe. SCRIPTS must also show ↺, -, +.'
+Write-Host '  B. Limits: ATALHOS max 12 (3x4); SCRIPTS max 8. + disables at the limit.'
+Write-Host '  C. - removes only the last shortcut row (4) or last script (1), never below four.'
+Write-Host '  D. Restore in ATALHOS asks confirmation and resets only shortcuts. Restore in SCRIPTS asks confirmation and resets only scripts.'
+Write-Host '  E. Left-click opens every configured shortcut; right-click edits every shortcut, including folders.'
+Write-Host '  F. Global F1..F4 open shortcuts 1..4. Shift+F1..F4 paste Scripts 1..4.'
+Write-Host '  G. Extra shortcuts/scripts remain configurable and clickable but have no default global hotkey.'
+Write-Host '  H. Script mouse-click paste, ⇔/⇕ size cycles, language in the right-click menu and window context menus must still work.'
+Write-Host '  I. Restart and verify rows/content/size persist.'
+Write-Host '  J. First-run language chooser will NOT appear on this existing profile; localization smoke verifies its persistence path separately.'
 Write-Host ''
 Write-Host "Opening: $exe"
 Start-Process -FilePath $exe
