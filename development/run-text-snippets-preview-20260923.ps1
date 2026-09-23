@@ -7,16 +7,16 @@ Set-StrictMode -Version Latest
 
 $expectedBranch = 'feature/text-snippets'
 $expected = @{
-    'src/WinSidebar.cs'            = '396fb3ff8eae93c5911bdc4382f1eb40ddd7b89a'
+    'src/WinSidebar.cs'            = '27b4c69018ff160e6afbefab6ec685ee16c27ecc'
     'src/Localization.cs'          = 'bb7f64977fc4dcc4791512ebc5bbd77ffcd5bb69'
     'src/FirstRunLanguageDialog.cs'= 'a582010162cdd07f55f32ef4ff9b6ebb5ef957e7'
     'src/ShortcutConfig.cs'        = 'a4db7728b8aeec6d48b2f4909524443e809a7a4c'
-    'src/SnippetStore.cs'          = 'bd2e8da43d2dbdf9b042ab046584f275637bd216'
-    'src/SnippetEditor.cs'         = '7477fb7eacafee41cb63b66cb4941ff9306621a7'
+    'src/SnippetStore.cs'          = '6d4835d4ad3ff36e66a134a8afcb32e4a5798a66'
+    'src/SnippetEditor.cs'         = '65cd78d0e0caa47776d6217d0a72f202e93ced55'
     'src/TextInjection.cs'         = '4b5e893363a4e4f9827dd003552252c2f84b526d'
     'WinSidebar.csproj'            = 'bb7d1acac365a5771e9e17534a2ed3ebbb5df17a'
     'tests/LocalizationSmoke.cs'   = 'e28b60f87dd5555f9a7ab3dcc9f0c2282b17cfed'
-    'tests/SnippetStoreSmoke.cs'   = '3ec159d8b2234a4b156cd3c606131fac5432501a'
+    'tests/SnippetStoreSmoke.cs'   = 'b144c31fd904677d00e1217d3f0f78133cf10283'
 }
 
 $rootFromGit = (git rev-parse --show-toplevel).Trim()
@@ -72,18 +72,18 @@ if (-not (Test-Path -LiteralPath $exe -PathType Leaf)) {
 }
 
 Write-Host ''
-Write-Host 'Preview ready. No source or profile data was changed by this runner.'
+Write-Host 'Preview ready. This runner does NOT delete or reset %LOCALAPPDATA%\WinSidebar; the existing profile is intentionally preserved.'
 Write-Host 'Test plan:'
-Write-Host '  A. ATALHOS must show ↺, -, + and no globe. SCRIPTS must also show ↺, -, +.'
-Write-Host '  B. Limits: ATALHOS max 12 (3x4); SCRIPTS max 8. + disables at the limit.'
-Write-Host '  C. - removes only the last shortcut row (4) or last script (1), never below four.'
-Write-Host '  D. Restore in ATALHOS asks confirmation and resets only shortcuts. Restore in SCRIPTS asks confirmation and resets only scripts.'
-Write-Host '  E. Left-click opens every configured shortcut; right-click edits every shortcut, including folders.'
-Write-Host '  F. Global F1..F4 open shortcuts 1..4. Shift+F1..F4 paste Scripts 1..4.'
-Write-Host '  G. Extra shortcuts/scripts remain configurable and clickable but have no default global hotkey.'
-Write-Host '  H. Script mouse-click paste, ⇔/⇕ size cycles, language in the right-click menu and window context menus must still work.'
-Write-Host '  I. Restart and verify rows/content/size persist.'
-Write-Host '  J. First-run language chooser will NOT appear on this existing profile; localization smoke verifies its persistence path separately.'
+Write-Host '  A. Keep the current profile. Do NOT delete %LOCALAPPDATA%\WinSidebar; we want to see whether the previous shortcut-load error recurs.'
+Write-Host '  B. ATALHOS and SCRIPTS should auto-fit vertically without their internal scrollbars on a normal-height desktop.'
+Write-Host '  C. With 12 shortcuts and 8 scripts, the sidebar may grow vertically as needed; the window list keeps the remaining space.'
+Write-Host '  D. Script gear -> editor: Keyboard shortcut must appear with No shortcut and Shift+F1..Shift+F12 choices.'
+Write-Host '  E. First four legacy/current scripts should load as Shift+F1..F4 if the saved file predates configurable hotkeys.'
+Write-Host '  F. Assign Script 5 = Shift+F5, save, focus ChatGPT/Notepad and verify Shift+F5 pastes Script 5.'
+Write-Host '  G. Reopen Script 5, choose No shortcut, save, and verify Shift+F5 no longer belongs to WinSidebar.'
+Write-Host '  H. Assigning the same script hotkey to two scripts must be rejected before save.'
+Write-Host '  I. F1..F4 still open shortcuts 1..4. Old window-list keyboard navigation remains removed.'
+Write-Host '  J. Close and run this same preview again without profile cleanup; report whether the shortcut-load error returns.'
 Write-Host ''
 Write-Host "Opening: $exe"
 Start-Process -FilePath $exe
