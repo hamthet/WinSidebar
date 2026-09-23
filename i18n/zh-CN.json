@@ -133,5 +133,9 @@
   "snippets.pasted": "文本已粘贴。",
   "config.snippets_unreadable": "无法读取文本脚本。已加载默认值。 ",
   "sidebar.next_width": "下一档宽度",
-  "sidebar.next_height": "下一档高度"
+  "sidebar.next_height": "下一档高度",
+  "sidebar.add_shortcut_row": "添加一行快捷方式",
+  "sidebar.edit_right_click": "右键单击以编辑",
+  "defaults.shortcut_prefix": "快捷方式",
+  "snippets.add_row": "添加脚本"
 }
