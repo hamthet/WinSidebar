@@ -1,4 +1,4 @@
-# Owner-run preview for the four configurable text snippets.
+# Owner-run preview for expandable shortcuts and text snippets.
 # Windows PowerShell 5.1; no administrator, CMD, GitHub Actions or FILEBRIDGE.
 [CmdletBinding()]
 param()
@@ -7,11 +7,12 @@ Set-StrictMode -Version Latest
 
 $expectedBranch = 'feature/text-snippets'
 $expected = @{
-    'src/WinSidebar.cs'   = '224ba64b2c85a830bd954685568276df2a97b53e'
-    'src/SnippetStore.cs' = '66d38ce07b0555d66fa954eb8867d021ccf8c2b7'
-    'src/SnippetEditor.cs'= '7477fb7eacafee41cb63b66cb4941ff9306621a7'
-    'src/TextInjection.cs'= '4b5e893363a4e4f9827dd003552252c2f84b526d'
-    'WinSidebar.csproj'   = 'a7c5f14eaccefd2fb33d93166e51ab7bf445318c'
+    'src/WinSidebar.cs'    = 'a13e32e8c65f94d7213dc3cbfe35de51ea1feb74'
+    'src/ShortcutConfig.cs'= 'ff96339e5830f60e9bb119d2154b1e60389e38bc'
+    'src/SnippetStore.cs'  = 'f4f9d08f2399b64e6f8bfdd4460d10d523214892'
+    'src/SnippetEditor.cs' = '7477fb7eacafee41cb63b66cb4941ff9306621a7'
+    'src/TextInjection.cs' = '4b5e893363a4e4f9827dd003552252c2f84b526d'
+    'WinSidebar.csproj'    = 'a7c5f14eaccefd2fb33d93166e51ab7bf445318c'
 }
 
 $rootFromGit = (git rev-parse --show-toplevel).Trim()
@@ -69,14 +70,13 @@ if (-not (Test-Path -LiteralPath $exe -PathType Leaf)) {
 Write-Host ''
 Write-Host 'Preview ready. No source or profile data was changed by this runner.'
 Write-Host 'Test plan:'
-Write-Host '  A. Confirm the four SCRIPT rows still render below ATALHOS.'
-Write-Host '  B. The ⇔ header button must cycle width: narrow -> medium -> wide -> narrow.'
-Write-Host '  C. The ⇕ header button must cycle height: compact -> medium -> tall -> compact.'
-Write-Host '  D. Restart later and verify the chosen width/height and saved snippet content persist.'
-Write-Host '  E. In ChatGPT/Notepad, Ctrl+Shift+F1 must still paste Script 1.'
-Write-Host '  F. With ChatGPT focused, move the pointer to WinSidebar and click Script 1: focus must return to ChatGPT and paste there.'
-Write-Host '  G. Rapid repeated hotkey while one paste is active must remain silent.'
-Write-Host '  H. Existing Shift+F1..F4 and right-click menus must still work.'
+Write-Host '  A. ATALHOS no longer has the original gear/edit mode.'
+Write-Host '  B. Left-click an existing shortcut: it opens normally. Right-click it: its editor opens directly.'
+Write-Host '  C. Click + in ATALHOS: a new row of four empty shortcuts appears and can be right-click edited.'
+Write-Host '  D. Click + in SCRIPTS: Script 5 appears; its gear edits it and its row click pastes it.'
+Write-Host '  E. Ctrl+Shift+F1..F4 still control only Scripts 1..4; extra scripts have no invented global hotkeys.'
+Write-Host '  F. The ⇔ and ⇕ size cycles, mouse-click paste focus restoration and existing context menus still work.'
+Write-Host '  G. Restart and verify extra rows, names, contents and selected width/height persist.'
 Write-Host ''
 Write-Host "Opening: $exe"
 Start-Process -FilePath $exe
