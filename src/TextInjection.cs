@@ -92,6 +92,7 @@ internal sealed class TextInjectionProbe : IDisposable
 
     internal event Action<string> Failed;
     internal event Action Completed;
+    internal bool IsBusy { get { return state != ProbeState.Idle; } }
 
     internal TextInjectionProbe()
     {
