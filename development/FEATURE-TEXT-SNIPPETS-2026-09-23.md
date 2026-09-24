@@ -125,3 +125,11 @@ The first owner test of `Alt+"` failed. The owner selected `Ctrl+"` instead. Cur
 ## Sidebar opener hotkey follow-up — 2026-09-24
 
 The owner reported that both `Alt+"` and `Ctrl+"` failed in the real Windows test. The current candidate uses **AltGr+Y**, implemented through Win32 `RegisterHotKey` as **Ctrl+Alt+Y**. It expands a collapsed sidebar and is a no-op while already expanded. Existing F1..F4 shortcut hotkeys and configurable Shift+F script hotkeys are preserved.
+
+## Final software contract — 2026-09-24
+
+The operative sidebar opener is **AltGr+Y** (Win32 Ctrl+Alt+Y) and now toggles both directions: collapsed -> open, open -> collapsed. Earlier Alt/Ctrl quote attempts in this document are historical failed candidates only.
+
+Runtime localization is finalized around five supported languages: English, Brazilian Portuguese, Spanish, Russian and Simplified Chinese. **English is the default for a brand-new installation.** Windows UI culture no longer auto-selects another language on first launch. The first-run chooser lists all five languages and persists the explicit selection. Existing legacy profiles without a `language=` field preserve Portuguese for compatibility. The current contract is documented in `LOCALIZATION-CONTRACT-2026-09-24.md`.
+
+The owner reported completing the self-contained gate at checkpoint `790ad23d...` before the English-default source closure. Therefore one final gate rerun is required on the new feature head before the software stage is treated as build-verified and frozen for repository-wide five-language documentation conversion.
