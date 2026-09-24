@@ -6,7 +6,8 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
 $expectedBranch = 'feature/text-snippets'
-$expected = @{    'src/WinSidebar.cs'            = 'fa845dfd7b425e06209abc3cd5eecb1acbd6099f'
+$expected = @{
+    'src/WinSidebar.cs'            = 'fa845dfd7b425e06209abc3cd5eecb1acbd6099f'
     'src/Localization.cs'          = 'bb7f64977fc4dcc4791512ebc5bbd77ffcd5bb69'
     'src/FirstRunLanguageDialog.cs'= 'a582010162cdd07f55f32ef4ff9b6ebb5ef957e7'
     'src/ShortcutConfig.cs'        = 'a4db7728b8aeec6d48b2f4909524443e809a7a4c'
