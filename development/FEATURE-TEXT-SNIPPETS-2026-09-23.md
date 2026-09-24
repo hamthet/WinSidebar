@@ -121,3 +121,7 @@ This feature starts **after** the frozen functional-menu checkpoint. Do not modi
 
 The first owner test of `Alt+"` failed. The owner selected `Ctrl+"` instead. Current implementation registers Ctrl+Shift+`Keys.Oem7` and expands a collapsed sidebar; it deliberately does nothing while already expanded. This does not replace F1..F4 shortcut activation or configurable Shift+F script hotkeys.
 
+
+## Sidebar opener hotkey follow-up — 2026-09-24
+
+The owner reported that both `Alt+"` and `Ctrl+"` failed in the real Windows test. The current candidate uses **AltGr+Y**, implemented through Win32 `RegisterHotKey` as **Ctrl+Alt+Y**. It expands a collapsed sidebar and is a no-op while already expanded. Existing F1..F4 shortcut hotkeys and configurable Shift+F script hotkeys are preserved.
