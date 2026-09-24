@@ -1,42 +1,92 @@
-# WinSidebar
+# WinSidebar 2.0.0
 
-[English](../../README.md) · **Português (Brasil)** · Español, Русский e 简体中文 (traduções planejadas)
+[English](../../README.md) · **Português (Brasil)** · [Español](README.es-ES.md) · [Русский](README.ru-RU.md) · [简体中文](README.zh-CN.md)
 
-![Ilustração conceitual do WinSidebar em um desktop com dois monitores](../../assets/hero-ilustrativo.svg)
+![Ilustração conceitual do WinSidebar](../../assets/i18n/pt-BR/hero-illustration.svg)
 
-> **Arte meramente ilustrativa, gerada com auxílio de IA.** Não é captura de tela nem representação exata dos controles do aplicativo. A interface inspirada no **Windows 98 é intencional** — uma escolha visual, não uma falha de modernização.
+> **Ilustração conceitual, não uma captura de tela do aplicativo.** A aparência inspirada no Windows 98 é intencional.
 
-Uma barra lateral retrátil para **encontrar e alternar entre janelas**, organizadas por monitor, com quatro atalhos configuráveis para pastas e sites. Portátil, sem instalador e sem exigir que o usuário baixe o .NET separadamente. **Código aberto sob a [licença MIT](../../LICENSE).**
+WinSidebar é uma barra lateral portátil e autocontida para Windows 10/11 x64, feita para localizar e alternar entre janelas abertas, abrir pastas ou sites frequentes e colar trechos de texto reutilizáveis. A versão 2.0.0 é a primeira linha de lançamento com runtime completo em cinco idiomas, atalhos expansíveis e snippets de texto.
 
-**[⬇ Baixar WinSidebar 1.0.0 para Windows 10/11 x64](https://github.com/hamthet/WinSidebar/releases/tag/v1.0.0)** · **[Ler o tutorial passo a passo](../TUTORIAL.md)**
+**Download:** [WinSidebar 2.0.0](https://github.com/hamthet/WinSidebar/releases/tag/v2.0.0) · **Tutorial:** [Português](TUTORIAL.pt-BR.md)
 
-> **Aviso sobre assinatura digital:** o executável desta versão **não possui assinatura digital**. O Windows Defender SmartScreen pode exibir um aviso de aplicativo não reconhecido, e políticas de segurança podem impedir sua execução. Baixe apenas da [release oficial](https://github.com/hamthet/WinSidebar/releases/tag/v1.0.0), confira o arquivo `SHA256SUMS.txt` disponível nela se desejar verificar a integridade do download e respeite as políticas de TI do seu computador. **O checksum não substitui uma assinatura digital.**
+## O que mudou na 2.0.0
 
-## Comece em um minuto
+- Cinco idiomas no aplicativo: inglês, português brasileiro, espanhol, russo e chinês simplificado.
+- Inglês é o padrão de uma instalação nova; o seletor inicial permite escolher qualquer idioma suportado.
+- Até 12 atalhos configuráveis, em linhas de quatro.
+- Até 8 snippets de texto reutilizáveis, com atalho de teclado por snippet.
+- Menu de contexto das janelas para renomear temporariamente, restaurar o nome e ignorar aplicativos de forma persistente.
+- Restauração independente de atalhos e snippets.
+- Ciclos de largura e altura da barra com persistência.
+- AltGr+Y abre ou recolhe a barra.
+- Distribuição Windows x64 autocontida em um único executável .NET 8; o usuário não instala .NET separadamente.
 
-1. Na página de lançamento, baixe **`WinSidebar-v1.0.0-win-x64.zip`**, em *Assets*.
-2. Extraia o ZIP em uma pasta sua.
-3. Abra **`WinSidebar.exe`**. O arquivo `LEIA-ME.txt` contém as instruções essenciais.
+## Início rápido
 
-O ZIP contém **somente o executável e o LEIA-ME**. Para usar o aplicativo, não são necessários PowerShell, Git, compilador, instalador nem download separado do .NET. O executável inclui o runtime .NET 8.
+1. Baixe o ZIP da versão 2.0.0 e extraia em uma pasta sob seu controle.
+2. Execute WinSidebar.exe.
+3. Em um perfil novo, English vem pré-selecionado. Escolha outro idioma se desejar.
+4. Clique na aba estreita ou pressione AltGr+Y para abrir/recolher.
+5. Clique em uma janela listada para ativá-la.
+6. Clique em um atalho para abri-lo; clique com o botão direito para editar.
+7. Clique em um snippet para colá-lo no aplicativo externo que estava ativo; use a engrenagem para editar o snippet.
 
-## O que você pode fazer
+A distribuição é portátil e não possui assinatura digital. O Windows SmartScreen ou políticas da organização podem exibir avisos.
 
-- **Alternar janelas:** a aba lateral abre e recolhe a barra; `Shift+F1` alterna a barra, `Shift+F2/F3` navegam entre janelas e `Shift+F4` ativa a janela selecionada.
-- **Organizar por monitor:** visualizar as janelas do monitor principal e, quando houver, do secundário.
-- **Personalizar quatro atalhos:** na seção **PASTAS / WEB**, clique na engrenagem e escolha nome, pasta ou URL, ícone e navegador. Os padrões genéricos são **Pasta local**, **Downloads**, **Acervo** e **Site**.
-- **Ajustar a barra:** no cabeçalho, mude de lado, diminua ou aumente a largura e use o X vermelho para encerrar.
+## Teclado
 
-**[Veja o tutorial ilustrado com todas as etapas →](../TUTORIAL.md)**
+- **AltGr+Y** — alterna a barra entre aberta e recolhida.
+- **F1–F4** — abrem os atalhos 1–4.
+- **Shift+F1–F4** — atalhos padrão dos snippets 1–4.
+- Cada snippet pode usar **Nenhum** ou **Shift+F1 até Shift+F12**. Duplicidades entre snippets são rejeitadas.
 
-## Privacidade e versões existentes
+A antiga navegação da lista de janelas por Shift+F não faz parte da 2.0.0.
 
-As preferências ficam em `%LOCALAPPDATA%\WinSidebar`, isoladas das outras instalações. O WinSidebar não substitui executáveis anteriores, não altera o navegador padrão, não ativa a inicialização automática e não envia telemetria. Para evitar conflitos de teclas globais, feche outra edição da barra antes de iniciar esta.
+## Atalhos e snippets
 
-Para remover, encerre pelo X e apague `WinSidebar.exe`. Opcionalmente, apague `%LOCALAPPDATA%\WinSidebar` para excluir **as preferências desta edição**.
+A seção **Atalhos** começa com quatro itens e pode chegar a 12. Use + para adicionar uma linha de quatro, − para remover a última linha adicionada e Restaurar para voltar somente os atalhos aos padrões. Clique normal abre; botão direito edita nome, destino, tipo, navegador e ícone.
 
-## Projeto, licença e divulgação
+A seção **Scripts** armazena snippets de texto literal, não scripts executáveis. Começa com quatro itens e pode chegar a 8. +, − e Restaurar são independentes da seção de atalhos. Ao clicar em um snippet, o WinSidebar tenta devolver o foco à janela externa anteriormente ativa e colar o texto salvo. A engrenagem edita nome, conteúdo e hotkey.
 
-O código-fonte C# fica em [`src/`](../../src/); a compilação Windows é verificada pelo [fluxo de build](../../.github/workflows/build.yml). O projeto é distribuído sob a **[licença MIT](../../LICENSE)**, que permite usar, modificar e redistribuir o código, inclusive comercialmente, mantendo os avisos de autoria e licença. Você pode abrir uma [issue](https://github.com/hamthet/WinSidebar/issues/new) para relatar erros e sugerir melhorias, evitando incluir dados pessoais em capturas ou logs.
+## Lista de janelas
 
-A [arte quadrada ilustrativa para divulgação](../../assets/linkedin-ilustrativo.svg) e o [texto sugerido para LinkedIn com instruções de publicação](../DIVULGACAO.md) estão no repositório. **Nenhuma das artes deve ser apresentada como captura real do aplicativo.**
+Janelas superiores elegíveis são agrupadas por monitor. Um clique ativa a janela. O menu de contexto permite renomear temporariamente uma janela listada, restaurar esse nome temporário ou ignorar persistentemente o aplicativo correspondente. Aplicativos ignorados podem ser gerenciados pelo menu de contexto geral.
+
+O WinSidebar usa metadados e heurísticas de janelas do Windows; não substitui a implementação de Alt+Tab do sistema operacional.
+
+## Idiomas
+
+Idiomas de runtime suportados:
+
+- English — en-US
+- Português (Brasil) — pt-BR
+- Español — es-ES
+- Русский — ru-RU
+- 简体中文 — zh-CN
+
+Uma instalação nova usa inglês como padrão, independentemente do idioma de exibição do Windows. A escolha feita pelo usuário é persistida no perfil. Perfis legados criados antes da persistência de idioma podem permanecer em português até uma escolha explícita.
+
+## Dados e privacidade
+
+O perfil do WinSidebar fica em:
+
+    %LOCALAPPDATA%\WinSidebar
+
+Ele pode conter settings.ini, shortcuts.xml, snippets.json, ignored-apps.json, backups e cópias de ícones personalizados. Nomes e caminhos definidos pelo usuário, textos de snippets e títulos de janelas externas nunca são traduzidos.
+
+O WinSidebar não instala inicialização automática, não muda o navegador padrão e não envia telemetria.
+
+Os snippets usam temporariamente a área de transferência do Windows para a colagem e tentam restaurar o conteúdo anterior em seguida. Barreiras de segurança do Windows podem impedir entrada simulada em aplicativos elevados.
+
+## Distribuição portátil
+
+WinSidebar 2.0.0 é destinado a Windows x64 e publicado como um único executável autocontido. O runtime .NET 8 está incluído dentro de WinSidebar.exe. O usuário final não precisa baixar .NET, PowerShell, Git, compilador ou instalador.
+
+Para remover, encerre o WinSidebar e apague o executável. Apague %LOCALAPPDATA%\WinSidebar somente se também quiser remover o perfil salvo.
+
+## Código-fonte e licença
+
+Código-fonte, catálogos de idioma e testes estão neste repositório. WinSidebar é distribuído sob a [Licença MIT](../../LICENSE).
+
+Para uso detalhado, consulte o [tutorial em português](TUTORIAL.pt-BR.md).
