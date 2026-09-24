@@ -90,3 +90,15 @@ The release gate updates this stable executable only after the candidate passes 
 The owner reported completing the self-contained release gate after the AltGr+Y toggle correction, corresponding to checkpoint `checkpoint/self-contained-owner-release-20260924` at `790ad23d6214728cbbe8e0cd1ea340cbab9bf86b`. No raw local log was supplied in this chat, so this record is an owner-reported result rather than independently observed console output.
 
 After that checkpoint, source/test changes made English the default for brand-new installations and aligned first-run UI/product metadata. Because the executable source changed, the prior PASS does not certify the new head. Rerun the same gate once on the current feature head; no change to the gate procedure is otherwise required.
+
+## Gate incident — Windows PowerShell 5.1 source encoding
+
+On 2026-09-24 the owner reran the final gate after the English-default closure. The gate stopped before build validation because Windows PowerShell 5.1 decoded non-ASCII literals embedded in the `.ps1` source using a legacy code page. The expected first-run title `WinSidebar — Language` was read by the script as mojibake (`WinSidebar â€” Language`), so the source assertion failed even though the C# source itself contained the correct Unicode text.
+
+This was a **gate-script defect, not a WinSidebar runtime/localization defect**. The release script was corrected on `feature/text-snippets` to:
+
+- read C# sources explicitly as UTF-8;
+- keep the PowerShell gate source itself ASCII-only;
+- validate the first-run five-language contract through ASCII structure and language-code mappings rather than Unicode literals.
+
+The failed run does not count as a release PASS. Rerun the same gate on the corrected feature head.
