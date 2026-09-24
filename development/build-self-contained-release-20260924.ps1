@@ -47,6 +47,9 @@ $properties = $project.Project.PropertyGroup | Select-Object -First 1
 if ($properties.TargetFramework -ne 'net8.0-windows') {
     throw "Unexpected target framework: $($properties.TargetFramework)"
 }
+if ($properties.NeutralLanguage -ne 'en-US') {
+    throw "Unexpected neutral/default language: $($properties.NeutralLanguage)"
+}
 if ($properties.RuntimeIdentifier -ne 'win-x64' -or
     $properties.SelfContained -ne 'true' -or
     $properties.PublishSingleFile -ne 'true') {
