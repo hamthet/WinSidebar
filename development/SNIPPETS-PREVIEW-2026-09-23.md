@@ -99,6 +99,19 @@ The pre-change fresh-profile state is preserved at `checkpoint/fresh-profile-con
 
 **Status:** SOURCE STAGED / OWNER BUILD + PRESERVED-PROFILE RETEST PENDING.
 
+## Owner follow-up — Alt+double-quote sidebar opener
+
+After reporting the latest preserved-profile/autofit/configurable-hotkey preview as **“parece tudo ok”**, the owner requested one additional global command:
+
+- `Alt+"` opens the sidebar when it is collapsed;
+- if the sidebar is already open, the command is a no-op;
+- existing F1..F4 shortcut keys and configured Shift+F script keys are preserved;
+- implementation uses Win32 RegisterHotKey with Alt+Shift+the quote/apostrophe OEM key (`Keys.Oem7`).
+
+The pre-change accepted state is preserved at `checkpoint/snippets-configurable-hotkeys-pass-20260924` (`2b4202277d2bb0330a25a27a2eaef6513a2e146d`).
+
+**Status:** SOURCE STAGED / OWNER HOTKEY RETEST PENDING.
+
 ## Owner-run preview
 
 Use only:
