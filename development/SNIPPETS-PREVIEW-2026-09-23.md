@@ -150,3 +150,24 @@ Owner confirmed that AltGr+Y successfully opened the collapsed sidebar, which va
 Source correction now changes AltGr+Y to a true toggle: `Expand(!expanded)`. Expected behavior is open when collapsed, collapse when open. No release gate was run before this correction.
 
 **Status:** SOURCE STAGED / OWNER TOGGLE RETEST PENDING.
+
+## Software closure — owner release and English-default localization
+
+The owner subsequently reported that the release gate was completed after the AltGr+Y toggle correction. Preserve that exact state at `checkpoint/self-contained-owner-release-20260924` (`790ad23d6214728cbbe8e0cd1ea340cbab9bf86b`).
+
+A final localization audit then found that all five runtime catalogs had full parity, but new installations still selected language from Windows UI culture and the in-memory default remained Portuguese. The owner approved the correction to make **English the product default**.
+
+Current source-staged closure:
+
+- supported runtime languages remain `en-US`, `pt-BR`, `es-ES`, `ru-RU`, `zh-CN`;
+- brand-new installations default to English regardless of Windows UI culture;
+- first-run chooser is English-first and lists all five native language names;
+- explicit user selection persists and restores;
+- legacy existing profiles without a `language=` field retain Portuguese;
+- product metadata description is English;
+- localization smoke now enforces the English-default rule across representative Windows cultures;
+- catalog parity remains required for all five languages.
+
+See `LOCALIZATION-CONTRACT-2026-09-24.md` for the current runtime contract. Because this closure changed executable source after the owner-reported PASS, the self-contained release gate must be run once more on the new feature head.
+
+**Status:** SOURCE STAGED / FINAL LOCAL RELEASE-GATE RERUN PENDING.
