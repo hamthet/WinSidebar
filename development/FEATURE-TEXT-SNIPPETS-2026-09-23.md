@@ -116,3 +116,7 @@ This feature starts **after** the frozen functional-menu checkpoint. Do not modi
 - Shortcut/script sections should auto-fit vertically so their own scrollbars do not appear under the normal supported 12/8 product limits. If the monitor working area is physically too short, internal scrolling remains a fallback instead of overlapping controls.
 - Script configuration now requires a persisted keyboard-shortcut selector. Supported script hotkeys for this stage are **none** or **Shift+F1..Shift+F12**. Scripts 1..4 default to Shift+F1..F4; scripts 5..8 default to none. Duplicate script assignments are rejected before save.
 - F1..F4 remain the fixed global defaults for shortcut buttons 1..4.
+
+## Sidebar opener hotkey — 2026-09-24
+
+Owner requested `Alt+"\`` as a global command to open the sidebar. Current implementation registers Alt+Shift+`Keys.Oem7` (the quote/apostrophe key on the target Windows keyboard layout). It expands a collapsed sidebar and deliberately does nothing when the sidebar is already expanded. This does not replace F1..F4 shortcut activation or configurable Shift+F script hotkeys.
