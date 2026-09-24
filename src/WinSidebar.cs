@@ -129,8 +129,10 @@ internal sealed class SidebarWindow : Form
     private const int WmMouseActivate = 0x0021;
     private const uint NoRepeat = 0x4000;
     private const uint ShiftNoRepeat = 0x4004;
+    private const uint AltShiftNoRepeat = 0x4005;
     private const int ShortcutHotkeyBase = 9801;
     private const int SnippetHotkeyBase = 9811;
+    private const int OpenSidebarHotkeyId = 9829;
     private static readonly int[] Widths = { 211, 260, 324 }; // one-way cycle
     private static readonly int[] Heights = { HeightDefault, 640, 780 }; // one-way cycle, clamped to work area
     private static readonly Color Face = Color.FromArgb(212, 208, 200);
@@ -1307,6 +1309,10 @@ internal sealed class SidebarWindow : Form
             else hotkeyErrors += (hotkeyErrors.Length == 0 ? "" : ", ") + hotkey;
         }
 
+        if (Native.RegisterHotKey(hotkeyHandle, OpenSidebarHotkeyId, AltShiftNoRepeat, (uint)Keys.Oem7))
+            registered.Add(OpenSidebarHotkeyId);
+        else hotkeyErrors += (hotkeyErrors.Length == 0 ? "" : ", ") + "Alt+\"";
+
         if (hotkeyErrors.Length > 0)
             status.Text = Localization.Text("sidebar.hotkeys_unavailable") + hotkeyErrors;
         else if (expanded)
@@ -1336,7 +1342,11 @@ internal sealed class SidebarWindow : Form
         if (m.Msg == WmHotkey)
         {
             int id = m.WParam.ToInt32();
-            if (id >= ShortcutHotkeyBase && id < ShortcutHotkeyBase + 4)
+            if (id == OpenSidebarHotkeyId)
+            {
+                if (!expanded) Expand(true);
+            }
+            else if (id >= ShortcutHotkeyBase && id < ShortcutHotkeyBase + 4)
                 OpenShortcut(id - ShortcutHotkeyBase);
             else if (id >= SnippetHotkeyBase && id < SnippetHotkeyBase + SnippetStore.MaxSlots)
             {
