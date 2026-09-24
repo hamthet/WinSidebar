@@ -142,3 +142,11 @@ The owner reported that the staged `Ctrl+"` opener also failed in the real Windo
 Expected behavior remains unchanged: open a collapsed sidebar; no-op while already expanded. F1..F4 shortcut activation and configured Shift+F script hotkeys remain unchanged.
 
 **Status:** SOURCE STAGED / OWNER ALTGR+Y RETEST PENDING.
+
+## Owner retest — AltGr+Y opens but did not close
+
+Owner confirmed that AltGr+Y successfully opened the collapsed sidebar, which validates the global hotkey registration on the real machine. The remaining defect was action semantics: the handler only expanded and deliberately did nothing while already open.
+
+Source correction now changes AltGr+Y to a true toggle: `Expand(!expanded)`. Expected behavior is open when collapsed, collapse when open. No release gate was run before this correction.
+
+**Status:** SOURCE STAGED / OWNER TOGGLE RETEST PENDING.
