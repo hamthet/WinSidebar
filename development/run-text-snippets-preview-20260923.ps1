@@ -6,8 +6,7 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
 $expectedBranch = 'feature/text-snippets'
-$expected = @{
-    'src/WinSidebar.cs'            = '27b4c69018ff160e6afbefab6ec685ee16c27ecc'
+$expected = @{    'src/WinSidebar.cs'            = 'fa845dfd7b425e06209abc3cd5eecb1acbd6099f'
     'src/Localization.cs'          = 'bb7f64977fc4dcc4791512ebc5bbd77ffcd5bb69'
     'src/FirstRunLanguageDialog.cs'= 'a582010162cdd07f55f32ef4ff9b6ebb5ef957e7'
     'src/ShortcutConfig.cs'        = 'a4db7728b8aeec6d48b2f4909524443e809a7a4c'
@@ -74,16 +73,12 @@ if (-not (Test-Path -LiteralPath $exe -PathType Leaf)) {
 Write-Host ''
 Write-Host 'Preview ready. This runner does NOT delete or reset %LOCALAPPDATA%\WinSidebar; the existing profile is intentionally preserved.'
 Write-Host 'Test plan:'
-Write-Host '  A. Keep the current profile. Do NOT delete %LOCALAPPDATA%\WinSidebar; we want to see whether the previous shortcut-load error recurs.'
-Write-Host '  B. ATALHOS and SCRIPTS should auto-fit vertically without their internal scrollbars on a normal-height desktop.'
-Write-Host '  C. With 12 shortcuts and 8 scripts, the sidebar may grow vertically as needed; the window list keeps the remaining space.'
-Write-Host '  D. Script gear -> editor: Keyboard shortcut must appear with No shortcut and Shift+F1..Shift+F12 choices.'
-Write-Host '  E. First four legacy/current scripts should load as Shift+F1..F4 if the saved file predates configurable hotkeys.'
-Write-Host '  F. Assign Script 5 = Shift+F5, save, focus ChatGPT/Notepad and verify Shift+F5 pastes Script 5.'
-Write-Host '  G. Reopen Script 5, choose No shortcut, save, and verify Shift+F5 no longer belongs to WinSidebar.'
-Write-Host '  H. Assigning the same script hotkey to two scripts must be rejected before save.'
-Write-Host '  I. F1..F4 still open shortcuts 1..4. Old window-list keyboard navigation remains removed.'
-Write-Host '  J. Close and run this same preview again without profile cleanup; report whether the shortcut-load error returns.'
+Write-Host '  A. Keep the current profile. Do NOT delete or reset %LOCALAPPDATA%\WinSidebar.'
+Write-Host '  B. Collapse the sidebar, then press Alt+" (Alt+Shift+the quote/apostrophe key). It must open the sidebar.'
+Write-Host '  C. Press Alt+" again while already open: no second action, popup or duplicate effect.'
+Write-Host '  D. F1..F4 still open shortcuts 1..4; configured Shift+F hotkeys still paste their scripts.'
+Write-Host '  E. Script gear hotkey editing, auto-fit vertical sizing and right-click shortcut editing must remain unchanged.'
+Write-Host '  F. Close and reopen with the same profile; report if the previous shortcut-load error returns.'
 Write-Host ''
 Write-Host "Opening: $exe"
 Start-Process -FilePath $exe
