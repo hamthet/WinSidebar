@@ -9,7 +9,7 @@ internal sealed class FirstRunLanguageDialog : Form
 
     internal FirstRunLanguageDialog(string suggestedCode)
     {
-        Text = "WinSidebar — Language / Idioma";
+        Text = "WinSidebar — Language";
         FormBorderStyle = FormBorderStyle.FixedDialog;
         StartPosition = FormStartPosition.CenterScreen;
         MaximizeBox = false;
@@ -21,7 +21,7 @@ internal sealed class FirstRunLanguageDialog : Form
         Font = new Font("Microsoft Sans Serif", 9f);
 
         Label prompt = new Label();
-        prompt.Text = "Choose your language / Escolha seu idioma";
+        prompt.Text = "Choose your language";
         prompt.SetBounds(18, 18, 320, 22);
         Controls.Add(prompt);
 
