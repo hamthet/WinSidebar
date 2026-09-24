@@ -2,7 +2,7 @@
 
 **Producer:** `hamthet/WinSidebar`  
 **Product branch under test:** `feature/text-snippets`  
-**Status:** CONFIGURATION VERIFIED IN SOURCE / LOCAL RELEASE GATE PENDING OWNER EXECUTION  
+**Status:** OWNER REPORTED PASS ON `790ad23d...`; RERUN REQUIRED AFTER ENGLISH-DEFAULT SOURCE CLOSURE  
 **Official `main` and v1.0.0:** unchanged.
 
 ## Requirement
@@ -84,3 +84,9 @@ The dated `candidate-<timestamp>-<commit>` directory is intentionally versioned 
 `C:\H\files\WinSidebar\current\WinSidebar.exe`
 
 The release gate updates this stable executable only after the candidate passes all self-contained checks. This keeps the desktop shortcut valid while preserving immutable candidate evidence separately.
+
+## Owner-reported gate result and superseding source change
+
+The owner reported completing the self-contained release gate after the AltGr+Y toggle correction, corresponding to checkpoint `checkpoint/self-contained-owner-release-20260924` at `790ad23d6214728cbbe8e0cd1ea340cbab9bf86b`. No raw local log was supplied in this chat, so this record is an owner-reported result rather than independently observed console output.
+
+After that checkpoint, source/test changes made English the default for brand-new installations and aligned first-run UI/product metadata. Because the executable source changed, the prior PASS does not certify the new head. Rerun the same gate once on the current feature head; no change to the gate procedure is otherwise required.
