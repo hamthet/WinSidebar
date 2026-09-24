@@ -10,6 +10,8 @@ $expectedBranch = 'feature/text-snippets'
 $dotnetRoot = 'C:\dotnet8'
 $dotnet = Join-Path $dotnetRoot 'dotnet.exe'
 $releaseRoot = 'C:\H\filebridge\WinSidebar\release'
+$stableRoot = 'C:\H\files\WinSidebar\current'
+$previousRoot = 'C:\H\files\WinSidebar\previous'
 
 $rootFromGit = (git rev-parse --show-toplevel).Trim()
 if ($LASTEXITCODE -ne 0) { throw 'Unable to resolve the Git repository root.' }
@@ -25,6 +27,9 @@ if ($LASTEXITCODE -ne 0 -or $branch -ne $expectedBranch) {
 }
 if (@(git status --porcelain).Count -ne 0) {
     throw 'Working tree is not clean. Preserve local changes before building the release candidate.'
+}
+if (Get-Process WinSidebar -ErrorAction SilentlyContinue) {
+    throw 'Exit WinSidebar before the release gate so the stable executable can be updated safely.'
 }
 
 if (-not (Test-Path -LiteralPath $dotnet -PathType Leaf)) {
@@ -108,6 +113,23 @@ $content = $exeHash + '  WinSidebar.exe' + [Environment]::NewLine +
     $zipHash + '  ' + $zipName + [Environment]::NewLine
 [IO.File]::WriteAllText($sumPath, $content, [Text.UTF8Encoding]::new($false))
 
+# Promote only a fully verified candidate to a stable local path. The dated
+# candidate remains immutable for evidence; desktop shortcuts should target stableRoot.
+New-Item -ItemType Directory -Path $stableRoot,$previousRoot -Force | Out-Null
+$stableExe = Join-Path $stableRoot 'WinSidebar.exe'
+$previousExe = Join-Path $previousRoot 'WinSidebar.exe'
+$stagedStable = Join-Path $stableRoot 'WinSidebar.exe.new'
+Copy-Item -LiteralPath $distExe -Destination $stagedStable -Force
+if (Test-Path -LiteralPath $stableExe) {
+    Copy-Item -LiteralPath $stableExe -Destination $previousExe -Force
+    Remove-Item -LiteralPath $stableExe -Force
+}
+Move-Item -LiteralPath $stagedStable -Destination $stableExe
+$stableHash = (Get-FileHash -LiteralPath $stableExe -Algorithm SHA256).Hash.ToLowerInvariant()
+if ($stableHash -ne $exeHash) {
+    throw 'Stable executable hash does not match the verified release candidate.'
+}
+
 Write-Host ''
 Write-Host 'SELF-CONTAINED RELEASE GATE: PASS'
 Write-Host "Git commit: $short"
@@ -115,6 +137,10 @@ Write-Host "SDK used only for build: $version at $dotnet"
 Write-Host "Published payload: one file -> $distExe"
 Write-Host "ZIP payload: WinSidebar.exe only -> $zip"
 Write-Host "Checksums: $sumPath"
+Write-Host "Stable executable for desktop shortcut: $stableExe"
+if (Test-Path -LiteralPath $previousExe) {
+    Write-Host "Previous stable executable preserved at: $previousExe"
+}
 Write-Host ''
 Write-Host 'The end-user executable contains the .NET runtime; no separate .NET installation is required.'
 Write-Host 'This gate does not publish a GitHub Release or modify main.'
