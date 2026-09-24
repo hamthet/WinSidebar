@@ -1,52 +1,127 @@
-name: Verify portable Windows build
+name: Verify WinSidebar 2.0.0 portable build
+
+# Owner-directed manual workflow only. Do not add push/pull_request triggers
+# while hosted Actions are intentionally not part of the active test path.
 on:
-  push:
-    paths:
-      - 'src/**'
-      - 'assets/**'
-      - WinSidebar.csproj
-      - LEIA-ME.txt
-      - .github/workflows/build.yml
   workflow_dispatch:
+
 permissions:
   contents: read
+
 jobs:
   build:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
-      - name: Audit published source and defaults
+
+      - name: Verify release metadata and public tree
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $text = [IO.File]::ReadAllText('src/WinSidebar.cs') + [IO.File]::ReadAllText('src/ShortcutConfig.cs')
-          if ($text -match 'C:[\\]Users[\\]|[A-Z]:[\\]Git|[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}') { throw 'Possible personal path or email in public source.' }
-          foreach ($term in @('"WinSidebar", "settings.ini"','@"Local\WinSidebarPublic"','"https://www.google.com/"','Environment.SpecialFolder.MyDocuments','Native.DownloadsPath()')) {
-            if (-not $text.Contains($term)) { throw "Missing required generic default or isolation: $term" }
+          [xml]$project = Get-Content -LiteralPath '.\WinSidebar.csproj' -Raw
+          $p = $project.Project.PropertyGroup | Select-Object -First 1
+          if ($p.Version -ne '2.0.0' -or $p.AssemblyVersion -ne '2.0.0.0' -or $p.FileVersion -ne '2.0.0.0') {
+            throw 'Unexpected WinSidebar release version.'
           }
+          if ($p.NeutralLanguage -ne 'en-US') { throw 'English must remain the neutral/default language.' }
+          if ($p.RuntimeIdentifier -ne 'win-x64' -or $p.SelfContained -ne 'true' -or $p.PublishSingleFile -ne 'true') {
+            throw 'Project is not configured as win-x64 self-contained single-file.'
+          }
+          if (Test-Path -LiteralPath '.\development') { throw 'Internal development dossier must not ship on the release branch.' }
+          foreach ($required in @(
+            'README.md',
+            'README.txt',
+            'docs\TUTORIAL.md',
+            'docs\OUTREACH.md',
+            'docs\i18n\README.pt-BR.md',
+            'docs\i18n\README.es-ES.md',
+            'docs\i18n\README.ru-RU.md',
+            'docs\i18n\README.zh-CN.md',
+            'assets\hero-illustration.svg'
+          )) {
+            if (-not (Test-Path -LiteralPath $required)) { throw "Missing release file: $required" }
+          }
+
+      - name: Audit source for personal local paths
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $text = (Get-ChildItem src -Filter '*.cs' | ForEach-Object { [IO.File]::ReadAllText($_.FullName) }) -join [Environment]::NewLine
+          if ($text -match 'C:[\\]Users[\\]|[A-Z]:[\\](?:Git|H)[\\]|[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}') {
+            throw 'Possible personal path or email in public source.'
+          }
+
+      - name: Run five-language localization smoke
+        shell: pwsh
+        run: |
+          dotnet run --project .\tests\LocalizationSmoke.csproj -c Release
+          if ($LASTEXITCODE -ne 0) { throw 'Localization smoke failed.' }
+
+      - name: Run snippet-store smoke
+        shell: pwsh
+        run: |
+          dotnet run --project .\tests\SnippetStoreSmoke.csproj -c Release
+          if ($LASTEXITCODE -ne 0) { throw 'Snippet-store smoke failed.' }
+
       - name: Build self-contained single EXE
         shell: pwsh
         run: |
-          dotnet publish WinSidebar.csproj -c Release -r win-x64 --self-contained true -o publish
+          dotnet publish .\WinSidebar.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o publish
           if ($LASTEXITCODE -ne 0) { throw 'Publish failed.' }
           $output = @(Get-ChildItem publish -File)
-          if ($output.Count -ne 1 -or $output[0].Name -ne 'WinSidebar.exe' -or $output[0].Length -lt 10000000) { throw 'Expected a single self-contained EXE.' }
-      - name: Package end-user deliverable
+          if ($output.Count -ne 1 -or $output[0].Name -ne 'WinSidebar.exe' -or $output[0].Length -lt 10000000) {
+            throw 'Expected exactly one self-contained WinSidebar.exe.'
+          }
+
+      - name: Package five-language end-user deliverable
         shell: pwsh
         run: |
+          $ErrorActionPreference = 'Stop'
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
           New-Item -ItemType Directory -Path staging,dist -Force | Out-Null
-          Copy-Item publish/WinSidebar.exe staging/WinSidebar.exe
-          Copy-Item LEIA-ME.txt staging/LEIA-ME.txt
-          Compress-Archive staging/* dist/WinSidebar-win-x64.zip -CompressionLevel Optimal
-          $archive = [IO.Compression.ZipFile]::OpenRead((Resolve-Path dist/WinSidebar-win-x64.zip).Path)
-          try { if ((@($archive.Entries | ForEach-Object FullName | Sort-Object) -join ',') -ne 'LEIA-ME.txt,WinSidebar.exe') { throw 'Unexpected ZIP contents.' } } finally { $archive.Dispose() }
-          $sum = (Get-FileHash dist/WinSidebar-win-x64.zip -Algorithm SHA256).Hash.ToLowerInvariant()
-          [IO.File]::WriteAllText('dist/SHA256SUMS.txt', "$sum  WinSidebar-win-x64.zip`n")
+          Copy-Item publish\WinSidebar.exe staging\WinSidebar.exe
+          Copy-Item LICENSE staging\LICENSE
+          Copy-Item README.txt staging\README.txt
+          Copy-Item docs\i18n\README.pt-BR.txt staging\README.pt-BR.txt
+          Copy-Item docs\i18n\README.es-ES.txt staging\README.es-ES.txt
+          Copy-Item docs\i18n\README.ru-RU.txt staging\README.ru-RU.txt
+          Copy-Item docs\i18n\README.zh-CN.txt staging\README.zh-CN.txt
+
+          $zip = 'dist\WinSidebar-v2.0.0-win-x64.zip'
+          Compress-Archive staging\* $zip -CompressionLevel Optimal
+
+          $expected = @(
+            'LICENSE',
+            'README.es-ES.txt',
+            'README.pt-BR.txt',
+            'README.ru-RU.txt',
+            'README.txt',
+            'README.zh-CN.txt',
+            'WinSidebar.exe'
+          )
+          $archive = [IO.Compression.ZipFile]::OpenRead((Resolve-Path $zip).Path)
+          try {
+            $actual = @($archive.Entries | ForEach-Object FullName | Sort-Object)
+            if (($actual -join '|') -ne ($expected -join '|')) {
+              throw "Unexpected ZIP contents: $($actual -join ', ')"
+            }
+          }
+          finally { $archive.Dispose() }
+
+          $exeHash = (Get-FileHash publish\WinSidebar.exe -Algorithm SHA256).Hash.ToLowerInvariant()
+          $zipHash = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLowerInvariant()
+          $lines = @(
+            "$exeHash  WinSidebar.exe",
+            "$zipHash  WinSidebar-v2.0.0-win-x64.zip"
+          )
+          [IO.File]::WriteAllLines('dist\SHA256SUMS.txt', $lines, [Text.UTF8Encoding]::new($false))
+
       - uses: actions/upload-artifact@v4
         with:
-          name: WinSidebar-win-x64-build
+          name: WinSidebar-v2.0.0-win-x64
           path: dist/
           if-no-files-found: error

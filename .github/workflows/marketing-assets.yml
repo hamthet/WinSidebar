@@ -1,65 +1,73 @@
-name: Render illustrative marketing artwork
+name: Render localized concept artwork
+
+# Manual only. This workflow never writes back to the repository.
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'assets/hero-ilustrativo.svg'
-      - 'assets/linkedin-ilustrativo.svg'
-      - 'assets/i18n/**.svg'
-      - '.github/workflows/marketing-assets.yml'
   workflow_dispatch:
+
 permissions:
-  contents: write
+  contents: read
+
 jobs:
   render:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Check illustration privacy and disclosure
+
+      - name: Audit concept-art disclosure and privacy
         shell: bash
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
-          sources = [Path('assets/hero-ilustrativo.svg'), Path('assets/linkedin-ilustrativo.svg')]
-          sources += sorted(Path('assets/i18n').glob('*/*.svg'))
-          for file in sources:
+
+          files = [Path('assets/hero-illustration.svg'), Path('assets/linkedin-illustration.svg')]
+          files += sorted(Path('assets/i18n').glob('*/*.svg'))
+          if len(files) != 10:
+              raise SystemExit(f'Expected 10 localized SVG assets, found {len(files)}')
+
+          forbidden = [
+              r'(?i)hamilton',
+              r'(?i)econet',
+              r'(?i)C:[\\/]',
+              r'(?i)[A-Z]:[\\/](?:git|h)[\\/]',
+              r'(?i)[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}'
+          ]
+          for file in files:
               text = file.read_text(encoding='utf-8')
-              forbidden = [r'(?i)hamilton', r'(?i)econet', r'(?i)revmt', r'(?i)barra[lL]ateral', r'(?i)C:[\\/]', r'(?i)[A-Z]:[\\/]git', r'(?i)[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}']
+              if 'CONCEPT_ART_NOT_SCREENSHOT' not in text:
+                  raise SystemExit(f'Missing concept-art marker: {file}')
               for pattern in forbidden:
                   if re.search(pattern, text):
-                      raise SystemExit(f'Blocked: possible personal content in {file} ({pattern})')
-              if '98' not in text or (not re.search(r'(?i)ILUSTRATIVA', text) and not re.search(r'(?i)NOT (?:AN? )?(?:ACTUAL )?APP SCREENSHOT|NOT AN ACTUAL SCREENSHOT', text)):
-                  raise SystemExit(f'Missing concept-art disclosure in {file}')
-          print('Marketing artwork privacy and disclosure checks passed.')
+                      raise SystemExit(f'Blocked possible personal content in {file}: {pattern}')
+          print('PASS: localized concept-art disclosure/privacy audit')
           PY
-      - name: Render SVGs to PNG on GitHub runner
+
+      - name: Render SVGs to PNG
+        shell: bash
         run: |
           python -m pip install --disable-pip-version-check 'CairoSVG==2.8.2'
           python - <<'PY'
           from pathlib import Path
           import cairosvg
-          sources = [Path('assets/hero-ilustrativo.svg'), Path('assets/linkedin-ilustrativo.svg')]
+
+          sources = [Path('assets/hero-illustration.svg'), Path('assets/linkedin-illustration.svg')]
           sources += sorted(Path('assets/i18n').glob('*/*.svg'))
+          out = Path('rendered')
           for source in sources:
-              target = source.with_suffix('.png')
+              target = out / source.with_suffix('.png')
+              target.parent.mkdir(parents=True, exist_ok=True)
               cairosvg.svg2png(url=str(source), write_to=str(target))
               if target.stat().st_size < 20000:
                   raise SystemExit(f'PNG unexpectedly small: {target}')
-              print(f'{target}: {target.stat().st_size:,} bytes')
+              print(target)
           PY
-      - name: Publish rendered PNG assets to this repository
-        shell: bash
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add assets/hero-ilustrativo.png assets/linkedin-ilustrativo.png assets/i18n
-          if git diff --cached --quiet; then
-            echo 'PNG assets already up to date.'
-            exit 0
-          fi
-          git commit -m 'Render localized public illustrative PNG assets'
-          git push origin HEAD:main
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: WinSidebar-2.0.0-localized-artwork
+          path: rendered/
+          if-no-files-found: error
