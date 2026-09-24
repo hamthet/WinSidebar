@@ -6,16 +6,17 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
 $expectedBranch = 'feature/text-snippets'
-$expected = @{    'src/WinSidebar.cs'            = 'febc7e75bbd18b3ddc7c0288abe1d2dcc1bb7c4a'
-    'src/Localization.cs'          = 'bb7f64977fc4dcc4791512ebc5bbd77ffcd5bb69'
-    'src/FirstRunLanguageDialog.cs'= 'a582010162cdd07f55f32ef4ff9b6ebb5ef957e7'
-    'src/ShortcutConfig.cs'        = 'a4db7728b8aeec6d48b2f4909524443e809a7a4c'
-    'src/SnippetStore.cs'          = '6d4835d4ad3ff36e66a134a8afcb32e4a5798a66'
-    'src/SnippetEditor.cs'         = '65cd78d0e0caa47776d6217d0a72f202e93ced55'
-    'src/TextInjection.cs'         = '4b5e893363a4e4f9827dd003552252c2f84b526d'
-    'WinSidebar.csproj'            = 'bb7d1acac365a5771e9e17534a2ed3ebbb5df17a'
-    'tests/LocalizationSmoke.cs'   = 'e28b60f87dd5555f9a7ab3dcc9f0c2282b17cfed'
-    'tests/SnippetStoreSmoke.cs'   = 'b144c31fd904677d00e1217d3f0f78133cf10283'
+$expected = @{
+    'src/WinSidebar.cs'             = 'febc7e75bbd18b3ddc7c0288abe1d2dcc1bb7c4a'
+    'src/Localization.cs'           = '312cc46de85dd4b28f25a3cd363e173490bcb9d5'
+    'src/FirstRunLanguageDialog.cs' = '2197a1b972af2e4c8abe934d81daafa22962e882'
+    'src/ShortcutConfig.cs'         = 'a4db7728b8aeec6d48b2f4909524443e809a7a4c'
+    'src/SnippetStore.cs'           = '6d4835d4ad3ff36e66a134a8afcb32e4a5798a66'
+    'src/SnippetEditor.cs'          = '65cd78d0e0caa47776d6217d0a72f202e93ced55'
+    'src/TextInjection.cs'          = '4b5e893363a4e4f9827dd003552252c2f84b526d'
+    'WinSidebar.csproj'             = '5cad63c290e559710d2845b68eadd39a110ca556'
+    'tests/LocalizationSmoke.cs'    = '1a20a10f94e96875c522c94b2c164908fbf32ea0'
+    'tests/SnippetStoreSmoke.cs'    = 'b144c31fd904677d00e1217d3f0f78133cf10283'
 }
 
 $rootFromGit = (git rev-parse --show-toplevel).Trim()
@@ -79,7 +80,7 @@ if (-not (Test-Path -LiteralPath $exe -PathType Leaf)) {
 Write-Host ''
 Write-Host 'Preview ready. This runner does NOT delete or reset %LOCALAPPDATA%\WinSidebar; the existing profile is intentionally preserved.'
 Write-Host 'Test plan:'
-Write-Host '  A. Keep the current profile. Do NOT delete or reset %LOCALAPPDATA%\WinSidebar.'
+Write-Host '  A. Keep the current profile. Do NOT delete or reset %LOCALAPPDATA%\WinSidebar. Localization smoke separately verifies that a brand-new profile defaults to English.'
 Write-Host '  B. Press AltGr+Y while collapsed: it must open. Press AltGr+Y again while open: it must collapse.'
 Write-Host '  C. Repeat the toggle several times; no popup, duplicate action or stuck state should occur.'
 Write-Host '  D. F1..F4 still open shortcuts 1..4; configured Shift+F hotkeys still paste their scripts.'
