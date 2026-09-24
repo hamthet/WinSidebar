@@ -10,7 +10,7 @@
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
     <Product>WinSidebar</Product>
-    <Description>Barra lateral de janelas e atalhos para Windows.</Description>
+    <Description>Windows sidebar for window switching, shortcuts, and text snippets.</Description>
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
