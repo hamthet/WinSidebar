@@ -93,3 +93,9 @@ Before merge/publication:
 8. publish tag/release `v2.0.0` separately after merge.
 
 Git merge, owner functional approval and GitHub release publication remain separate acts.
+
+## Pull Request
+
+Draft PR [#6](https://github.com/hamthet/WinSidebar/pull/6), **release: prepare WinSidebar 2.0.0**, now proposes `chore/release-2.0.0` -> `main`.
+
+At creation, GitHub reports the PR as mergeable and the branch is 7 commits ahead / 0 behind `main`. The PR remains draft because clean-branch local Windows build/smoke evidence is still pending. No hosted Actions were dispatched.
