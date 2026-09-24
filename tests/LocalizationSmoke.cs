@@ -37,6 +37,7 @@ internal static class LocalizationSmoke
         Dictionary<string, string> russian = ReadLocale(assembly, "ru-RU");
         Dictionary<string, string> chinese = ReadLocale(assembly, "zh-CN");
         Check(catalog != null && catalog.Count >= 100, "base catalog covers application-owned UI");
+        Check(Localization.Current == "en-US", "English is the application default before profile initialization");
         Check(spanish != null && spanish.Count == catalog.Count, "Spanish key parity");
         Check(russian != null && russian.Count == catalog.Count, "Russian key parity");
         Check(chinese != null && chinese.Count == catalog.Count, "Simplified Chinese key parity");
@@ -68,32 +69,19 @@ internal static class LocalizationSmoke
         CultureInfo originalCulture = Thread.CurrentThread.CurrentUICulture;
         try
         {
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("es-MX");
-            Localization.Initialize(path);
-            Check(Localization.Current == "es-ES", "Spanish Windows variants select Spanish");
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("ru-RU");
-            Localization.Initialize(path);
-            Check(Localization.Current == "ru-RU" && Localization.Text("sidebar.language") == "Язык",
-                "Russian Windows selects Russian on first launch");
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("ru-KZ");
-            Localization.Initialize(path);
-            Check(Localization.Current == "ru-RU", "other Russian Windows locales select Russian");
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("zh-CN");
-            Localization.Initialize(path);
-            Check(Localization.Current == "zh-CN" && Localization.Text("sidebar.language") == "语言",
-                "Simplified Chinese Windows selects Chinese on first launch");
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("zh-SG");
-            Localization.Initialize(path);
-            Check(Localization.Current == "zh-CN", "Singapore Chinese selects Simplified Chinese");
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("zh-TW");
-            Localization.Initialize(path);
-            Check(Localization.Current == "en-US", "Traditional Chinese Windows does not receive Simplified Chinese by default");
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("pt-BR");
-            Localization.Initialize(path);
-            Check(Localization.Current == "pt-BR", "Portuguese Windows selects Portuguese");
+            foreach (string cultureName in new[] { "en-US", "pt-BR", "es-MX", "ru-RU", "zh-CN", "zh-TW" })
+            {
+                if (File.Exists(path)) File.Delete(path);
+                Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(cultureName);
+                Localization.Initialize(path);
+                Check(Localization.Current == "en-US",
+                    "new installation defaults to English regardless of Windows UI culture: " + cultureName);
+            }
+
             File.WriteAllLines(path, new[] { "width=1", "left=1" });
             Localization.Initialize(path);
-            Check(Localization.Current == "pt-BR", "existing profile without language retains Portuguese");
+            Check(Localization.Current == "pt-BR",
+                "legacy existing profile without language retains Portuguese");
             File.Delete(path);
             Localization.SaveInitialSelection(path, "es-ES");
             Localization.Initialize(path);
