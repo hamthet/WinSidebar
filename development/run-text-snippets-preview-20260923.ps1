@@ -14,7 +14,7 @@ $expected = @{
     'src/SnippetStore.cs'           = '6d4835d4ad3ff36e66a134a8afcb32e4a5798a66'
     'src/SnippetEditor.cs'          = '65cd78d0e0caa47776d6217d0a72f202e93ced55'
     'src/TextInjection.cs'          = '4b5e893363a4e4f9827dd003552252c2f84b526d'
-    'WinSidebar.csproj'             = '5cad63c290e559710d2845b68eadd39a110ca556'
+    'WinSidebar.csproj'             = 'a67ab99b2a827afcbd3901c924e5e9fca5ad4e01'
     'tests/LocalizationSmoke.cs'    = '1a20a10f94e96875c522c94b2c164908fbf32ea0'
     'tests/SnippetStoreSmoke.cs'    = 'b144c31fd904677d00e1217d3f0f78133cf10283'
 }
