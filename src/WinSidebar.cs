@@ -1344,7 +1344,7 @@ internal sealed class SidebarWindow : Form
             int id = m.WParam.ToInt32();
             if (id == OpenSidebarHotkeyId)
             {
-                if (!expanded) Expand(true);
+                Expand(!expanded);
             }
             else if (id >= ShortcutHotkeyBase && id < ShortcutHotkeyBase + 4)
                 OpenShortcut(id - ShortcutHotkeyBase);
