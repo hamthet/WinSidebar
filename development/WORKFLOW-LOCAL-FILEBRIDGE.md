@@ -10,26 +10,33 @@ O assistente **não tem acesso ao PowerShell do computador do responsável** nem
 
 ## Desenvolvimento e testes: somente WinSidebar
 
-Execute no PowerShell do Windows (requer `git`, `gh` autenticado e .NET 8 SDK):
+Execute no PowerShell do Windows. Convenções locais vigentes do responsável: clone em `C:\\Git\\WinSidebar`, SDK portátil .NET 8 em `C:\\dotnet8\\dotnet.exe` e temporários locais em `C:\\H\\filebridge\\WinSidebar`. O diretório local `C:\\H\\filebridge` **não é** o repositório GitHub privado FILEBRIDGE.
 
 ```powershell
 $ErrorActionPreference = 'Stop'
-gh auth status
-gh repo clone hamthet/WinSidebar
-Set-Location .\WinSidebar
+Set-Location 'C:\Git\WinSidebar'
+$dotnet = 'C:\dotnet8\dotnet.exe'
+if (-not (Test-Path -LiteralPath $dotnet)) { throw 'SDK .NET 8 portátil não encontrado.' }
+
 git fetch origin --prune
-git switch --track origin/feature/runtime-i18n-es # substituir pela branch atual; se existente: git switch <branch>
 git status --short
 git rev-parse HEAD
-dotnet run --project tests/LocalizationSmoke.csproj -c Release
+
+& $dotnet run --project .\tests\LocalizationSmoke.csproj -c Release
 if ($LASTEXITCODE -ne 0) { throw 'Teste local de idiomas falhou.' }
-$preview = Join-Path $env:TEMP 'WinSidebar-owner-preview'
-New-Item -ItemType Directory -Path $preview -Force | Out-Null
-dotnet publish WinSidebar.csproj -c Release -r win-x64 --self-contained true -o $preview
+
+$previewRoot = 'C:\H\filebridge\WinSidebar\preview'
+New-Item -ItemType Directory -Path $previewRoot -Force | Out-Null
+$preview = Join-Path $previewRoot ('WinSidebar-owner-preview-' + [Guid]::NewGuid().ToString('N'))
+
+& $dotnet publish .\WinSidebar.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o $preview
 if ($LASTEXITCODE -ne 0) { throw 'Build local falhou.' }
-$exe = Join-Path $preview 'WinSidebar.exe'
-if (-not (Test-Path $exe)) { throw 'Executável não encontrado.' }
-(Get-FileHash $exe -Algorithm SHA256).Hash
+
+$files = @(Get-ChildItem -LiteralPath $preview -File)
+if ($files.Count -ne 1 -or $files[0].Name -ne 'WinSidebar.exe') {
+    throw 'A prévia deve produzir exatamente um WinSidebar.exe autocontido.'
+}
+(Get-FileHash -LiteralPath $files[0].FullName -Algorithm SHA256).Hash
 ```
 
 Antes de qualquer `git push` de código, confirmar que **nenhum workflow automático da branch de destino será acionado**. `gh workflow list --all --repo hamthet/WinSidebar` ajuda a inspecionar, mas não desabilita nada. Em branches de desenvolvimento sem Actions, remover gatilhos `push`/`pull_request` dos arquivos de workflow **antes** de alterar `src/**` ou o `.csproj`, ou, se autorizado e tecnicamente viável, desabilitar os workflows relevantes no próprio repositório via `gh workflow disable <id> --repo hamthet/WinSidebar` e confirmar. Não afirmar que um workflow foi desativado sem resultado verificável. Nunca modificar automaticamente a configuração de Actions na `main` por causa de uma branch experimental.
@@ -38,7 +45,7 @@ Antes de qualquer `git push` de código, confirmar que **nenhum workflow automá
 
 ## FILEBRIDGE: transferência sob demanda, não persistência
 
-**Somente após pedido explícito do responsável por um arquivo para testar**, compilar localmente e conferir o hash. Caso seja necessário usar o FILEBRIDGE privado, transferir **apenas** o executável ou ZIP de teste com identificação de commit e SHA-256. Não copiar código-fonte, planos, scripts de engenharia, histórico, diretórios `development/**` nem versões arquivadas do produto para o FILEBRIDGE. Não cadastrar prévias preventivamente, nem confundir entrega privada com release oficial. O arquivo local de prévia fica em `%TEMP%`; o arquivo no FILEBRIDGE deve ser excluído quando deixar de ser necessário, após confirmar o download e a integridade. Uma tag/release temporária eventualmente usada para transportar o arquivo também deve ser removida, sem afetar as tags/releases oficiais de `hamthet/WinSidebar`.
+**Somente após pedido explícito do responsável por um arquivo para testar**, compilar localmente e conferir o hash. Caso seja necessário usar o FILEBRIDGE privado, transferir **apenas** o executável ou ZIP de teste com identificação de commit e SHA-256. Não copiar código-fonte, planos, scripts de engenharia, histórico, diretórios `development/**` nem versões arquivadas do produto para o FILEBRIDGE. Não cadastrar prévias preventivamente, nem confundir entrega privada com release oficial. O arquivo local de prévia fica em `C:\\H\\filebridge\\WinSidebar`; o arquivo no repositório GitHub privado FILEBRIDGE deve ser excluído quando deixar de ser necessário, após confirmar o download e a integridade. Uma tag/release temporária eventualmente usada para transportar o arquivo também deve ser removida, sem afetar as tags/releases oficiais de `hamthet/WinSidebar`.
 
 Com um executável que de fato exista, exemplo **não executado** de transporte privado por GitHub CLI (o usuário precisa ter acesso à conta privada):
 
