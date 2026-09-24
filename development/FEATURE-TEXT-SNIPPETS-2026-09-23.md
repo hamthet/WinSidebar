@@ -119,4 +119,5 @@ This feature starts **after** the frozen functional-menu checkpoint. Do not modi
 
 ## Sidebar opener hotkey — 2026-09-24
 
-Owner requested `Alt+"\`` as a global command to open the sidebar. Current implementation registers Alt+Shift+`Keys.Oem7` (the quote/apostrophe key on the target Windows keyboard layout). It expands a collapsed sidebar and deliberately does nothing when the sidebar is already expanded. This does not replace F1..F4 shortcut activation or configurable Shift+F script hotkeys.
+The first owner test of `Alt+"` failed. The owner selected `Ctrl+"` instead. Current implementation registers Ctrl+Shift+`Keys.Oem7` and expands a collapsed sidebar; it deliberately does nothing while already expanded. This does not replace F1..F4 shortcut activation or configurable Shift+F script hotkeys.
+
