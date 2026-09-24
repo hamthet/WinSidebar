@@ -35,7 +35,9 @@ Local conventions:
 
 - repository: `C:\Git\WinSidebar`
 - .NET 8 SDK used **only for build**: `C:\dotnet8\dotnet.exe`
-- release-candidate artifacts: `C:\H\filebridge\WinSidebar\release`
+- immutable release-candidate artifacts: `C:\H\filebridge\WinSidebar\release`
+- stable local executable for desktop shortcuts: `C:\H\files\WinSidebar\current\WinSidebar.exe`
+- previous stable executable preserved for recovery: `C:\H\files\WinSidebar\previous\WinSidebar.exe`
 
 The script:
 
@@ -48,7 +50,8 @@ The script:
 7. rejects the result unless publish contains **exactly one file named `WinSidebar.exe`**;
 8. rejects an implausibly small binary;
 9. creates a ZIP whose sole payload is `WinSidebar.exe`;
-10. writes SHA-256 hashes for the EXE and ZIP.
+10. writes SHA-256 hashes for the EXE and ZIP;
+11. only after all checks pass, promotes the verified EXE to the stable `current` path and preserves the prior stable EXE under `previous`.
 
 The gate does not merge, tag, publish a GitHub Release or modify `main`.
 
@@ -73,3 +76,11 @@ Do not change product behavior opportunistically during the translation stage. F
 ## Preservation
 
 Current user profile remains at `%LOCALAPPDATA%\WinSidebar` and is not part of release packaging. Internal `development/**` files never enter the shipping ZIP. No remote FILEBRIDGE transfer is authorized by this gate.
+
+## Stable desktop shortcut target
+
+The dated `candidate-<timestamp>-<commit>` directory is intentionally versioned and changes every successful build. Desktop shortcuts must **not** target it. Use the stable path:
+
+`C:\H\files\WinSidebar\current\WinSidebar.exe`
+
+The release gate updates this stable executable only after the candidate passes all self-contained checks. This keeps the desktop shortcut valid while preserving immutable candidate evidence separately.
