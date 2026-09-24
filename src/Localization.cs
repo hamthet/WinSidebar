@@ -11,7 +11,7 @@ using System.Threading;
 internal static class Localization
 {
     private static readonly Dictionary<string, Dictionary<string, string>> Catalog = ReadCatalog();
-    internal static string Current { get; private set; } = "pt-BR";
+    internal static string Current { get; private set; } = "en-US";
 
     private static Dictionary<string, Dictionary<string, string>> ReadCatalog()
     {
@@ -68,29 +68,14 @@ internal static class Localization
         return value;
     }
 
-    private static bool IsSimplifiedChinese(CultureInfo culture)
-    {
-        // Traditional Chinese Windows UI must not silently receive simplified characters.
-        string name = culture.Name;
-        return name.Equals("zh-CN", StringComparison.OrdinalIgnoreCase) ||
-            name.Equals("zh-SG", StringComparison.OrdinalIgnoreCase) ||
-            name.Equals("zh-MY", StringComparison.OrdinalIgnoreCase) ||
-            name.Equals("zh-Hans", StringComparison.OrdinalIgnoreCase) ||
-            name.StartsWith("zh-Hans-", StringComparison.OrdinalIgnoreCase);
-    }
-
     internal static void Initialize(string settingsFile)
     {
-        // Existing profiles without a language field retain Portuguese.
-        string chosen = "pt-BR";
-        if (!File.Exists(settingsFile))
-        {
-            CultureInfo culture = CultureInfo.CurrentUICulture;
-            string os = culture.TwoLetterISOLanguageName;
-            chosen = os == "pt" ? "pt-BR" : os == "es" ? "es-ES" :
-                os == "ru" ? "ru-RU" : IsSimplifiedChinese(culture) ? "zh-CN" : "en-US";
-        }
-        else
+        bool existingProfile = File.Exists(settingsFile);
+        // English is the product default for new installations. Profiles created
+        // before language persistence existed retain Portuguese unless they already
+        // contain an explicit supported language= value.
+        string chosen = existingProfile ? "pt-BR" : "en-US";
+        if (existingProfile)
         {
             try
             {
