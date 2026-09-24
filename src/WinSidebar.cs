@@ -129,7 +129,7 @@ internal sealed class SidebarWindow : Form
     private const int WmMouseActivate = 0x0021;
     private const uint NoRepeat = 0x4000;
     private const uint ShiftNoRepeat = 0x4004;
-    private const uint AltShiftNoRepeat = 0x4005;
+    private const uint CtrlShiftNoRepeat = 0x4006;
     private const int ShortcutHotkeyBase = 9801;
     private const int SnippetHotkeyBase = 9811;
     private const int OpenSidebarHotkeyId = 9829;
@@ -1309,9 +1309,9 @@ internal sealed class SidebarWindow : Form
             else hotkeyErrors += (hotkeyErrors.Length == 0 ? "" : ", ") + hotkey;
         }
 
-        if (Native.RegisterHotKey(hotkeyHandle, OpenSidebarHotkeyId, AltShiftNoRepeat, (uint)Keys.Oem7))
+        if (Native.RegisterHotKey(hotkeyHandle, OpenSidebarHotkeyId, CtrlShiftNoRepeat, (uint)Keys.Oem7))
             registered.Add(OpenSidebarHotkeyId);
-        else hotkeyErrors += (hotkeyErrors.Length == 0 ? "" : ", ") + "Alt+\"";
+        else hotkeyErrors += (hotkeyErrors.Length == 0 ? "" : ", ") + "Ctrl+\"";
 
         if (hotkeyErrors.Length > 0)
             status.Text = Localization.Text("sidebar.hotkeys_unavailable") + hotkeyErrors;
