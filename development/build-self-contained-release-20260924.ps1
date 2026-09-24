@@ -56,8 +56,9 @@ if ($properties.RuntimeIdentifier -ne 'win-x64' -or
     throw 'Project is not configured as win-x64 self-contained single-file.'
 }
 
-$localizationSource = [IO.File]::ReadAllText('.\src\Localization.cs')
-$firstRunSource = [IO.File]::ReadAllText('.\src\FirstRunLanguageDialog.cs')
+$utf8 = [Text.UTF8Encoding]::new($false)
+$localizationSource = [IO.File]::ReadAllText('.\src\Localization.cs', $utf8)
+$firstRunSource = [IO.File]::ReadAllText('.\src\FirstRunLanguageDialog.cs', $utf8)
 foreach ($required in @(
     'Current { get; private set; } = "en-US"',
     'string chosen = existingProfile ? "pt-BR" : "en-US"'
@@ -70,14 +71,26 @@ if ($localizationSource.Contains('TwoLetterISOLanguageName') -or
     $localizationSource.Contains('IsSimplifiedChinese')) {
     throw 'New-install language must not be auto-selected from Windows UI culture.'
 }
+
+# Keep this PowerShell 5.1 gate source ASCII-only. Validate the first-run
+# chooser by ASCII structure/language codes so the script itself is not
+# corrupted when Windows PowerShell reads a UTF-8 file without a BOM.
 foreach ($required in @(
-    'Text = "WinSidebar — Language"',
+    'Text = "WinSidebar',
+    'Language";',
     'prompt.Text = "Choose your language"',
+    'language.Items.AddRange(new object[] {',
     '"English"',
-    '"Português (Brasil)"',
-    '"Español"',
-    '"Русский"',
-    '"简体中文"'
+    'if (code == "pt-BR") return 1;',
+    'if (code == "es-ES") return 2;',
+    'if (code == "ru-RU") return 3;',
+    'if (code == "zh-CN") return 4;',
+    'return 0;',
+    'if (index == 1) return "pt-BR";',
+    'if (index == 2) return "es-ES";',
+    'if (index == 3) return "ru-RU";',
+    'if (index == 4) return "zh-CN";',
+    'return "en-US";'
 )) {
     if (-not $firstRunSource.Contains($required)) {
         throw "First-run five-language chooser contract missing from source: $required"
