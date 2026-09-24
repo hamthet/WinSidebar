@@ -41,10 +41,14 @@ foreach ($path in $expected.Keys) {
     }
 }
 
-$dotnetRoot = Join-Path $env:USERPROFILE 'Desktop\HAMILTON_NAODELETAR\dotnet'
+$dotnetRoot = 'C:\dotnet8'
 $dotnet = Join-Path $dotnetRoot 'dotnet.exe'
 if (-not (Test-Path -LiteralPath $dotnet -PathType Leaf)) {
-    throw "Portable .NET SDK not found: $dotnet"
+    throw "Portable .NET 8 SDK not found: $dotnet"
+}
+$version = (& $dotnet --version).Trim()
+if ($LASTEXITCODE -ne 0 -or -not $version.StartsWith('8.')) {
+    throw "WinSidebar requires the .NET 8 SDK for development. Found: $version"
 }
 $env:DOTNET_ROOT = $dotnetRoot
 $env:PATH = "$dotnetRoot;$env:PATH"
@@ -61,7 +65,9 @@ Write-Host 'Running isolated snippet-store smoke...'
 & $dotnet run --project .\tests\SnippetStoreSmoke.csproj -c Release
 if ($LASTEXITCODE -ne 0) { throw 'Snippet-store smoke failed.' }
 
-$output = Join-Path $env:TEMP ('WinSidebar-snippets-preview-' + [Guid]::NewGuid().ToString('N'))
+$previewRoot = 'C:\H\filebridge\WinSidebar\preview'
+New-Item -ItemType Directory -Path $previewRoot -Force | Out-Null
+$output = Join-Path $previewRoot ('WinSidebar-snippets-preview-' + [Guid]::NewGuid().ToString('N'))
 Write-Host "Publishing preview to: $output"
 & $dotnet publish .\WinSidebar.csproj -c Release -r win-x64 --self-contained true -o $output
 if ($LASTEXITCODE -ne 0) { throw 'Windows publish failed.' }
