@@ -5,6 +5,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <AssemblyName>WinSidebar</AssemblyName>
     <RootNamespace>WinSidebar</RootNamespace>
+    <NeutralLanguage>en-US</NeutralLanguage>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <Version>1.0.0</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
