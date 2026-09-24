@@ -56,6 +56,34 @@ if ($properties.RuntimeIdentifier -ne 'win-x64' -or
     throw 'Project is not configured as win-x64 self-contained single-file.'
 }
 
+$localizationSource = [IO.File]::ReadAllText('.\src\Localization.cs')
+$firstRunSource = [IO.File]::ReadAllText('.\src\FirstRunLanguageDialog.cs')
+foreach ($required in @(
+    'Current { get; private set; } = "en-US"',
+    'string chosen = existingProfile ? "pt-BR" : "en-US"'
+)) {
+    if (-not $localizationSource.Contains($required)) {
+        throw "English-default localization contract missing from source: $required"
+    }
+}
+if ($localizationSource.Contains('TwoLetterISOLanguageName') -or
+    $localizationSource.Contains('IsSimplifiedChinese')) {
+    throw 'New-install language must not be auto-selected from Windows UI culture.'
+}
+foreach ($required in @(
+    'Text = "WinSidebar — Language"',
+    'prompt.Text = "Choose your language"',
+    '"English"',
+    '"Português (Brasil)"',
+    '"Español"',
+    '"Русский"',
+    '"简体中文"'
+)) {
+    if (-not $firstRunSource.Contains($required)) {
+        throw "First-run five-language chooser contract missing from source: $required"
+    }
+}
+
 Write-Host 'Running five-language localization smoke...'
 & $dotnet run --project .\tests\LocalizationSmoke.csproj -c Release
 if ($LASTEXITCODE -ne 0) { throw 'Localization smoke failed.' }
