@@ -182,3 +182,22 @@ Current release head is `81a80987fe37eca822bc7462355a0e1c63dbc1bc`. It replaces 
 ### Merge completion
 
 PR #7 merged to `main` as `2597fe5ddda8906fd4e2a31ab8591ed4e7f6a2a4`. Its tree SHA is `00d4c1502e529bcaea609a8da6971088171fa6aa`, exactly equal to the tree of tested head `81a80987fe37eca822bc7462355a0e1c63dbc1bc`. Publication is the only remaining release act: tag `v2.0` and GitHub Release with the verified ZIP/checksum assets.
+
+
+## FINAL PUBLICATION CLOSURE — 2026-09-25
+
+The WinSidebar 2.0 release procedure is complete.
+
+- Final current-head Windows gate: PASS on `81a80987fe37eca822bc7462355a0e1c63dbc1bc` using .NET SDK `8.0.425`.
+- Final artifact launch: PASS.
+- PR #7 merged to `main` as `2597fe5ddda8906fd4e2a31ab8591ed4e7f6a2a4`.
+- Merge tree and tested-head tree are identical: `00d4c1502e529bcaea609a8da6971088171fa6aa`.
+- Annotated tag `v2.0` points exactly to the merge commit.
+- Public GitHub Release: `WinSidebar 2.0 — Windows x64`, published `2026-09-25T18:50:55Z`, non-draft and non-prerelease.
+- Published assets:
+  - `SHA256SUMS.txt`, 177 bytes, GitHub digest `sha256:ff2c7645613ec948930b7445ec64cefcbe32ac5cb287b306b38c9ca7885e6dac`;
+  - `WinSidebar-v2.0-win-x64.zip`, 66,068,922 bytes, GitHub digest `sha256:decf7fe7d7616f7ecb03ec08175dd7cafae8a455b37340642a670cbb92436fdf`.
+- Published release notes match `docs/RELEASE-NOTES.md` after line-ending normalization.
+- Current shipping workflow on `main` remains manual-only and delegates to the canonical verifier.
+
+This closes the 2.0 integration, merge, tagging and publication sequence. Historical 2.0.0 naming and stacked-PR sections above remain provenance only and must not be interpreted as current product state.
