@@ -164,6 +164,11 @@ Draft PR #7 may now be treated as ready for review. Merge and GitHub Release pub
 
 ## Current closure amendment — post-ready review
 
-The previous “all gates closed” state was superseded by a fresh automated review after PR #7 was marked ready. Valid findings were corrected in `10e8aaf78b495b71bb6b26fd77ceea23252e9c11`; the immediately preceding release state is preserved at `checkpoint/pre-final-review-fixes-20260925`.
+The previous “all gates closed” state was superseded by a fresh automated review after PR #7 was marked ready. Valid findings were corrected in `81a80987fe37eca822bc7462355a0e1c63dbc1bc`; the immediately preceding release state is preserved at `checkpoint/pre-final-review-fixes-20260925`.
 
-The fix commit changes runtime behavior, so the earlier PASS cannot authorize merge of this new head. Required before the already-authorized merge: canonical Windows `tools/verify-release.ps1` PASS on `10e8aaf78...` plus one launch of the newly produced EXE. Release publication remains authorized but must follow merge.
+The fix commit changes runtime behavior, so the earlier PASS cannot authorize merge of this new head. Required before the already-authorized merge: canonical Windows `tools/verify-release.ps1` PASS on `81a80987...` plus one launch of the newly produced EXE. Release publication remains authorized but must follow merge.
+
+
+### Preservation follow-up
+
+Current release head is `81a80987fe37eca822bc7462355a0e1c63dbc1bc`. It replaces `File.Exists`-based ambiguity in settings initialization and rollback snapshot capture with direct read/error classification, preserving the fail-closed behavior for inaccessible user data. PR #7 is temporarily draft until this exact head passes the canonical Windows verifier and artifact launch.

@@ -48,6 +48,9 @@ Follow-up audit commit `a156c3fff7497fc7f33c262eb3d20f029818d59e` strengthens th
 
 Marking PR #7 ready triggered a new automated review that found valid runtime/data-safety issues not covered by the previous owner PASS. State before these fixes is preserved at `checkpoint/pre-final-review-fixes-20260925`.
 
-Commit `10e8aaf78b495b71bb6b26fd77ceea23252e9c11` addresses the confirmed findings: paste-target recheck, partial SendInput cleanup, rollback snapshot preservation, invariant Downloads fallback, ignored-app read/write/recovery hardening, unreadable-settings write suppression, AltGr+Y tooltip correction and localized generated snippet names. Smoke coverage was extended for localization/settings and localized snippet defaults. Static audit: 152 localization keys, exact five-language parity, no undefined source keys.
+Commit `81a80987fe37eca822bc7462355a0e1c63dbc1bc` addresses the confirmed findings: paste-target recheck, partial SendInput cleanup, rollback snapshot preservation, invariant Downloads fallback, ignored-app read/write/recovery hardening, unreadable-settings write suppression, AltGr+Y tooltip correction and localized generated snippet names. Smoke coverage was extended for localization/settings and localized snippet defaults. Static audit: 152 localization keys, exact five-language parity, no undefined source keys.
 
 Because this is a runtime-changing commit, the previous canonical PASS is historical evidence only. Merge/release remain owner-authorized but blocked until the canonical verifier and one artifact launch pass on the new head.
+
+
+Follow-up commit `81a80987fe37eca822bc7462355a0e1c63dbc1bc` hardens missing-vs-unreadable detection for settings and rollback snapshots. PR #7 is intentionally draft pending the canonical Windows PASS and artifact launch on this exact head. Owner authorization for merge/publication remains valid once the technical gate closes.

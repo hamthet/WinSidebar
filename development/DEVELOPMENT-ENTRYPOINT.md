@@ -41,7 +41,7 @@ Final PR #7 diff review is complete with no release blocker found, PR #7 is read
 
 After PR #7 was marked ready, a fresh automated review of head `a156c3fff...` found additional valid runtime/data-safety issues, including a P1 focus race in snippet paste injection. The pre-fix state is preserved at `checkpoint/pre-final-review-fixes-20260925`.
 
-Corrective release head: `10e8aaf78b495b71bb6b26fd77ceea23252e9c11`.
+Corrective release head: `81a80987fe37eca822bc7462355a0e1c63dbc1bc`.
 
 The commit changes runtime/source behavior to:
 - recheck snippet target focus immediately before `SendInput`;
@@ -55,4 +55,7 @@ The commit changes runtime/source behavior to:
 
 Localization catalogs now contain 152 keys with exact five-language parity. Prior review threads were resolved after the fixes and a fresh `@codex review` was requested.
 
-The owner already authorized merge and release publication, but the runtime-changing commit invalidates the previous artifact gate for merge purposes. Current required gate: run `.\tools\verify-release.ps1` on Windows at `10e8aaf78...`, then open the resulting EXE once. Only after that current-head PASS may the authorized merge proceed.
+The owner already authorized merge and release publication, but the runtime-changing commit invalidates the previous artifact gate for merge purposes. Current required gate: run `.\tools\verify-release.ps1` on Windows at `81a80987...`, then open the resulting EXE once. Only after that current-head PASS may the authorized merge proceed.
+
+
+Follow-up hardening in `81a80987fe37eca822bc7462355a0e1c63dbc1bc` removes the remaining `File.Exists` ambiguity: settings initialization now distinguishes truly missing files from present-but-unreadable state, and rollback snapshots distinguish missing files by explicit read exceptions rather than existence probing. PR #7 was intentionally returned to draft until the canonical Windows gate passes on this exact head.
