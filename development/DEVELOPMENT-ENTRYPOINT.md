@@ -124,3 +124,20 @@ Post-merge verification:
 - no runtime, localization, test, packaging, verifier or workflow change occurred.
 
 Current authority is now explicit in public documentation: use `v2.0` for the exact shipped 2.0 source baseline and `main` for current repository/maintenance guidance.
+
+
+## 2026-09-25 — branch/PR hygiene classification after v2.0
+
+Read-only comparison against current `main` (`790cd352b11f67625f121a8fb9dcd4d9022ed6e0`) distinguishes refs that are fully incorporated from refs that preserve divergent history.
+
+Fully incorporated refs (zero commits unique relative to current `main`; deletion may be considered later as a separate owner-authorized cleanup):
+- `chore/release-2.0`;
+- `chore/release-2.0.0`;
+- `checkpoint/pre-final-review-fixes-20260925`;
+- the merged documentation branch `docs/post-release-2.0-sync` is likewise a normal post-merge cleanup candidate.
+
+Divergent historical checkpoints/features retain commits not present in the clean `main` lineage and must not be deleted merely because v2.0 is published. They are provenance/rollback evidence unless separately reviewed.
+
+Open draft PRs #1–#5 remain historical WIP records on the stacked development lineage. They were not closed or modified in this pass. Closing those PRs, deleting branches, and restructuring `develop` are separate repository-governance actions requiring explicit owner authorization.
+
+Repository UI metadata observed after the sync: default branch `main`, public repository, current latest release `v2.0`; description remains `WinSidebar by Hamthet. For those who hate ALT+TAB confusion`, homepage is unset and topics are empty. These metadata fields are not contradictory to the software state, but they were not changed because the connected GitHub mutation surface does not expose repository-description/homepage/topic editing.
