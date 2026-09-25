@@ -88,7 +88,7 @@ Restaurar accesos directos y Restaurar scripts son independientes.
 
 Si un archivo del perfil queda ilegible, conserva el original antes de borrarlo o reemplazarlo manualmente. Puede ser útil para recuperar datos.
 
-La migración de preferencias entre versiones no forma parte del contrato de validación de 2.0.
+Si vienes de una versión anterior de WinSidebar, haz primero una copia de este perfil; no se garantiza la migración del perfil entre versiones.
 
 ## 9. Desinstalar
 

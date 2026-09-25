@@ -42,7 +42,7 @@ if (Test-Path -LiteralPath (Join-Path $root 'development')) {
 
 $required = @(
     'README.md', 'START-HERE.txt', 'SUPPORT.md', 'PROJECT.md', 'project.json', 'CONTRIBUTING.md',
-    'docs\README.md', 'docs\FAQ.md', 'docs\TUTORIAL.md', 'docs\RELEASE-NOTES.md',
+    'docs\README.md', 'docs\FAQ.md', 'docs\TUTORIAL.md', 'docs\RELEASE-NOTES.md', 'docs\OUTREACH.md',
     'docs\ARCHITECTURE.md', 'docs\DATA-FORMATS.md', 'docs\DESIGN-DECISIONS.md',
     'docs\KNOWN-LIMITATIONS.md', 'docs\DEVELOPMENT.md', 'docs\RELEASE.md',
     'docs\i18n\START-HERE.pt-BR.txt', 'docs\i18n\START-HERE.es-ES.txt',
@@ -50,7 +50,20 @@ $required = @(
     'docs\i18n\FAQ.pt-BR.md', 'docs\i18n\FAQ.es-ES.md',
     'docs\i18n\FAQ.ru-RU.md', 'docs\i18n\FAQ.zh-CN.md',
     'docs\i18n\SUPPORT.pt-BR.md', 'docs\i18n\SUPPORT.es-ES.md',
-    'docs\i18n\SUPPORT.ru-RU.md', 'docs\i18n\SUPPORT.zh-CN.md'
+    'docs\i18n\SUPPORT.ru-RU.md', 'docs\i18n\SUPPORT.zh-CN.md',
+    'docs\i18n\README.pt-BR.md', 'docs\i18n\README.es-ES.md',
+    'docs\i18n\README.ru-RU.md', 'docs\i18n\README.zh-CN.md',
+    'docs\i18n\TUTORIAL.pt-BR.md', 'docs\i18n\TUTORIAL.es-ES.md',
+    'docs\i18n\TUTORIAL.ru-RU.md', 'docs\i18n\TUTORIAL.zh-CN.md',
+    'docs\i18n\RELEASE-NOTES.pt-BR.md', 'docs\i18n\RELEASE-NOTES.es-ES.md',
+    'docs\i18n\RELEASE-NOTES.ru-RU.md', 'docs\i18n\RELEASE-NOTES.zh-CN.md',
+    'docs\i18n\OUTREACH.pt-BR.md', 'docs\i18n\OUTREACH.es-ES.md',
+    'docs\i18n\OUTREACH.ru-RU.md', 'docs\i18n\OUTREACH.zh-CN.md',
+    'assets\hero-illustration.svg', 'assets\linkedin-illustration.svg',
+    'assets\i18n\pt-BR\hero-illustration.svg', 'assets\i18n\pt-BR\linkedin-illustration.svg',
+    'assets\i18n\es-ES\hero-illustration.svg', 'assets\i18n\es-ES\linkedin-illustration.svg',
+    'assets\i18n\ru-RU\hero-illustration.svg', 'assets\i18n\ru-RU\linkedin-illustration.svg',
+    'assets\i18n\zh-CN\hero-illustration.svg', 'assets\i18n\zh-CN\linkedin-illustration.svg'
 )
 foreach ($path in $required) {
     if (-not (Test-Path -LiteralPath (Join-Path $root $path) -PathType Leaf)) {
@@ -96,6 +109,27 @@ foreach ($pattern in @(
     'chore/release-2.0.0'
 )) {
     if ($publicText -match $pattern) { throw "Personal/obsolete repository reference remains in public docs: $pattern" }
+}
+
+Write-Host 'Auditing localized product-document parity...'
+$localizedProductDocs = @(
+    'README.md',
+    'docs\i18n\README.pt-BR.md', 'docs\i18n\README.es-ES.md',
+    'docs\i18n\README.ru-RU.md', 'docs\i18n\README.zh-CN.md',
+    'docs\TUTORIAL.md',
+    'docs\i18n\TUTORIAL.pt-BR.md', 'docs\i18n\TUTORIAL.es-ES.md',
+    'docs\i18n\TUTORIAL.ru-RU.md', 'docs\i18n\TUTORIAL.zh-CN.md',
+    'docs\RELEASE-NOTES.md',
+    'docs\i18n\RELEASE-NOTES.pt-BR.md', 'docs\i18n\RELEASE-NOTES.es-ES.md',
+    'docs\i18n\RELEASE-NOTES.ru-RU.md', 'docs\i18n\RELEASE-NOTES.zh-CN.md'
+)
+foreach ($path in $localizedProductDocs) {
+    $document = [IO.File]::ReadAllText((Join-Path $root $path), $utf8)
+    foreach ($token in @('WinSidebar 2.0', 'AltGr+Y', 'F1', 'F12', '12', '8')) {
+        if (-not $document.Contains($token)) {
+            throw "Localized product documentation is missing a current 2.0 contract token: $path / $token"
+        }
+    }
 }
 
 Write-Host 'Auditing five-language catalog parity...'
@@ -152,6 +186,31 @@ if ([IO.Path]::IsPathRooted($OutputRoot)) {
 else {
     $output = Join-Path $root $OutputRoot
 }
+$finalExpected = @(
+    'LICENSE',
+    'SHA256SUMS.txt',
+    'START-HERE.es-ES.txt',
+    'START-HERE.pt-BR.txt',
+    'START-HERE.ru-RU.txt',
+    'START-HERE.txt',
+    'START-HERE.zh-CN.txt',
+    'WinSidebar-v2.0-win-x64.zip',
+    'WinSidebar.exe'
+)
+$transientNames = @('publish','staging','dist')
+if (-not (Test-Path -LiteralPath $output)) {
+    New-Item -ItemType Directory -Path $output -Force | Out-Null
+}
+$unexpectedExisting = @(Get-ChildItem -LiteralPath $output -Force | Where-Object {
+    $_.Name -notin ($finalExpected + $transientNames)
+})
+if ($unexpectedExisting.Count -ne 0) {
+    throw "OutputRoot contains unrelated content. Use an empty/dedicated release folder: $($unexpectedExisting.Name -join ', ')"
+}
+foreach ($name in $finalExpected) {
+    $old = Join-Path $output $name
+    if (Test-Path -LiteralPath $old -PathType Leaf) { Remove-Item -LiteralPath $old -Force }
+}
 $publish = Join-Path $output 'publish'
 $staging = Join-Path $output 'staging'
 $dist = Join-Path $output 'dist'
@@ -207,6 +266,18 @@ Copy-Item -LiteralPath $sum -Destination $finalSum -Force
 
 foreach ($dir in @($publish,$staging,$dist)) {
     if (Test-Path -LiteralPath $dir) { Remove-Item -LiteralPath $dir -Recurse -Force }
+}
+
+$finalEntries = @(Get-ChildItem -LiteralPath $output -Force)
+$finalDirectories = @($finalEntries | Where-Object { $_.PSIsContainer })
+if ($finalDirectories.Count -ne 0) {
+    throw "Final release folder must be flat. Unexpected directories: $($finalDirectories.Name -join ', ')"
+}
+$finalFiles = @($finalEntries | Where-Object { -not $_.PSIsContainer } |
+    ForEach-Object Name | Sort-Object)
+$expectedFinalFiles = @($finalExpected | Sort-Object)
+if (($finalFiles -join '|') -ne ($expectedFinalFiles -join '|')) {
+    throw "Unexpected final release folder contents: $($finalFiles -join ', ')"
 }
 
 $finalExe = Join-Path $output 'WinSidebar.exe'

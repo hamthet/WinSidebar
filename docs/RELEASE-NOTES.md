@@ -21,7 +21,7 @@ Version 2.0 is a major product revision.
 
 ## Compatibility notes
 
-The former Shift+F window-navigation contract is removed. Existing legacy profiles without a saved language may retain Portuguese until the user selects another language. Cross-version preference migration is outside the 2.0 validation scope.
+The former Shift+F window-navigation contract is removed. Existing legacy profiles without a saved language may retain Portuguese until the user selects another language. Profile migration from older versions is not guaranteed; back up saved data before changing versions.
 
 ## Security and distribution
 

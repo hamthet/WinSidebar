@@ -97,7 +97,7 @@ Restaurar Atalhos e Restaurar Scripts são independentes. Restaurar uma seção 
 
 Se um arquivo do perfil ficar ilegível, preserve o original antes de excluir ou substituir manualmente. Um arquivo malformado pode conter evidência útil para recuperação.
 
-Migração de preferências entre versões não faz parte do contrato de validação da 2.0.
+Se estiver vindo de uma versão antiga do WinSidebar, faça primeiro uma cópia desse perfil; a migração de perfil entre versões não é garantida.
 
 ## 9. Remover
 

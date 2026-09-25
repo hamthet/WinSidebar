@@ -21,7 +21,7 @@ La versión 2.0 es una revisión importante del producto.
 
 ## Compatibilidad
 
-Se elimina la antigua navegación de ventanas mediante Shift+F. Los perfiles antiguos sin idioma guardado pueden conservar portugués hasta una elección explícita. La migración de preferencias entre versiones queda fuera del alcance de validación de 2.0.
+Se elimina la antigua navegación de ventanas mediante Shift+F. Los perfiles antiguos sin idioma guardado pueden conservar portugués hasta una elección explícita. No se garantiza la migración del perfil desde versiones anteriores; haz una copia de los datos guardados antes de cambiar de versión.
 
 ## Seguridad y distribución
 

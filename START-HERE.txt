@@ -26,6 +26,7 @@ F1-F4: open shortcuts 1-4.
 Shift+F1-F4: default text-snippet hotkeys 1-4.
 Shortcuts: left-click opens; right-click edits.
 Scripts/snippets: click to paste saved text; the gear edits name, text and hotkey.
+Use +, - and Restore independently in the Shortcuts and Scripts sections.
 
 WINDOWS
 Click a listed window to activate it.
@@ -36,6 +37,7 @@ YOUR SAVED DATA
 Profile: %LOCALAPPDATA%\WinSidebar
 Deleting WinSidebar.exe does not delete this saved profile.
 WinSidebar does not enable automatic startup, change the default browser or send telemetry.
+Snippet paste temporarily uses the Windows clipboard and then attempts to restore the previous content.
 
 REMOVE
 Exit WinSidebar and delete WinSidebar.exe.

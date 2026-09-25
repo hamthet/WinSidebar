@@ -94,7 +94,7 @@ Depending on the features you use, the folder can contain:
 - snippets.json — text snippet definitions and hotkeys;
 - ignored-apps.json — persistent ignored-application rules;
 - icons\ — copied custom shortcut icons;
-- .bak files created by atomic replacement paths.
+- .bak files WinSidebar may create while safely saving changes.
 
 User data such as shortcut names, paths, snippet contents and external window titles is never translated.
 
@@ -104,7 +104,7 @@ Shortcut Restore and Script Restore are intentionally independent. Restoring one
 
 If a profile file becomes unreadable, preserve the original file before manually deleting or replacing it. A malformed file can contain useful recovery evidence.
 
-Cross-version preference migration is not part of the 2.0 validation contract.
+If you are moving from an older WinSidebar version, back up this profile first; profile migration between versions is not guaranteed.
 
 ## 9. Uninstall
 

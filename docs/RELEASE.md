@@ -40,7 +40,7 @@ After a successful canonical gate, the selected OutputRoot is flat. Temporary bu
     START-HERE.zh-CN.txt
     LICENSE
 
-This flat directory is for humans. Internal publish/staging/dist folders are build implementation details and must not remain after a PASS.
+This flat directory is for humans. Internal publish/staging/dist folders are build implementation details and must not remain after a PASS. The verifier rejects unrelated pre-existing content and checks the exact final file set, so a PASS cannot leave stale files or technical subdirectories in the selected OutputRoot.
 
 ## End-user ZIP
 

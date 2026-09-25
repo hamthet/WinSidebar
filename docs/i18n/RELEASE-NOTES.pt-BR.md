@@ -21,7 +21,7 @@ A versão 2.0 é uma revisão ampla do produto.
 
 ## Compatibilidade
 
-A antiga navegação de janelas por Shift+F foi removida. Perfis legados sem idioma salvo podem permanecer em português até uma escolha explícita. Migração de preferências entre versões está fora do escopo de validação da 2.0.
+A antiga navegação de janelas por Shift+F foi removida. Perfis legados sem idioma salvo podem permanecer em português até uma escolha explícita. A migração de perfil de versões antigas não é garantida; faça backup dos dados salvos antes de trocar de versão.
 
 ## Segurança e distribuição
 
