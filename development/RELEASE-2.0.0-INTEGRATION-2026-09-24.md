@@ -1,3 +1,20 @@
+# Naming update — 2026-09-25
+
+The owner simplified the public release name from **2.0.0** to **2.0**. The original integration record below remains historical evidence of the first clean-release pass.
+
+Current release integration:
+- branch: `chore/release-2.0`
+- draft PR: #7 `release: prepare WinSidebar 2.0`
+- PR #6 / `chore/release-2.0.0`: closed as superseded, not merged
+- public package: `WinSidebar-v2.0-win-x64.zip`
+- intended tag: `v2.0`
+- technical Windows AssemblyVersion/FileVersion remain `2.0.0.0`
+- repository now includes `PROJECT.md`, architecture/data/development/release docs, CONTRIBUTING, five-language START-HERE files and five-language beginner FAQ
+
+Do not treat the older 2.0.0 public naming in the historical section as the current release contract.
+
+---
+
 # WinSidebar 2.0.0 — clean release integration
 
 **Date:** 2026-09-24  
