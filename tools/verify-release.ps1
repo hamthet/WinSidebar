@@ -107,7 +107,12 @@ Write-Host 'Running snippet-store smoke...'
 & $Dotnet run --project .\tests\SnippetStoreSmoke.csproj -c Release
 if ($LASTEXITCODE -ne 0) { throw 'Snippet-store smoke failed.' }
 
-$output = Join-Path $root $OutputRoot
+if ([IO.Path]::IsPathRooted($OutputRoot)) {
+    $output = $OutputRoot
+}
+else {
+    $output = Join-Path $root $OutputRoot
+}
 $publish = Join-Path $output 'publish'
 $staging = Join-Path $output 'staging'
 $dist = Join-Path $output 'dist'
