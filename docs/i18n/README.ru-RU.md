@@ -1,6 +1,13 @@
 # WinSidebar 2.0
 
 [English](../../README.md) · [Português (Brasil)](README.pt-BR.md) · [Español](README.es-ES.md) · **Русский** · [简体中文](README.zh-CN.md)
+## Хотите просто запустить программу?
+
+1. Скачайте **WinSidebar-v2.0-win-x64.zip** в Releases.
+2. Распакуйте ZIP.
+3. Дважды щёлкните **WinSidebar.exe**.
+
+Установщик и отдельная загрузка .NET не нужны. Если вы не технический пользователь, начните с [START-HERE](START-HERE.ru-RU.txt) или [частых вопросов](FAQ.ru-RU.md).
 
 ![Концептуальная иллюстрация WinSidebar](../../assets/i18n/ru-RU/hero-illustration.svg)
 

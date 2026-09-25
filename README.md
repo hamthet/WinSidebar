@@ -1,6 +1,13 @@
 # WinSidebar 2.0
 
 **English** · [Português (Brasil)](docs/i18n/README.pt-BR.md) · [Español](docs/i18n/README.es-ES.md) · [Русский](docs/i18n/README.ru-RU.md) · [简体中文](docs/i18n/README.zh-CN.md)
+## Just want to use it?
+
+1. Download **WinSidebar-v2.0-win-x64.zip** from Releases.
+2. Extract the ZIP.
+3. Double-click **WinSidebar.exe**.
+
+No installer and no separate .NET download are required. If you are not technical, start with [START-HERE.txt](START-HERE.txt) or the [FAQ](docs/FAQ.md).
 
 ![WinSidebar concept illustration](assets/hero-illustration.svg)
 

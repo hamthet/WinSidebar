@@ -1,6 +1,13 @@
 # WinSidebar 2.0
 
 [English](../../README.md) · [Português (Brasil)](README.pt-BR.md) · [Español](README.es-ES.md) · [Русский](README.ru-RU.md) · **简体中文**
+## 只想直接使用？
+
+1. 在 Releases 下载 **WinSidebar-v2.0-win-x64.zip**。
+2. 解压 ZIP。
+3. 双击 **WinSidebar.exe**。
+
+无需安装程序，也无需单独下载 .NET。非技术用户可先阅读 [START-HERE](START-HERE.zh-CN.txt) 或 [常见问题](FAQ.zh-CN.md)。
 
 ![WinSidebar 概念插图](../../assets/i18n/zh-CN/hero-illustration.svg)
 

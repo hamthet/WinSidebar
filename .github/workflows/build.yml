@@ -24,7 +24,7 @@ jobs:
           $ErrorActionPreference = 'Stop'
           [xml]$project = Get-Content -LiteralPath '.\WinSidebar.csproj' -Raw
           $p = $project.Project.PropertyGroup | Select-Object -First 1
-          if ($p.Version -ne '2.0' -or $p.AssemblyVersion -ne '2.0.0' -or $p.FileVersion -ne '2.0.0') {
+          if ($p.Version -ne '2.0' -or $p.AssemblyVersion -ne '2.0.0.0' -or $p.FileVersion -ne '2.0.0.0') {
             throw 'Unexpected WinSidebar release version.'
           }
           if ($p.NeutralLanguage -ne 'en-US') { throw 'English must remain the neutral/default language.' }
@@ -35,8 +35,16 @@ jobs:
           foreach ($required in @(
             'README.md',
             'START-HERE.txt',
+            'PROJECT.md',
+            'CONTRIBUTING.md',
+            'docs\README.md',
+            'docs\FAQ.md',
             'docs\TUTORIAL.md',
             'docs\OUTREACH.md',
+            'docs\ARCHITECTURE.md',
+            'docs\DATA-FORMATS.md',
+            'docs\DEVELOPMENT.md',
+            'docs\RELEASE.md',
             'docs\i18n\README.pt-BR.md',
             'docs\i18n\README.es-ES.md',
             'docs\i18n\README.ru-RU.md',
