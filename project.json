@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "name": "WinSidebar",
+  "publicVersion": "2.0",
+  "productType": "portable Windows desktop application",
+  "platform": [
+    "Windows 10 x64",
+    "Windows 11 x64"
+  ],
+  "framework": "net8.0-windows",
+  "distribution": {
+    "selfContained": true,
+    "singleFile": true,
+    "executable": "WinSidebar.exe",
+    "archive": "WinSidebar-v2.0-win-x64.zip",
+    "installer": false,
+    "signed": false
+  },
+  "localization": {
+    "default": "en-US",
+    "supported": [
+      "en-US",
+      "pt-BR",
+      "es-ES",
+      "ru-RU",
+      "zh-CN"
+    ],
+    "baseCatalog": "i18n/catalog.json",
+    "additionalCatalogs": [
+      "i18n/es-ES.json",
+      "i18n/ru-RU.json",
+      "i18n/zh-CN.json"
+    ]
+  },
+  "userProfile": {
+    "root": "%LOCALAPPDATA%\\WinSidebar",
+    "files": [
+      "settings.ini",
+      "shortcuts.xml",
+      "snippets.json",
+      "ignored-apps.json",
+      "icons/"
+    ]
+  },
+  "limits": {
+    "shortcuts": {
+      "min": 4,
+      "max": 12,
+      "step": 4
+    },
+    "snippets": {
+      "min": 4,
+      "max": 8
+    },
+    "snippetHotkeys": "None or Shift+F1..Shift+F12"
+  },
+  "globalHotkeys": {
+    "sidebarToggle": "AltGr+Y",
+    "shortcuts": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+    ],
+    "defaultSnippets": [
+      "Shift+F1",
+      "Shift+F2",
+      "Shift+F3",
+      "Shift+F4"
+    ]
+  },
+  "entryPoints": {
+    "users": "README.md",
+    "releaseStart": "START-HERE.txt",
+    "maintainers": "PROJECT.md",
+    "docsIndex": "docs/README.md",
+    "architecture": "docs/ARCHITECTURE.md",
+    "dataFormats": "docs/DATA-FORMATS.md",
+    "development": "docs/DEVELOPMENT.md",
+    "release": "docs/RELEASE.md"
+  },
+  "sourceMap": {
+    "mainUi": "src/WinSidebar.cs",
+    "localization": "src/Localization.cs",
+    "firstRunLanguage": "src/FirstRunLanguageDialog.cs",
+    "shortcuts": "src/ShortcutConfig.cs",
+    "snippets": "src/SnippetStore.cs",
+    "snippetEditor": "src/SnippetEditor.cs",
+    "textInjection": "src/TextInjection.cs",
+    "windows": "src/WindowManagement.cs"
+  },
+  "tests": [
+    "tests/LocalizationSmoke.csproj",
+    "tests/SnippetStoreSmoke.csproj"
+  ],
+  "releaseVerifier": "tools/verify-release.ps1",
+  "notes": [
+    "project.json is an index for tools and AI; implementation files and executable tests remain authoritative for behavior.",
+    "Cross-version preference migration is outside the WinSidebar 2.0 validation scope."
+  ]
+}

@@ -11,7 +11,7 @@
 
 ## I maintain or analyze WinSidebar
 
-Start with ../PROJECT.md, then:
+Start with ../PROJECT.md. Tools and AI can also read ../project.json for a compact machine-readable map. Then:
 - ARCHITECTURE.md
 - DATA-FORMATS.md
 - DEVELOPMENT.md

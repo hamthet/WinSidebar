@@ -15,13 +15,14 @@ This is the technical entry point for maintainers, reviewers, automation and AI 
 
 ## Reading order for maintainers and AI
 
-1. PROJECT.md — stable product map and invariants.
-2. docs/ARCHITECTURE.md — component boundaries and runtime flow.
-3. docs/DATA-FORMATS.md — persisted user data and compatibility rules.
-4. docs/DEVELOPMENT.md — build and test commands.
-5. docs/RELEASE.md — release procedure and gates.
-6. tests/ — executable behavioral contracts.
-7. src/ and i18n/ — implementation and runtime language resources.
+1. PROJECT.md — stable human-readable product map and invariants.
+2. project.json — compact machine-readable repository/product index.
+3. docs/ARCHITECTURE.md — component boundaries and runtime flow.
+4. docs/DATA-FORMATS.md — persisted user data and compatibility rules.
+5. docs/DEVELOPMENT.md — build and test commands.
+6. docs/RELEASE.md — release procedure and gates.
+7. tests/ — executable behavioral contracts.
+8. src/ and i18n/ — implementation and runtime language resources.
 
 Historical branches and old Pull Requests are development evidence, not the current product contract.
 
@@ -72,3 +73,6 @@ Historical branches and old Pull Requests are development evidence, not the curr
 ## Change rule
 
 Before changing behavior, identify the owning source file and the test that should prove the new contract. Do not infer current behavior from old branches when current source and tests are available.
+## Machine-readable index
+
+`project.json` duplicates a small set of stable facts so tools and AI assistants can orient themselves without scraping prose. It is an index, not a replacement for implementation or executable tests. If it disagrees with source/tests, treat the mismatch as a defect and resolve it explicitly.

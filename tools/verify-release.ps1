@@ -41,7 +41,7 @@ if (Test-Path -LiteralPath (Join-Path $root 'development')) {
 }
 
 $required = @(
-    'README.md', 'START-HERE.txt', 'PROJECT.md', 'CONTRIBUTING.md',
+    'README.md', 'START-HERE.txt', 'PROJECT.md', 'project.json', 'CONTRIBUTING.md',
     'docs\README.md', 'docs\FAQ.md', 'docs\TUTORIAL.md', 'docs\RELEASE-NOTES.md',
     'docs\ARCHITECTURE.md', 'docs\DATA-FORMATS.md', 'docs\DEVELOPMENT.md', 'docs\RELEASE.md',
     'docs\i18n\START-HERE.pt-BR.txt', 'docs\i18n\START-HERE.es-ES.txt',
@@ -55,8 +55,20 @@ foreach ($path in $required) {
     }
 }
 
-Write-Host 'Auditing five-language catalog parity...'
 $utf8 = [Text.UTF8Encoding]::new($false)
+$manifest = [IO.File]::ReadAllText((Join-Path $root 'project.json'), $utf8) | ConvertFrom-Json
+if ($manifest.publicVersion -ne '2.0') { throw 'project.json publicVersion mismatch.' }
+if ($manifest.localization.default -ne 'en-US') { throw 'project.json default language mismatch.' }
+if ((@($manifest.localization.supported) -join '|') -ne 'en-US|pt-BR|es-ES|ru-RU|zh-CN') {
+    throw 'project.json supported-language contract mismatch.'
+}
+if ($manifest.distribution.executable -ne 'WinSidebar.exe' -or
+    $manifest.distribution.archive -ne 'WinSidebar-v2.0-win-x64.zip' -or
+    -not $manifest.distribution.selfContained -or -not $manifest.distribution.singleFile) {
+    throw 'project.json distribution contract mismatch.'
+}
+
+Write-Host 'Auditing five-language catalog parity...'
 $base = [IO.File]::ReadAllText((Join-Path $root 'i18n\catalog.json'), $utf8) | ConvertFrom-Json
 $baseKeys = @($base.PSObject.Properties.Name)
 if ($baseKeys.Count -lt 100) { throw 'Localization base catalog is unexpectedly small.' }

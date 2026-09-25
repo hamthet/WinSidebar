@@ -29,3 +29,6 @@ Treat settings.ini, shortcuts.xml, snippets.json and ignored-apps.json as user-d
 ## Public documentation
 
 Write for non-technical users first: say what to download, tell them to extract the ZIP, keep WinSidebar.exe at the archive root, explain SmartScreen plainly, and explain uninstall/profile behavior without build jargon.
+## Machine-readable project index
+
+Keep `project.json` synchronized when changing public version, supported languages, distribution shape, top-level hotkeys, persisted profile filenames, component paths or documented limits. It is an index; implementation and tests remain authoritative for behavior.
