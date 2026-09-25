@@ -1,11 +1,26 @@
-# Release procedure
+# Release procedure and current 2.0 publication
 
-Public product version: 2.0
-Intended tag: v2.0
+Public product version: 2.0  
+Published tag: `v2.0`  
+Published release: https://github.com/hamthet/WinSidebar/releases/tag/v2.0  
+Published source commit: `2597fe5ddda8906fd4e2a31ab8591ed4e7f6a2a4`
 
 Technical Windows assembly/file versions may use four numeric fields such as 2.0.0.0. That technical format is not a separate public product version.
 
+## Current 2.0 publication state
+
+WinSidebar 2.0 was published on 2026-09-25. The GitHub Release is public, non-draft and non-prerelease.
+
+Published assets:
+
+    WinSidebar-v2.0-win-x64.zip
+    SHA256SUMS.txt
+
+The annotated tag `v2.0` points to the published source commit above. Treat that tag as the immutable source baseline for the shipped 2.0 artifacts. The `main` branch can advance after publication with documentation or later maintenance work without changing the already-published release.
+
 ## Preconditions
+
+For a release build:
 
 - clean working tree;
 - WinSidebar.csproj has Version=2.0;
@@ -58,7 +73,9 @@ Archive root:
 
 Do not bury the executable under bin/, publish/ or candidate folders inside the ZIP.
 
-## Integration
+## 2.0 publication sequence
+
+The following sequence is complete for the published `v2.0` release:
 
 1. Review the release PR against main.
 2. Record actual tests accurately.
@@ -69,3 +86,5 @@ Do not bury the executable under bin/, publish/ or candidate folders inside the 
 7. Publish the GitHub Release and attach the verified ZIP/checksum artifacts.
 
 Merge approval and release publication are separate decisions.
+
+For a later public version, update all version-specific metadata, artifact names, verifier expectations and documentation before reusing this procedure. Do not move or repurpose the published `v2.0` tag.

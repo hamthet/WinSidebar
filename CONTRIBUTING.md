@@ -10,6 +10,8 @@ Read PROJECT.md, the relevant docs under docs/, the owning source file and the a
 
 Keep one coherent task per branch/PR. Do not bundle unrelated refactoring, dependency changes or style modernization into a bug fix or documentation task.
 
+New work should start from current `main`. The published `v2.0` tag is the immutable source baseline for the shipped 2.0 release; do not move or repurpose that tag. Use `v2.0` when reproducing the released source and `main` when working on current repository state.
+
 Do not publish personal machine paths, private screenshots, credentials or secrets.
 
 ## Tests

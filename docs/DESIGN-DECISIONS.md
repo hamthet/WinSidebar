@@ -58,7 +58,9 @@ See `docs/DATA-FORMATS.md`.
 
 ## Public version versus Windows file version
 
-The public product/release name is **2.0** and the intended tag is `v2.0`. Windows AssemblyVersion/FileVersion use the required four-field form `2.0.0.0`. That technical representation is not a second public version.
+The public product/release name is **2.0** and the published tag is `v2.0`. Windows AssemblyVersion/FileVersion use the required four-field form `2.0.0.0`. That technical representation is not a second public version.
+
+The `v2.0` tag is the immutable source baseline for the published 2.0 artifacts. Later commits on `main` do not retroactively redefine that release.
 
 ## Release verification
 
