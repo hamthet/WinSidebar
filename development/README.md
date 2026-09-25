@@ -1,6 +1,6 @@
 # WinSidebar — development dossier
 
-**Repository:** `hamthet/WinSidebar` · **development branch:** `develop` · updated 2026-09-24. Project source, tests, resources and engineering records belong in WinSidebar. `development/**` must **not** enter shipping `main` or the release ZIP. Target languages: English, Brazilian Portuguese, Spanish, Russian and Simplified Chinese. Official v1.0.0 remains unchanged.
+**Repository:** `hamthet/WinSidebar` · **development branch:** `develop` · updated 2026-09-25. Project source, tests, resources and engineering records belong in WinSidebar. `development/**` must **not** enter shipping `main` or the release ZIP. Target languages: English, Brazilian Portuguese, Spanish, Russian and Simplified Chinese. Official v1.0.0 remains unchanged.
 
 ## Operating decisions
 
@@ -21,11 +21,11 @@ No feature PR is merged into `develop` or `main`. Older logs and stage sections 
 
 - **Functional-menu checkpoint:** [`checkpoint/functional-menu-approved-20260923`](https://github.com/hamthet/WinSidebar/tree/checkpoint/functional-menu-approved-20260923) at `6af6343e8d5e6e0dc8cbd19f3d40e378cb583194`.
 - **Final software checkpoint:** [`checkpoint/software-2.0.0-final-20260924`](https://github.com/hamthet/WinSidebar/tree/checkpoint/software-2.0.0-final-20260924) at `8f85cd1377f1677f710366ae121e9fe7bc98be55`. The owner subsequently reported the software state as functional.
-- **Clean release branch:** [`chore/release-2.0`](https://github.com/hamthet/WinSidebar/tree/chore/release-2.0), created from the current `main` lineage, contains the approved runtime, production smoke tests, public version **2.0**, five-language user documentation and AI/maintainer project maps. It intentionally contains no `development/**`. Draft PR #7 targets `main`. PR #6 / `chore/release-2.0.0` was closed as superseded without merge.
+- **Clean release branch:** [`chore/release-2.0`](https://github.com/hamthet/WinSidebar/tree/chore/release-2.0), created from the current `main` lineage, contains the approved runtime, production smoke tests, public version **2.0**, five-language beginner/user documentation, `PROJECT.md`, machine-readable `project.json`, deterministic `tools/verify-release.ps1`, privacy-aware support guidance and AI/maintainer project maps. It intentionally contains no `development/**`. Draft PR #7 targets `main`. PR #6 / `chore/release-2.0.0` was closed as superseded without merge.
 - **Integration record:** [`RELEASE-2.0.0-INTEGRATION-2026-09-24.md`](RELEASE-2.0.0-INTEGRATION-2026-09-24.md).
 
 ## Outstanding gates before official v2.0
-- **Clean-branch Windows validation:** run localization + snippet-store smoke, self-contained publish and a short real-machine smoke from `chore/release-2.0.0`. Feature-branch acceptance does not by itself prove the clean integration branch compiles.
+- **Clean-branch Windows validation:** run `tools/verify-release.ps1` plus a short real-machine smoke from `chore/release-2.0`. Feature-branch acceptance does not by itself prove the clean integration branch compiles.
 - **Pull Request:** review the clean release branch against `main`; the old stacked PRs remain historical development evidence and must not be merged wholesale into the release.
 - **Owner merge approval:** merge to `main` only after explicit approval of the clean PR.
 - **Publication:** tag/release `v2.0` only after merge. Git merge and GitHub release publication remain separate acts.
