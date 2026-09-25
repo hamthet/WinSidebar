@@ -1,4 +1,4 @@
-# WinSidebar 2.0.0
+# WinSidebar 2.0
 
 [English](../../README.md) · [Português (Brasil)](README.pt-BR.md) · **Español** · [Русский](README.ru-RU.md) · [简体中文](README.zh-CN.md)
 
@@ -6,11 +6,11 @@
 
 > **Ilustración conceptual, no una captura de pantalla de la aplicación.** La apariencia inspirada en Windows 98 es intencional.
 
-WinSidebar es una barra lateral portátil y autocontenida para Windows 10/11 x64 que permite localizar y cambiar entre ventanas abiertas, abrir carpetas o sitios frecuentes y pegar fragmentos de texto reutilizables. La versión 2.0.0 es la primera línea de lanzamiento con runtime completo en cinco idiomas, accesos directos ampliables y fragmentos de texto.
+WinSidebar es una barra lateral portátil y autocontenida para Windows 10/11 x64 que permite localizar y cambiar entre ventanas abiertas, abrir carpetas o sitios frecuentes y pegar fragmentos de texto reutilizables. La versión 2.0 es la primera línea de lanzamiento con runtime completo en cinco idiomas, accesos directos ampliables y fragmentos de texto.
 
-**Descarga:** [WinSidebar 2.0.0](https://github.com/hamthet/WinSidebar/releases/tag/v2.0.0) · **Tutorial:** [Español](TUTORIAL.es-ES.md)
+**Descarga:** [WinSidebar 2.0](https://github.com/hamthet/WinSidebar/releases/tag/v2.0) · **Tutorial:** [Español](TUTORIAL.es-ES.md)
 
-## Novedades de 2.0.0
+## Novedades de 2.0
 
 - Cinco idiomas en la aplicación: inglés, portugués de Brasil, español, ruso y chino simplificado.
 - Inglés es el idioma predeterminado de una instalación nueva; el selector inicial permite elegir cualquiera de los cinco.
@@ -24,7 +24,7 @@ WinSidebar es una barra lateral portátil y autocontenida para Windows 10/11 x64
 
 ## Inicio rápido
 
-1. Descarga el ZIP de v2.0.0 y extráelo en una carpeta bajo tu control.
+1. Descarga el ZIP de v2.0 y extráelo en una carpeta bajo tu control.
 2. Ejecuta WinSidebar.exe.
 3. En un perfil nuevo, English aparece preseleccionado. Elige otro idioma si lo prefieres.
 4. Haz clic en la pestaña estrecha o pulsa AltGr+Y para abrir/cerrar la barra.
@@ -41,7 +41,7 @@ La distribución es portátil y no está firmada digitalmente. Windows SmartScre
 - **Shift+F1–F4** — atajos predeterminados de los fragmentos 1–4.
 - Cada fragmento puede usar **Ninguno** o **Shift+F1 a Shift+F12**. No se permiten duplicados entre fragmentos.
 
-La antigua navegación de la lista de ventanas mediante Shift+F no forma parte de 2.0.0.
+La antigua navegación de la lista de ventanas mediante Shift+F no forma parte de 2.0.
 
 ## Accesos directos y fragmentos
 
@@ -81,7 +81,7 @@ Los fragmentos usan temporalmente el portapapeles de Windows para pegar y despu�
 
 ## Distribución portátil
 
-WinSidebar 2.0.0 está destinado a Windows x64 y se publica como un único ejecutable autocontenido. El runtime .NET 8 está incluido dentro de WinSidebar.exe. El usuario final no necesita descargar .NET, PowerShell, Git, compilador ni instalador.
+WinSidebar 2.0 está destinado a Windows x64 y se publica como un único ejecutable autocontenido. El runtime .NET 8 está incluido dentro de WinSidebar.exe. El usuario final no necesita descargar .NET, PowerShell, Git, compilador ni instalador.
 
 Para desinstalar, cierra WinSidebar y elimina el ejecutable. Elimina %LOCALAPPDATA%\WinSidebar solo si también quieres borrar el perfil guardado.
 

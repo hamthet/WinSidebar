@@ -1,10 +1,10 @@
-# WinSidebar 2.0.0 — orientação de divulgação
+# WinSidebar 2.0 — orientação de divulgação
 
 [README](README.pt-BR.md) · [English](../../docs/OUTREACH.md) · [Español](OUTREACH.es-ES.md) · [Русский](OUTREACH.ru-RU.md) · [简体中文](OUTREACH.zh-CN.md)
 
 ## Texto curto sugerido
 
-WinSidebar 2.0.0 é uma barra lateral portátil para Windows 10/11 x64 que ajuda a alternar entre janelas abertas, abrir até 12 atalhos e colar até 8 snippets de texto reutilizáveis. É autocontido em um único executável, suporta inglês, português brasileiro, espanhol, russo e chinês simplificado e usa inglês como padrão de um perfil novo.
+WinSidebar 2.0 é uma barra lateral portátil para Windows 10/11 x64 que ajuda a alternar entre janelas abertas, abrir até 12 atalhos e colar até 8 snippets de texto reutilizáveis. É autocontido em um único executável, suporta inglês, português brasileiro, espanhol, russo e chinês simplificado e usa inglês como padrão de um perfil novo.
 
 Controles principais: AltGr+Y abre/recolhe a barra, F1–F4 abrem os atalhos 1–4 e Shift+F1–F4 são as hotkeys padrão dos snippets.
 

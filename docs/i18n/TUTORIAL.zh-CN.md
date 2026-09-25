@@ -1,10 +1,10 @@
-# WinSidebar 2.0.0 教程
+# WinSidebar 2.0 教程
 
 [README](README.zh-CN.md) · [English](../../docs/TUTORIAL.md) · [Português](TUTORIAL.pt-BR.md) · [Español](TUTORIAL.es-ES.md) · [Русский](TUTORIAL.ru-RU.md)
 
 ## 1. 启动便携应用
 
-解压 WinSidebar 2.0.0 ZIP，然后运行 WinSidebar.exe。无需安装程序，也无需单独安装 .NET runtime。
+解压 WinSidebar 2.0 ZIP，然后运行 WinSidebar.exe。无需安装程序，也无需单独安装 .NET runtime。
 
 在全新配置文件中会预选 English。首次启动还可选择 Português (Brasil)、Español、Русский 和 简体中文。选择会保存到 %LOCALAPPDATA%\WinSidebar。
 
@@ -88,7 +88,7 @@ F1–F4 全局打开快捷方式 1–4，其余通过鼠标使用。
 
 如果配置文件无法读取，在手动删除或替换前请先保留原文件；它可能对数据恢复有帮助。
 
-跨版本偏好迁移不属于 2.0.0 的验证合同。
+跨版本偏好迁移不属于 2.0 的验证合同。
 
 ## 9. 删除
 
@@ -105,4 +105,4 @@ F1–F4 全局打开快捷方式 1–4，其余通过鼠标使用。
 | Shift+F1–F4 | 文本片段 1–4 的默认快捷键 |
 | Shift+F1–F12 | 可配置的文本片段快捷键 |
 
-2.0.0 已有意移除旧版 Shift+F 窗口列表导航。
+2.0 已有意移除旧版 Shift+F 窗口列表导航。

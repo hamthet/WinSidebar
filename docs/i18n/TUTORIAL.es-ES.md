@@ -1,10 +1,10 @@
-# Tutorial de WinSidebar 2.0.0
+# Tutorial de WinSidebar 2.0
 
 [README](README.es-ES.md) · [English](../../docs/TUTORIAL.md) · [Português](TUTORIAL.pt-BR.md) · [Русский](TUTORIAL.ru-RU.md) · [简体中文](TUTORIAL.zh-CN.md)
 
 ## 1. Inicia la aplicación portátil
 
-Extrae el ZIP de WinSidebar 2.0.0 y ejecuta WinSidebar.exe. No hace falta instalador ni runtime .NET separado.
+Extrae el ZIP de WinSidebar 2.0 y ejecuta WinSidebar.exe. No hace falta instalador ni runtime .NET separado.
 
 En un perfil totalmente nuevo, English aparece preseleccionado. El selector inicial también ofrece Português (Brasil), Español, Русский y 简体中文. La elección se guarda en %LOCALAPPDATA%\WinSidebar.
 
@@ -88,7 +88,7 @@ Restaurar accesos directos y Restaurar scripts son independientes.
 
 Si un archivo del perfil queda ilegible, conserva el original antes de borrarlo o reemplazarlo manualmente. Puede ser útil para recuperar datos.
 
-La migración de preferencias entre versiones no forma parte del contrato de validación de 2.0.0.
+La migración de preferencias entre versiones no forma parte del contrato de validación de 2.0.
 
 ## 9. Desinstalar
 
@@ -105,4 +105,4 @@ El perfil es independiente. Elimina %LOCALAPPDATA%\WinSidebar solo si también q
 | Shift+F1–F4 | Atajos predeterminados de fragmentos 1–4 |
 | Shift+F1–F12 | Atajos configurables disponibles |
 
-La antigua navegación de ventanas mediante Shift+F se eliminó intencionalmente en 2.0.0.
+La antigua navegación de ventanas mediante Shift+F se eliminó intencionalmente en 2.0.

@@ -1,4 +1,4 @@
-# WinSidebar 2.0.0
+# WinSidebar 2.0
 
 [English](../../README.md) · [Português (Brasil)](README.pt-BR.md) · [Español](README.es-ES.md) · [Русский](README.ru-RU.md) · **简体中文**
 
@@ -6,11 +6,11 @@
 
 > **这是概念插图，不是应用程序截图。** Windows 98 风格的外观是有意保留的设计。
 
-WinSidebar 是面向 Windows 10/11 x64 的便携、自包含侧边栏，可用于查找和切换已打开的窗口、打开常用文件夹或网站，以及粘贴可重复使用的文本片段。2.0.0 是首个同时提供完整五语言运行时、可扩展快捷方式和文本片段的发布系列。
+WinSidebar 是面向 Windows 10/11 x64 的便携、自包含侧边栏，可用于查找和切换已打开的窗口、打开常用文件夹或网站，以及粘贴可重复使用的文本片段。2.0 是首个同时提供完整五语言运行时、可扩展快捷方式和文本片段的发布系列。
 
-**下载：** [WinSidebar 2.0.0](https://github.com/hamthet/WinSidebar/releases/tag/v2.0.0) · **教程：** [简体中文](TUTORIAL.zh-CN.md)
+**下载：** [WinSidebar 2.0](https://github.com/hamthet/WinSidebar/releases/tag/v2.0) · **教程：** [简体中文](TUTORIAL.zh-CN.md)
 
-## 2.0.0 的主要变化
+## 2.0 的主要变化
 
 - 应用支持五种语言：英语、巴西葡萄牙语、西班牙语、俄语和简体中文。
 - 全新安装默认使用英语；首次启动时可选择任一支持语言。
@@ -24,7 +24,7 @@ WinSidebar 是面向 Windows 10/11 x64 的便携、自包含侧边栏，可用�
 
 ## 快速开始
 
-1. 下载 2.0.0 ZIP，并解压到你有权限使用的文件夹。
+1. 下载 2.0 ZIP，并解压到你有权限使用的文件夹。
 2. 运行 WinSidebar.exe。
 3. 新配置文件中会预选 English；如需要可选择其他语言。
 4. 点击窄侧边标签，或按 AltGr+Y 打开/收起侧边栏。
@@ -41,7 +41,7 @@ WinSidebar 是面向 Windows 10/11 x64 的便携、自包含侧边栏，可用�
 - **Shift+F1–F4** — 文本片段 1–4 的默认快捷键。
 - 每个文本片段可设置为 **无快捷键** 或 **Shift+F1 到 Shift+F12**。不同片段不能使用重复组合。
 
-2.0.0 不再提供旧版通过 Shift+F 导航窗口列表的行为。
+2.0 不再提供旧版通过 Shift+F 导航窗口列表的行为。
 
 ## 快捷方式与文本片段
 
@@ -81,7 +81,7 @@ WinSidebar 不会设置自动启动，不会更改默认浏览器，也不会发
 
 ## 便携式发布
 
-WinSidebar 2.0.0 面向 Windows x64，以单个自包含可执行文件发布。.NET 8 runtime 已包含在 WinSidebar.exe 内。最终用户无需另外下载 .NET、PowerShell、Git、编译器或安装程序。
+WinSidebar 2.0 面向 Windows x64，以单个自包含可执行文件发布。.NET 8 runtime 已包含在 WinSidebar.exe 内。最终用户无需另外下载 .NET、PowerShell、Git、编译器或安装程序。
 
 卸载时退出 WinSidebar 并删除可执行文件即可。只有在同时希望删除保存的配置时，才删除 %LOCALAPPDATA%\WinSidebar。
 
