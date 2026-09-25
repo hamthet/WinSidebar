@@ -54,3 +54,6 @@ Because this is a runtime-changing commit, the previous canonical PASS is histor
 
 
 Follow-up commit `81a80987fe37eca822bc7462355a0e1c63dbc1bc` hardens missing-vs-unreadable detection for settings and rollback snapshots. PR #7 is intentionally draft pending the canonical Windows PASS and artifact launch on this exact head. Owner authorization for merge/publication remains valid once the technical gate closes.
+
+
+Final preservation head `81a80987fe37eca822bc7462355a0e1c63dbc1bc` passed the canonical Windows verifier with .NET SDK `8.0.425`. All PR review threads are resolved and the PR is mergeable. Remaining technical gate: launch the EXE produced by this exact PASS once; the prior launch applied to an earlier build.

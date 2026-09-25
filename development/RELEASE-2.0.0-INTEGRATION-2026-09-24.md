@@ -172,3 +172,8 @@ The fix commit changes runtime behavior, so the earlier PASS cannot authorize me
 ### Preservation follow-up
 
 Current release head is `81a80987fe37eca822bc7462355a0e1c63dbc1bc`. It replaces `File.Exists`-based ambiguity in settings initialization and rollback snapshot capture with direct read/error classification, preserving the fail-closed behavior for inaccessible user data. PR #7 is temporarily draft until this exact head passes the canonical Windows verifier and artifact launch.
+
+
+### Final-head gate result
+
+`81a80987fe37eca822bc7462355a0e1c63dbc1bc` passed `.\tools\verify-release.ps1` on Windows with SDK `8.0.425`. Flat EXE/ZIP/checksum artifacts were produced. All review threads are resolved and PR #7 is mergeable. One final artifact sanity launch of this exact build remains before the already-authorized merge.

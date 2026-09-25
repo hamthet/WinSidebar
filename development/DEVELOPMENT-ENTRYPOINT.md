@@ -59,3 +59,10 @@ The owner already authorized merge and release publication, but the runtime-chan
 
 
 Follow-up hardening in `81a80987fe37eca822bc7462355a0e1c63dbc1bc` removes the remaining `File.Exists` ambiguity: settings initialization now distinguishes truly missing files from present-but-unreadable state, and rollback snapshots distinguish missing files by explicit read exceptions rather than existence probing. PR #7 was intentionally returned to draft until the canonical Windows gate passes on this exact head.
+
+
+## 2026-09-25 — canonical PASS on final preservation head
+
+The owner ran `.\tools\verify-release.ps1` on `81a80987fe37eca822bc7462355a0e1c63dbc1bc` with .NET SDK `8.0.425`. Result: `WINSIDEBAR 2.0 RELEASE VERIFICATION: PASS`. The expected flat EXE/ZIP/checksum artifacts were produced under `artifacts\release`.
+
+All review threads are resolved and PR #7 is mergeable. One current-head technical check remains: open the `WinSidebar.exe` produced by this exact PASS once. The earlier artifact launch covered the pre-hardening build and does not substitute for this final-head launch. Owner authorization for merge and publication remains in force after that final launch.
