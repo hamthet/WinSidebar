@@ -124,3 +124,22 @@ Git merge, owner functional approval and GitHub release publication remain separ
 Draft PR [#6](https://github.com/hamthet/WinSidebar/pull/6), **release: prepare WinSidebar 2.0.0**, now proposes `chore/release-2.0.0` -> `main`.
 
 At creation, GitHub reports the PR as mergeable and the branch is 7 commits ahead / 0 behind `main`. The PR remains draft because clean-branch local Windows build/smoke evidence is still pending. No hosted Actions were dispatched.
+
+
+## Owner approval and final presentation adjustment — 2026-09-25
+
+The owner reported the clean WinSidebar 2.0 candidate as **tested and approved** on the real Windows machine.
+
+Immediately after that approval, the owner correctly identified that the verifier's local OutputRoot still exposed build-oriented `publish/`, `staging/` and `dist/` directories. Those directories were useful to the build implementation but were not user-friendly.
+
+A non-runtime release-tooling adjustment on `chore/release-2.0` now keeps those directories transient and removes them after PASS. The successful OutputRoot is flat and directly exposes:
+
+- `WinSidebar.exe`
+- `WinSidebar-v2.0-win-x64.zip`
+- `SHA256SUMS.txt`
+- `START-HERE.txt` plus PT-BR / ES / RU / ZH-CN variants
+- `LICENSE`
+
+This amendment does **not** change WinSidebar runtime source, localization catalogs or persisted-data contracts. The owner's functional approval therefore remains valid for the executable behavior. The flat-output copy/cleanup amendment has been statically audited in source but was not separately re-executed in this chat after the approval.
+
+Draft PR #7 may now be treated as ready for review. Merge and GitHub Release publication remain separate acts and require their own explicit authorization.
