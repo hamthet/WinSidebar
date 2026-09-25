@@ -123,6 +123,15 @@ foreach ($code in @('es-ES','ru-RU','zh-CN')) {
 $sourceText = (Get-ChildItem -LiteralPath (Join-Path $root 'src') -Filter '*.cs' -File | ForEach-Object {
     [IO.File]::ReadAllText($_.FullName, $utf8)
 }) -join [Environment]::NewLine
+foreach ($pattern in @(
+    'C:\\Users\\',
+    '[A-Z]:\\(?:Git|H)\\',
+    'HAMILTON_NAODELETAR',
+    'C:\\dotnet8',
+    '[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}'
+)) {
+    if ($sourceText -match $pattern) { throw "Possible personal/local development reference in source: $pattern" }
+}
 $refs = [regex]::Matches($sourceText, 'Localization\.Text\("([^"]+)"\)') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique
 foreach ($key in $refs) {
     if (-not ($baseKeys -contains $key)) { throw "Undefined localization key referenced by source: $key" }

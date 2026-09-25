@@ -68,6 +68,9 @@ Historical branches and old Pull Requests are development evidence, not the curr
     i18n/                Runtime localization catalogs
     src/                 WinForms implementation
     tests/               Smoke tests
+    tools/               Deterministic local release verification
+    project.json         Machine-readable product/repository index
+    SUPPORT.md           Beginner-friendly support and privacy guidance
     WinSidebar.csproj    Product/build contract
 
 ## Change rule
