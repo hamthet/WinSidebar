@@ -114,3 +114,24 @@ Divergent historical checkpoints/features retain commits not present in the clea
 Open draft PRs #1–#5 remain historical WIP records on the stacked development lineage. They were not closed or modified in this pass. Closing those PRs, deleting branches, and restructuring `develop` are separate repository-governance actions requiring explicit owner authorization.
 
 Repository UI metadata observed after the sync: default branch `main`, public repository, current latest release `v2.0`; description remains `WinSidebar by Hamthet. For those who hate ALT+TAB confusion`, homepage is unset and topics are empty. These metadata fields are not contradictory to the software state, but they were not changed because the connected GitHub mutation surface does not expose repository-description/homepage/topic editing.
+
+
+## 2026-09-25 — historical PR closure / incorporated-ref cleanup gate
+
+Owner authorized the post-release housekeeping described in the preceding audit.
+
+Completed:
+- PRs #1, #2, #3, #4 and #5 were closed as **superseded without merge**.
+- Each PR received a provenance comment stating that WinSidebar 2.0 was integrated through the clean release line/PR #7 and published as `v2.0`.
+- Their divergent head branches were intentionally preserved.
+- No open pull requests remain at this checkpoint.
+
+Revalidated deletion candidates against current `main` `790cd352b11f67625f121a8fb9dcd4d9022ed6e0`:
+- `chore/release-2.0` — fully incorporated; no unique commits;
+- `chore/release-2.0.0` — fully incorporated; no unique commits;
+- `checkpoint/pre-final-review-fixes-20260925` — fully incorporated; no unique commits;
+- `docs/post-release-2.0-sync` — merged and fully incorporated; no unique commits.
+
+All four refs are unprotected. The connected GitHub mutation surface available in this session does not expose branch/ref deletion, so those deletions were **not** claimed or simulated. They remain pending as a local authenticated Git/gh cleanup step. No divergent feature/checkpoint branch is authorized for deletion by this classification.
+
+No rulesets were observed. Direct branch-protection read returned integration-level 403, so no claim is made about branch-protection configuration beyond the branch-list `protected:false` values observed for the four cleanup candidates.
