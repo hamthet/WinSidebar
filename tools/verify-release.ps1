@@ -120,7 +120,7 @@ foreach ($code in @('pt-BR','es-ES','ru-RU','zh-CN')) {
 }
 
 $zip = Join-Path $dist 'WinSidebar-v2.0-win-x64.zip'
-Compress-Archive -LiteralPath (Join-Path $staging '*') -DestinationPath $zip -CompressionLevel Optimal
+Compress-Archive -Path (Join-Path $staging '*') -DestinationPath $zip -CompressionLevel Optimal
 
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $archive = [IO.Compression.ZipFile]::OpenRead($zip)
@@ -140,7 +140,7 @@ $sum = Join-Path $dist 'SHA256SUMS.txt'
 ), $utf8)
 
 Write-Host ''
-Write-Host 'WINsidebar 2.0 RELEASE VERIFICATION: PASS'
+Write-Host 'WINSIDEBAR 2.0 RELEASE VERIFICATION: PASS'
 Write-Host "SDK: $sdkVersion"
 Write-Host "EXE: $($published[0].FullName)"
 Write-Host "ZIP: $zip"

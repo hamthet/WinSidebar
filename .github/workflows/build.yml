@@ -1,7 +1,6 @@
 name: Verify WinSidebar 2.0 portable build
 
-# Owner-directed manual workflow only. Do not add push/pull_request triggers
-# while hosted Actions are intentionally not part of the active test path.
+# Manual only. The local verifier is the single release-build procedure.
 on:
   workflow_dispatch:
 
@@ -18,118 +17,13 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Verify release metadata and public tree
-        shell: pwsh
+      - name: Run canonical WinSidebar 2.0 release verifier
+        shell: powershell
         run: |
-          $ErrorActionPreference = 'Stop'
-          [xml]$project = Get-Content -LiteralPath '.\WinSidebar.csproj' -Raw
-          $p = $project.Project.PropertyGroup | Select-Object -First 1
-          if ($p.Version -ne '2.0' -or $p.AssemblyVersion -ne '2.0.0.0' -or $p.FileVersion -ne '2.0.0.0') {
-            throw 'Unexpected WinSidebar release version.'
-          }
-          if ($p.NeutralLanguage -ne 'en-US') { throw 'English must remain the neutral/default language.' }
-          if ($p.RuntimeIdentifier -ne 'win-x64' -or $p.SelfContained -ne 'true' -or $p.PublishSingleFile -ne 'true') {
-            throw 'Project is not configured as win-x64 self-contained single-file.'
-          }
-          if (Test-Path -LiteralPath '.\development') { throw 'Internal development dossier must not ship on the release branch.' }
-          foreach ($required in @(
-            'README.md',
-            'START-HERE.txt',
-            'PROJECT.md',
-            'CONTRIBUTING.md',
-            'docs\README.md',
-            'docs\FAQ.md',
-            'docs\TUTORIAL.md',
-            'docs\OUTREACH.md',
-            'docs\ARCHITECTURE.md',
-            'docs\DATA-FORMATS.md',
-            'docs\DEVELOPMENT.md',
-            'docs\RELEASE.md',
-            'docs\i18n\README.pt-BR.md',
-            'docs\i18n\README.es-ES.md',
-            'docs\i18n\README.ru-RU.md',
-            'docs\i18n\README.zh-CN.md',
-            'assets\hero-illustration.svg'
-          )) {
-            if (-not (Test-Path -LiteralPath $required)) { throw "Missing release file: $required" }
-          }
-
-      - name: Audit source for personal local paths
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = 'Stop'
-          $text = (Get-ChildItem src -Filter '*.cs' | ForEach-Object { [IO.File]::ReadAllText($_.FullName) }) -join [Environment]::NewLine
-          if ($text -match 'C:[\\]Users[\\]|[A-Z]:[\\](?:Git|H)[\\]|[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}') {
-            throw 'Possible personal path or email in public source.'
-          }
-
-      - name: Run five-language localization smoke
-        shell: pwsh
-        run: |
-          dotnet run --project .\tests\LocalizationSmoke.csproj -c Release
-          if ($LASTEXITCODE -ne 0) { throw 'Localization smoke failed.' }
-
-      - name: Run snippet-store smoke
-        shell: pwsh
-        run: |
-          dotnet run --project .\tests\SnippetStoreSmoke.csproj -c Release
-          if ($LASTEXITCODE -ne 0) { throw 'Snippet-store smoke failed.' }
-
-      - name: Build self-contained single EXE
-        shell: pwsh
-        run: |
-          dotnet publish .\WinSidebar.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o publish
-          if ($LASTEXITCODE -ne 0) { throw 'Publish failed.' }
-          $output = @(Get-ChildItem publish -File)
-          if ($output.Count -ne 1 -or $output[0].Name -ne 'WinSidebar.exe' -or $output[0].Length -lt 10000000) {
-            throw 'Expected exactly one self-contained WinSidebar.exe.'
-          }
-
-      - name: Package five-language end-user deliverable
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = 'Stop'
-          Add-Type -AssemblyName System.IO.Compression.FileSystem
-          New-Item -ItemType Directory -Path staging,dist -Force | Out-Null
-          Copy-Item publish\WinSidebar.exe staging\WinSidebar.exe
-          Copy-Item LICENSE staging\LICENSE
-          Copy-Item START-HERE.txt staging\START-HERE.txt
-          Copy-Item docs\i18n\START-HERE.pt-BR.txt staging\START-HERE.pt-BR.txt
-          Copy-Item docs\i18n\START-HERE.es-ES.txt staging\START-HERE.es-ES.txt
-          Copy-Item docs\i18n\START-HERE.ru-RU.txt staging\START-HERE.ru-RU.txt
-          Copy-Item docs\i18n\START-HERE.zh-CN.txt staging\START-HERE.zh-CN.txt
-
-          $zip = 'dist\WinSidebar-v2.0-win-x64.zip'
-          Compress-Archive staging\* $zip -CompressionLevel Optimal
-
-          $expected = @(
-            'LICENSE',
-            'START-HERE.es-ES.txt',
-            'START-HERE.pt-BR.txt',
-            'START-HERE.ru-RU.txt',
-            'START-HERE.txt',
-            'START-HERE.zh-CN.txt',
-            'WinSidebar.exe'
-          )
-          $archive = [IO.Compression.ZipFile]::OpenRead((Resolve-Path $zip).Path)
-          try {
-            $actual = @($archive.Entries | ForEach-Object FullName | Sort-Object)
-            if (($actual -join '|') -ne ($expected -join '|')) {
-              throw "Unexpected ZIP contents: $($actual -join ', ')"
-            }
-          }
-          finally { $archive.Dispose() }
-
-          $exeHash = (Get-FileHash publish\WinSidebar.exe -Algorithm SHA256).Hash.ToLowerInvariant()
-          $zipHash = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLowerInvariant()
-          $lines = @(
-            "$exeHash  WinSidebar.exe",
-            "$zipHash  WinSidebar-v2.0-win-x64.zip"
-          )
-          [IO.File]::WriteAllLines('dist\SHA256SUMS.txt', $lines, [Text.UTF8Encoding]::new($false))
+          .\tools\verify-release.ps1 -Dotnet dotnet -OutputRoot 'artifacts\release'
 
       - uses: actions/upload-artifact@v4
         with:
           name: WinSidebar-v2.0-win-x64
-          path: dist/
+          path: artifacts/release/dist/
           if-no-files-found: error

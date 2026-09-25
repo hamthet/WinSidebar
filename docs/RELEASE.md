@@ -16,13 +16,15 @@ Technical Windows assembly/file versions may use four numeric fields such as 2.0
 - five locale catalogs have exact key parity;
 - no internal development dossier or personal machine paths in the shipping tree.
 
-## Tests
+## Canonical gate
 
-    dotnet run --project .\tests\LocalizationSmoke.csproj -c Release
-    dotnet run --project .\tests\SnippetStoreSmoke.csproj -c Release
-    dotnet publish .\WinSidebar.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o .\publish
+Run from the repository root:
 
-Confirm publish contains exactly WinSidebar.exe.
+    .\tools\verify-release.ps1
+
+If dotnet is not on PATH, use -Dotnet with the .NET 8 SDK executable. The script checks release metadata, repository structure, five-language parity, source localization references, smoke tests, self-contained publish, ZIP layout and SHA-256 hashes.
+
+A PASS from this script is build/test evidence only; it does not authorize merge or publication.
 
 ## End-user ZIP
 

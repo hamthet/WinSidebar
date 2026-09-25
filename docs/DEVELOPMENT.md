@@ -19,7 +19,19 @@ From repository root:
     dotnet run --project .\tests\LocalizationSmoke.csproj -c Release
     dotnet run --project .\tests\SnippetStoreSmoke.csproj -c Release
 
-## Self-contained publish
+## Canonical release verification
+
+Preferred command from the repository root:
+
+    .\tools\verify-release.ps1
+
+If dotnet is not on PATH, pass its executable explicitly:
+
+    .\tools\verify-release.ps1 -Dotnet 'C:\path\to\dotnet.exe'
+
+The script verifies release metadata, five-language catalog parity, source localization keys, both smoke tests, self-contained single-file publish, ZIP contents and SHA-256 output. Default artifacts go under artifacts\release, which is ignored by Git.
+
+For a publish-only diagnostic:
 
     dotnet publish .\WinSidebar.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o .\publish
 

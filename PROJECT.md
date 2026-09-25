@@ -38,7 +38,7 @@ Historical branches and old Pull Requests are development evidence, not the curr
 | Window aliases / ignored apps | src/WindowManagement.cs |
 | Text paste | src/TextInjection.cs |
 | User instructions | README.md, START-HERE.txt, docs/TUTORIAL.md, docs/FAQ.md |
-| Release checks | .github/workflows/*.yml + docs/RELEASE.md |
+| Release checks | tools/verify-release.ps1 + docs/RELEASE.md; .github/workflows/build.yml delegates to the same script |
 
 ## Product invariants
 
