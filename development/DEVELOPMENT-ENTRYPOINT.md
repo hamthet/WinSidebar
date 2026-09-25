@@ -35,3 +35,24 @@ Final PR #7 diff review is complete with no release blocker found, PR #7 is read
 ## Historical material
 
 `PLAN.md`, `PRODUCT-REVIEW.md`, `VERIFICATION.md`, `CODE-STATUS.md`, `FEATURE-STATUS.md`, dated logs and old feature PR notes describe earlier development stages. Preserve them for provenance; do not infer current implementation status from their old `PLANNED`, `NOT RUN` or pre-localization statements.
+
+
+## 2026-09-25 — post-ready automated review reopened runtime gate
+
+After PR #7 was marked ready, a fresh automated review of head `a156c3fff...` found additional valid runtime/data-safety issues, including a P1 focus race in snippet paste injection. The pre-fix state is preserved at `checkpoint/pre-final-review-fixes-20260925`.
+
+Corrective release head: `10e8aaf78b495b71bb6b26fd77ceea23252e9c11`.
+
+The commit changes runtime/source behavior to:
+- recheck snippet target focus immediately before `SendInput`;
+- clean up partially injected Ctrl/V key-down events;
+- preserve files when rollback snapshot capture itself fails;
+- use a nonlocalized physical Downloads fallback;
+- validate ignored-app persistence symmetrically, catch case collisions and allow safe UI reset with backup;
+- suppress preference writes when an existing `settings.ini` was unreadable at startup;
+- correct the sidebar tooltip to AltGr+Y;
+- localize generated default snippet names.
+
+Localization catalogs now contain 152 keys with exact five-language parity. Prior review threads were resolved after the fixes and a fresh `@codex review` was requested.
+
+The owner already authorized merge and release publication, but the runtime-changing commit invalidates the previous artifact gate for merge purposes. Current required gate: run `.\tools\verify-release.ps1` on Windows at `10e8aaf78...`, then open the resulting EXE once. Only after that current-head PASS may the authorized merge proceed.

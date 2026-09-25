@@ -42,3 +42,12 @@ Owner reported the WinSidebar 2.0 clean candidate as tested and approved. Runtim
 Final release-tooling presentation was then simplified: canonical verifier work folders `publish/`, `staging/` and `dist/` are transient only. After PASS, OutputRoot is flat with the EXE, ZIP, checksums, LICENSE and five START-HERE files directly visible. This is a packaging/tooling presentation change only; runtime source was not changed.
 
 Follow-up audit commit `a156c3fff7497fc7f33c262eb3d20f029818d59e` strengthens that contract: the verifier now rejects unrelated pre-existing OutputRoot content, requires an exact flat final file set, requires all localized README/tutorial/release-note/outreach files plus localized concept-art SVGs, and performs stable-token parity checks across the main translated product docs. The same commit makes end-user recovery wording less engineering-oriented. No `src/**` or runtime localization catalog changed.
+
+
+## 2026-09-25 — final automated-review hardening
+
+Marking PR #7 ready triggered a new automated review that found valid runtime/data-safety issues not covered by the previous owner PASS. State before these fixes is preserved at `checkpoint/pre-final-review-fixes-20260925`.
+
+Commit `10e8aaf78b495b71bb6b26fd77ceea23252e9c11` addresses the confirmed findings: paste-target recheck, partial SendInput cleanup, rollback snapshot preservation, invariant Downloads fallback, ignored-app read/write/recovery hardening, unreadable-settings write suppression, AltGr+Y tooltip correction and localized generated snippet names. Smoke coverage was extended for localization/settings and localized snippet defaults. Static audit: 152 localization keys, exact five-language parity, no undefined source keys.
+
+Because this is a runtime-changing commit, the previous canonical PASS is historical evidence only. Merge/release remain owner-authorized but blocked until the canonical verifier and one artifact launch pass on the new head.
