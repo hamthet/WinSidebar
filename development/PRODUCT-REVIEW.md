@@ -1,5 +1,7 @@
 # Product-design review — WinSidebar
 
+> **Historical 2026-09-22 baseline — superseded as current status.** It predates the implemented five-language runtime, expandable shortcuts/scripts, final hotkey contract, owner runtime approval and clean 2.0 release branch. Keep the findings as provenance; use `DEVELOPMENT-ENTRYPOINT.md` and `README.md` for the current release state.
+
 **Review date:** 2026-09-22. **Method:** source, README, tutorial, package workflow and prior CI result review; **no fresh interactive Windows user test, accessibility audit, sustained reliability test or installation study was performed**. This is a scoped design assessment, not a certification. Use `VERIFICATION.md` to turn findings into evidence.
 
 ## Product contract and intended user journey

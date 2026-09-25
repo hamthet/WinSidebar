@@ -1,6 +1,8 @@
 # Implementation plan — PRODUCT FIRST, repository second
 
-**State:** PLANNED, not implemented. **Scope:** one portable WinSidebar executable for Windows 10/11 x64, with runtime UI support for English, Brazilian Portuguese, Spanish, Russian and Simplified Chinese, preserving existing working functions and settings. User-facing material follows the software; it never substitutes for it. Apply one locale per implementation/review stage, while making architecture and both en-US/pt-BR baselines available together for backwards compatibility.
+> **Historical plan — superseded as current status.** This plan drove the 2.0 work but predates the implemented/owner-approved runtime and the clean `chore/release-2.0` candidate. Use `DEVELOPMENT-ENTRYPOINT.md` and `README.md` for current state; retain the stages below as design/provenance material.
+
+**State:** HISTORICAL PLAN. The original implementation sequence below is no longer a list of pending work. **Scope:** one portable WinSidebar executable for Windows 10/11 x64, with runtime UI support for English, Brazilian Portuguese, Spanish, Russian and Simplified Chinese, preserving existing working functions and settings. User-facing material follows the software; it never substitutes for it. Apply one locale per implementation/review stage, while making architecture and both en-US/pt-BR baselines available together for backwards compatibility.
 
 ## 0. Inventory and baseline contract
 

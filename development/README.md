@@ -25,11 +25,12 @@ No feature PR is merged into `develop` or `main`. Older logs and stage sections 
 - **Integration record:** [`RELEASE-2.0.0-INTEGRATION-2026-09-24.md`](RELEASE-2.0.0-INTEGRATION-2026-09-24.md).
 
 ## Outstanding gates before official v2.0
-- **Clean-branch Windows validation:** run `tools/verify-release.ps1` plus a short real-machine smoke from `chore/release-2.0`. Feature-branch acceptance does not by itself prove the clean integration branch compiles.
-- **Pull Request:** review the clean release branch against `main`; the old stacked PRs remain historical development evidence and must not be merged wholesale into the release.
-- **Owner merge approval:** merge to `main` only after explicit approval of the clean PR.
-- **Publication:** tag/release `v2.0` only after merge. Git merge and GitHub release publication remain separate acts.
-- **Scope:** runtime behavior is frozen for this release candidate; avoid opportunistic functional changes during release documentation/review. Cross-version preference migration remains out of scope by owner decision.
+- **Current-head Windows gate:** on `chore/release-2.0` at `72a6a76f58d67751abdb2e4bb8025dcefafde11f`, run `tools/verify-release.ps1`. The owner has already approved runtime behavior; this rerun validates the current release-tooling/documentation head.
+- **Artifact sanity:** require the exact flat OutputRoot/ZIP and open the newly produced `WinSidebar.exe` once. This is not a reopening of feature acceptance.
+- **Pull Request:** review PR #7 against `main`; old stacked PRs remain historical development evidence and must not be merged wholesale.
+- **Merge:** only after the current-head gate passes.
+- **Publication:** tag/release `v2.0` only after merge. Git merge and GitHub Release publication remain separate acts.
+- **Scope:** runtime behavior is frozen; avoid opportunistic functional changes during release review. Cross-version preference migration remains out of scope by owner decision.
 
 Supporting records: [`BASELINE.md`](BASELINE.md), [`ENGINEERING-NOTES.md`](ENGINEERING-NOTES.md), [`IMPLEMENTATION-BACKLOG.md`](IMPLEMENTATION-BACKLOG.md), [`PLAN.md`](PLAN.md), [`PRODUCT-REVIEW.md`](PRODUCT-REVIEW.md), [`VERIFICATION.md`](VERIFICATION.md), [`RELEASE-GATE-OVERRIDE.md`](RELEASE-GATE-OVERRIDE.md), [`DECISIONS.md`](DECISIONS.md), [`LOG.md`](LOG.md), dated `LOG-*.md` and locale dossiers.
 
@@ -39,3 +40,5 @@ Supporting records: [`BASELINE.md`](BASELINE.md), [`ENGINEERING-NOTES.md`](ENGIN
 Owner reported the WinSidebar 2.0 clean candidate as tested and approved. Runtime behavior is approved.
 
 Final release-tooling presentation was then simplified: canonical verifier work folders `publish/`, `staging/` and `dist/` are transient only. After PASS, OutputRoot is flat with the EXE, ZIP, checksums, LICENSE and five START-HERE files directly visible. This is a packaging/tooling presentation change only; runtime source was not changed.
+
+Follow-up audit commit `72a6a76f58d67751abdb2e4bb8025dcefafde11f` strengthens that contract: the verifier now rejects unrelated pre-existing OutputRoot content, requires an exact flat final file set, requires all localized README/tutorial/release-note/outreach files plus localized concept-art SVGs, and performs stable-token parity checks across the main translated product docs. The same commit makes end-user recovery wording less engineering-oriented. No `src/**` or runtime localization catalog changed.

@@ -1,6 +1,8 @@
 # Feature implementation status — 2026-09-22
 
-**Integration `develop`:** product source still at original implementation; all new code is isolated on `feature/window-management`. **Draft PR:** https://github.com/hamthet/WinSidebar/pull/1 (head commit `c40b62f84a15b8378189e2fb5c590ed314baa023`). Do not infer that source changes already exist in `develop` or `main`, and do not merge to the public release.
+> **Historical snapshot — superseded.** This file records the first window-management implementation stage. The current WinSidebar 2.0 runtime is implemented and owner-approved; the active shipping candidate is `chore/release-2.0`. Use `DEVELOPMENT-ENTRYPOINT.md` and `README.md` for current state.
+
+**Integration `develop` at the time of this snapshot:** product source still at original implementation; all new code is isolated on `feature/window-management`. **Draft PR:** https://github.com/hamthet/WinSidebar/pull/1 (head commit `c40b62f84a15b8378189e2fb5c590ed314baa023`). Do not infer that source changes already exist in `develop` or `main`, and do not merge to the public release.
 
 **Implemented on feature branch (code candidate):** remove unconditional Calculator/Settings title/process filters; per-live-window displayed aliases with right-click Rename/Reset; persisted per-application ignore rules and reversible tray manager; `ATALHOS` heading with Save preferences and Restore defaults buttons. New helper `src/WindowManagement.cs` and updated `src/WinSidebar.cs`/`WinSidebar.csproj` are in commit above. A one-shot anchored patch script and feature-only workflow exist strictly as development tooling.
 

@@ -1,5 +1,22 @@
 # Naming update — 2026-09-25
 
+## Current closure — 2026-09-25
+
+The active clean release branch is `chore/release-2.0`, not the historical `chore/release-2.0.0` branch described later in this file.
+
+Current checkpoint:
+- head: `72a6a76f58d67751abdb2e4bb8025dcefafde11f`;
+- PR: #7 `release: prepare WinSidebar 2.0` -> `main`;
+- live comparison at this checkpoint: 28 commits ahead / 0 behind `main`;
+- runtime/source behavior: unchanged from the owner-approved 2.0 candidate;
+- post-approval changes: public documentation and release verification only;
+- verifier now requires the complete five-language public documentation/artwork set and an exact flat OutputRoot with no leftover technical directories or unrelated stale content;
+- PR #7 records explicit owner runtime approval.
+
+Remaining gate: run `.\tools\verify-release.ps1` on Windows from this exact head, confirm PASS and the flat artifacts, then open the produced EXE once as an artifact sanity check. After that, review/merge and GitHub Release publication remain separate actions.
+
+The historical integration sequence below is preserved for provenance and must not override this current closure.
+
 The owner simplified the public release name from **2.0.0** to **2.0**. The original integration record below remains historical evidence of the first clean-release pass.
 
 Current release integration:

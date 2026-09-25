@@ -1,5 +1,7 @@
 # Verification and release gates
 
+> **Historical 2026-09-22 matrix — not the current release checklist.** The row statuses below were not retroactively rewritten as the product evolved. Current 2.0 release verification is defined by `DEVELOPMENT-ENTRYPOINT.md`, the clean `chore/release-2.0` branch and its `tools/verify-release.ps1`. Do not treat old `NOT RUN` rows as a statement that the approved current runtime is unimplemented.
+
 **Status as of 2026-09-22:** all new five-language runtime tests `NOT RUN`. Prior Windows publish and concept-art render CI succeeded for earlier commits only; neither is evidence that a multilingual release exists. Update every status with evidence; never precheck a future test.
 
 ## Evidence format for each test

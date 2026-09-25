@@ -1,7 +1,36 @@
-# Continue development here
+# Continue development here — current WinSidebar 2.0 state
 
-Read in order: `README.md` -> `CHANGE-REQUEST-2026-09-22.md` -> `ENGINEERING-NOTES.md` -> `IMPLEMENTATION-BACKLOG.md` -> `RELEASE-GATE-OVERRIDE.md` -> `PLAN.md` -> `LOG.md` plus `LOG-2026-09-22-CHANGE.md`. These are on `develop` only; exclude them from final `main` and the ZIP.
+This file is the current internal entry point on `develop`. The older dated plans, reviews and verification matrices remain useful historical evidence, but they are not the current product status.
 
-Accepted behavior: genuine Alt+Tab-like windows (not all processes); remove hard-coded Calculator/Settings exclusions without reviving phantom windows; per-live-window distinct aliases; reversible per-app ignore with accessible manager; localized Atalhos header with functional Save preferences and confirmed Restore defaults; existing preferences are owner-approved and migration testing is OUT OF SCOPE; owner will test the five-language UI.
+## Current authority
 
-Status: documentation and code analysis only; the features, runtime internationalization, Windows acceptance and new release are not yet verified. Do not equate a plan, existing English art, or a compile-only CI run with completed software.
+1. `development/README.md` — current internal status and branch/PR map.
+2. `development/RELEASE-2.0.0-INTEGRATION-2026-09-24.md` — integration history plus the current 2.0 closure note.
+3. Shipping branch `chore/release-2.0` — current clean product/repository candidate.
+4. On that shipping branch: `PROJECT.md`, `project.json`, `docs/DEVELOPMENT.md`, `docs/RELEASE.md`, source and executable smoke tests.
+
+## Current state — 2026-09-25
+
+- WinSidebar 2.0 runtime behavior is frozen and explicitly owner-approved.
+- Active clean shipping branch: `chore/release-2.0`.
+- Current shipping head: `72a6a76f58d67751abdb2e4bb8025dcefafde11f`.
+- Draft PR #7 targets `main`; live comparison is 28 commits ahead / 0 behind at this checkpoint.
+- The current head changes public documentation and release verification only; it does not modify `src/**`, runtime localization catalogs or persisted-data contracts.
+- The canonical verifier now requires the complete five-language public documentation/artwork set and requires the successful OutputRoot to be exactly flat: EXE, ZIP, checksums, LICENSE and five START-HERE files, with no technical subdirectories or stale unrelated content.
+- User-facing docs are separated from maintainer/AI documentation. Internal `development/**` remains excluded from shipping `main` and the ZIP.
+
+## Remaining release gate
+
+On Windows, from a clean checkout of the current `chore/release-2.0` head:
+
+1. run `.\tools\verify-release.ps1`;
+2. require `WINSIDEBAR 2.0 RELEASE VERIFICATION: PASS`;
+3. confirm the flat OutputRoot and ZIP;
+4. open the newly produced `WinSidebar.exe` once as an artifact sanity check;
+5. review the final PR #7 diff.
+
+Runtime feature acceptance is not being reopened by this gate. Merge to `main`, tag `v2.0` and GitHub Release publication are separate actions and must follow the successful current-head gate.
+
+## Historical material
+
+`PLAN.md`, `PRODUCT-REVIEW.md`, `VERIFICATION.md`, `CODE-STATUS.md`, `FEATURE-STATUS.md`, dated logs and old feature PR notes describe earlier development stages. Preserve them for provenance; do not infer current implementation status from their old `PLANNED`, `NOT RUN` or pre-localization statements.
