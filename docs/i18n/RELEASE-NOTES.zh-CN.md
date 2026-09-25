@@ -1,8 +1,8 @@
-# WinSidebar 2.0.0 发布说明
+# WinSidebar 2.0 发布说明
 
 [English](../RELEASE-NOTES.md) · [Português](RELEASE-NOTES.pt-BR.md) · [Español](RELEASE-NOTES.es-ES.md) · [Русский](RELEASE-NOTES.ru-RU.md)
 
-2.0.0 是一次重要的产品升级。
+2.0 是一次重要的产品升级。
 
 ## 主要变化
 
@@ -21,7 +21,7 @@
 
 ## 兼容性
 
-旧版 Shift+F 窗口导航已移除。没有保存语言字段的旧配置可能继续使用葡萄牙语，直到用户明确选择其他语言。跨版本偏好迁移不属于 2.0.0 的验证范围。
+旧版 Shift+F 窗口导航已移除。没有保存语言字段的旧配置可能继续使用葡萄牙语，直到用户明确选择其他语言。跨版本偏好迁移不属于 2.0 的验证范围。
 
 ## 安全与发布
 

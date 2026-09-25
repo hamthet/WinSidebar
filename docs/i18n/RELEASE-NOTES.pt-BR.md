@@ -1,8 +1,8 @@
-# Notas de lançamento do WinSidebar 2.0.0
+# Notas de lançamento do WinSidebar 2.0
 
 [English](../RELEASE-NOTES.md) · [Español](RELEASE-NOTES.es-ES.md) · [Русский](RELEASE-NOTES.ru-RU.md) · [简体中文](RELEASE-NOTES.zh-CN.md)
 
-A versão 2.0.0 é uma revisão ampla do produto.
+A versão 2.0 é uma revisão ampla do produto.
 
 ## Destaques
 
@@ -21,7 +21,7 @@ A versão 2.0.0 é uma revisão ampla do produto.
 
 ## Compatibilidade
 
-A antiga navegação de janelas por Shift+F foi removida. Perfis legados sem idioma salvo podem permanecer em português até uma escolha explícita. Migração de preferências entre versões está fora do escopo de validação da 2.0.0.
+A antiga navegação de janelas por Shift+F foi removida. Perfis legados sem idioma salvo podem permanecer em português até uma escolha explícita. Migração de preferências entre versões está fora do escopo de validação da 2.0.
 
 ## Segurança e distribuição
 
