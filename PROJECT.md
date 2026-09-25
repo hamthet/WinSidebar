@@ -4,7 +4,9 @@ This is the technical entry point for maintainers, reviewers, automation and AI 
 
 ## Product identity
 
-- Public release line: 2.0
+- Current public release: 2.0 (`v2.0`)
+- Published release: https://github.com/hamthet/WinSidebar/releases/tag/v2.0
+- Published source baseline: `2597fe5ddda8906fd4e2a31ab8591ed4e7f6a2a4`
 - Platform: Windows 10/11 x64
 - Runtime: .NET 8, published self-contained as one WinSidebar.exe
 - New-profile default language: English (en-US)
@@ -12,6 +14,14 @@ This is the technical entry point for maintainers, reviewers, automation and AI 
 - User profile root: %LOCALAPPDATA%\WinSidebar
 - Installer: none; the application is portable
 - Telemetry: none
+
+## Current release state
+
+WinSidebar 2.0 was published on 2026-09-25. The annotated tag `v2.0` points to the published source baseline above and is the immutable Git reference for reproducing the shipped 2.0 release.
+
+The `main` branch is the ongoing repository/maintenance line. It may advance after publication with documentation or later maintenance work; do not infer that a newer `main` commit retroactively changes the already-published `v2.0` artifacts.
+
+For the exact published 2.0 source, use tag `v2.0`. For current repository guidance and future work, use `main`.
 
 ## Reading order for maintainers and AI
 

@@ -1,5 +1,11 @@
 # Development
 
+## Repository baseline
+
+Use `main` for current development and maintenance. Use tag `v2.0` when you need the exact source baseline that produced the published WinSidebar 2.0 release.
+
+Because documentation and maintenance can continue after a release, `main` may be newer than the published tag without changing the already-published 2.0 artifacts.
+
 ## Prerequisites
 
 - Windows for real WinForms execution.

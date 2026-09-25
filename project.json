@@ -100,5 +100,16 @@
   "notes": [
     "project.json is an index for tools and AI; implementation files and executable tests remain authoritative for behavior.",
     "Cross-version preference migration is outside the WinSidebar 2.0 validation scope."
-  ]
+  ],
+  "release": {
+    "status": "published",
+    "tag": "v2.0",
+    "publishedAt": "2026-09-25T18:50:55Z",
+    "commit": "2597fe5ddda8906fd4e2a31ab8591ed4e7f6a2a4",
+    "url": "https://github.com/hamthet/WinSidebar/releases/tag/v2.0",
+    "assets": [
+      "WinSidebar-v2.0-win-x64.zip",
+      "SHA256SUMS.txt"
+    ]
+  }
 }
