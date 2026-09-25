@@ -1,0 +1,48 @@
+WinSidebar 2.0 - Windows 10/11 x64
+
+LANGUAGE
+English: this file
+Português (Brasil): START-HERE.pt-BR.txt
+Español: START-HERE.es-ES.txt
+Русский: START-HERE.ru-RU.txt
+简体中文: START-HERE.zh-CN.txt
+
+GET STARTED - 3 STEPS
+1. Extract the ZIP.
+2. Open the extracted folder.
+3. Double-click WinSidebar.exe.
+
+Nothing else needs to be installed. Everything required to run WinSidebar is included in WinSidebar.exe.
+The executable is not digitally signed, so Windows SmartScreen or company security policy may show a warning.
+
+FIRST RUN
+English is selected by default on a new profile.
+You can choose English, Brazilian Portuguese, Spanish, Russian or Simplified Chinese.
+Your choice is saved under %LOCALAPPDATA%\WinSidebar.
+
+ESSENTIAL CONTROLS
+AltGr+Y: open or hide the sidebar.
+F1-F4: open shortcuts 1-4.
+Shift+F1-F4: default text-snippet hotkeys 1-4.
+Shortcuts: left-click opens; right-click edits.
+Scripts/snippets: click to paste saved text; the gear edits name, text and hotkey.
+Use +, - and Restore independently in the Shortcuts and Scripts sections.
+
+WINDOWS
+Click a listed window to activate it.
+Right-click a window to temporarily rename/reset it or ignore that application.
+Ignored applications can be managed from the general context menu.
+
+YOUR SAVED DATA
+Profile: %LOCALAPPDATA%\WinSidebar
+Deleting WinSidebar.exe does not delete this saved profile.
+WinSidebar does not enable automatic startup, change the default browser or send telemetry.
+Snippet paste temporarily uses the Windows clipboard and then attempts to restore the previous content.
+
+REMOVE
+Exit WinSidebar and delete WinSidebar.exe.
+Delete %LOCALAPPDATA%\WinSidebar only if you also want to erase saved preferences.
+
+More help: https://github.com/hamthet/WinSidebar/blob/main/docs/FAQ.md
+Source: https://github.com/hamthet/WinSidebar
+License: MIT

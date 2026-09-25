@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <RootNamespace>WinSidebar</RootNamespace>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="LocalizationSmoke.cs" />
+    <Compile Include="../src/Localization.cs" Link="Localization.cs" />
+    <EmbeddedResource Include="../i18n/catalog.json" LogicalName="WinSidebar.i18n.catalog.json" />
+    <EmbeddedResource Include="../i18n/es-ES.json" LogicalName="WinSidebar.i18n.es-ES.json" />
+    <EmbeddedResource Include="../i18n/ru-RU.json" LogicalName="WinSidebar.i18n.ru-RU.json" />
+    <EmbeddedResource Include="../i18n/zh-CN.json" LogicalName="WinSidebar.i18n.zh-CN.json" />
+  </ItemGroup>
+</Project>

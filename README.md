@@ -1,44 +1,103 @@
-# WinSidebar
+# WinSidebar 2.0
 
-**English** · [Português (Brasil)](docs/i18n/README.pt-BR.md) · Español, Русский and 简体中文 (translations planned)
+**English** · [Português (Brasil)](docs/i18n/README.pt-BR.md) · [Español](docs/i18n/README.es-ES.md) · [Русский](docs/i18n/README.ru-RU.md) · [简体中文](docs/i18n/README.zh-CN.md)
+## Just want to use it?
 
-![Concept illustration of WinSidebar on a dual-monitor desktop](assets/i18n/en-US/hero-illustration.svg)
+1. Download **WinSidebar-v2.0-win-x64.zip** from Releases.
+2. Extract the ZIP.
+3. Double-click **WinSidebar.exe**.
 
-> **Concept artwork, created with AI assistance.** This is not a screenshot or an exact representation of the application controls. The **Windows 98-inspired appearance is intentional**, not an outdated UI in need of modernization.
+No installer and no separate .NET download are required. If you are not technical, start with [START-HERE.txt](START-HERE.txt) or the [FAQ](docs/FAQ.md).
 
-WinSidebar is a collapsible Windows sidebar for **finding and switching between open windows**, grouped by monitor. It also provides four customizable shortcuts to folders and websites. It is portable, needs no installer or separate .NET download, and is open source under the [MIT license](LICENSE).
+![WinSidebar concept illustration](assets/hero-illustration.svg)
 
-**[Download WinSidebar 1.0.0 for Windows 10/11 x64](https://github.com/hamthet/WinSidebar/releases/tag/v1.0.0)** · **[Read the step-by-step tutorial](docs/i18n/TUTORIAL.en-US.md)**
+> **Concept illustration, not an application screenshot.** The Windows 98-inspired appearance is intentional.
 
-> **Language availability:** The repository's default documentation and concept artwork are in English. **The existing v1.0.0 executable still has a Portuguese interface.** An in-app language selector and translated executable have not been released. This documentation change does not update the published binary.
+WinSidebar is a portable, self-contained Windows 10/11 x64 sidebar for finding and switching between open windows, launching frequently used folders or websites, and pasting reusable text snippets. Version 2.0 is the first release line with the complete five-language runtime, expandable shortcuts and text snippets.
 
-> **Unsigned application:** This version's executable is **not digitally signed**. Microsoft Defender SmartScreen may show an unrecognized-app warning, and security policies may block it. Download only from the [official release](https://github.com/hamthet/WinSidebar/releases/tag/v1.0.0). If you want to check the download's integrity, compare it with the release's `SHA256SUMS.txt`. Follow your computer's IT policies. **A checksum is not a substitute for a digital signature.**
+**Download:** [WinSidebar 2.0](https://github.com/hamthet/WinSidebar/releases/tag/v2.0) · **Tutorial:** [English](docs/TUTORIAL.md)
 
-## Get started in a minute
+## What changed in 2.0
 
-1. Open the release page and download **`WinSidebar-v1.0.0-win-x64.zip`** under *Assets*.
-2. Extract the ZIP into a folder you control.
-3. Run **`WinSidebar.exe`**. The included `LEIA-ME.txt` provides essential instructions in Portuguese.
+- Five runtime languages: English, Brazilian Portuguese, Spanish, Russian and Simplified Chinese.
+- English is the default for a brand-new installation; the first-run chooser lets the user select any supported language.
+- Up to 12 configurable shortcuts, organized in rows of four.
+- Up to 8 reusable text snippets with per-snippet keyboard shortcuts.
+- Window context commands for temporary rename/reset and persistent application-ignore rules.
+- Independent restore controls for shortcuts and snippets.
+- Horizontal and vertical sidebar size cycles with persisted settings.
+- AltGr+Y toggles the sidebar open or closed.
+- Self-contained, single-file .NET 8 Windows x64 distribution: end users do not install .NET separately.
 
-The ZIP contains **only the executable and `LEIA-ME.txt`**. You do not need PowerShell, Git, a compiler, an installer, or a separate .NET download. The executable bundles the .NET 8 runtime.
+## Quick start
 
-## Features
+1. Download the v2.0 ZIP and extract it to a folder you control.
+2. Run WinSidebar.exe.
+3. On a new profile, English is preselected. Choose another language if preferred.
+4. Click the narrow sidebar tab or press AltGr+Y to open/close the sidebar.
+5. Click a listed window to activate it.
+6. Click a shortcut to open it; right-click the shortcut to edit it.
+7. Click a text snippet to paste it into the most recently active external application; use the gear button to edit the snippet.
 
-- **Switch windows:** click the sidebar tab to expand or collapse it; `Shift+F1` toggles the sidebar, `Shift+F2/F3` navigate windows, and `Shift+F4` activates the selected window.
-- **Group windows by monitor:** view windows on the primary monitor and, if available, a secondary display.
-- **Customize four shortcuts:** in the **PASTAS / WEB** (Folders / Web) section, click the gear and then a shortcut to set its name, folder or URL, icon, and browser. The current executable's generic defaults are **Pasta local** (Documents folder), **Downloads**, **Acervo** (unconfigured), and **Site** (Google).
-- **Adjust the sidebar:** use the header buttons to move it to the opposite edge, decrease or increase its width, and exit with the red X.
+The distribution is portable and unsigned. Windows SmartScreen or organizational policy may warn about an unsigned executable.
 
-**[See the illustrated tutorial →](docs/i18n/TUTORIAL.en-US.md)**
+## Keyboard
 
-## Privacy and existing installations
+- **AltGr+Y** — toggle the sidebar.
+- **F1–F4** — open shortcuts 1–4.
+- **Shift+F1–F4** — default hotkeys for snippets 1–4.
+- Each snippet can be assigned **None** or **Shift+F1 through Shift+F12**. Duplicate snippet hotkeys are rejected.
 
-Preferences are stored under `%LOCALAPPDATA%\WinSidebar`, independently of other installations. WinSidebar does not replace earlier executables, change your default browser, enable automatic startup, or send telemetry. Close any other edition of the sidebar before launching this one to avoid conflicts between global keyboard shortcuts.
+The former window-list Shift+F navigation is not part of 2.0.
 
-To uninstall, exit with the X and delete `WinSidebar.exe`. Optionally, delete `%LOCALAPPDATA%\WinSidebar` to remove **this edition's preferences**.
+## Shortcuts and snippets
 
-## Source, license, and outreach
+The **Shortcuts** section starts with four entries and can grow to 12. Use + to add a row of four, − to remove the last added row, and Restore to return only the shortcut section to defaults. Left-click opens a shortcut; right-click edits its name, target, type, browser and icon.
 
-The C# source is in [`src/`](src/); the Windows build is verified by the [build workflow](.github/workflows/build.yml). The [MIT license](LICENSE) permits use, modification, and redistribution, including commercial use, provided its copyright and license notices are retained. To report issues or suggest improvements, [open an issue](https://github.com/hamthet/WinSidebar/issues/new); remove personal information from any screenshots or logs.
+The **Scripts** section stores literal text snippets, not executable scripts. It starts with four entries and can grow to 8. Use +, − and Restore independently from the shortcut section. Clicking a snippet attempts to return focus to the previously active external window and paste the saved text. The gear button edits the snippet name, content and hotkey.
 
-An [English square promotional illustration](assets/i18n/en-US/linkedin-illustration.svg) and [English LinkedIn publishing guidance](docs/i18n/OUTREACH.en-US.md) are available. **Do not present either illustration as an actual application screenshot.**
+## Window list
+
+Eligible top-level windows are grouped by monitor. Clicking a window activates it. The window context menu can temporarily rename a listed window, reset that temporary name, or persistently ignore the corresponding application. Ignored applications can be managed from the general context menu.
+
+WinSidebar uses Windows window metadata and heuristics; it is not a replacement for the operating system's Alt+Tab implementation.
+
+## Languages
+
+Supported runtime languages:
+
+- English — en-US
+- Português (Brasil) — pt-BR
+- Español — es-ES
+- Русский — ru-RU
+- 简体中文 — zh-CN
+
+A new installation defaults to English regardless of the Windows display language. The selected language is then persisted in the WinSidebar profile. Legacy profiles created before language persistence may retain Portuguese until the user explicitly chooses another language.
+
+## Data and privacy
+
+WinSidebar stores its profile under:
+
+    %LOCALAPPDATA%\WinSidebar
+
+The profile can contain settings.ini, shortcuts.xml, snippets.json, ignored-apps.json, backups and copied custom icons. User-authored shortcut names, paths, snippet text and external window titles are never translated.
+
+WinSidebar does not install automatic startup, does not change the default browser and does not send telemetry.
+
+Text snippets use the Windows clipboard temporarily for paste injection and attempt to restore the previous clipboard content afterward. Windows security boundaries can prevent simulated input into elevated applications.
+
+## Portable distribution
+
+WinSidebar 2.0 targets Windows x64 and is published as a self-contained single executable. The bundled .NET 8 runtime is inside WinSidebar.exe. End users do not need a separate .NET download, PowerShell, Git, a compiler or an installer.
+
+To uninstall, exit WinSidebar and delete the executable. Delete %LOCALAPPDATA%\WinSidebar only if you also want to remove its saved profile.
+
+## Source and license
+
+Source code, localization catalogs and tests are in this repository. WinSidebar is released under the [MIT License](LICENSE).
+
+For detailed use, see the [English tutorial](docs/TUTORIAL.md). Maintainers and AI assistants should start with [PROJECT.md](PROJECT.md) and the [documentation map](docs/README.md).
+
+## Help and support
+
+If something does not work, see [Getting help](SUPPORT.md). You do not need technical knowledge to file a bug report.

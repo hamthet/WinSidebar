@@ -1,51 +1,124 @@
-# Tutorial do WinSidebar
+# WinSidebar 2.0 tutorial
 
-> **Sobre as imagens:** as artes desta página são **meramente ilustrativas**, geradas com auxílio de IA. Elas não são capturas de tela, nem uma reprodução exata da interface. O visual inspirado no Windows 98 é **intencional**.
+[README](../README.md) · [Português](i18n/TUTORIAL.pt-BR.md) · [Español](i18n/TUTORIAL.es-ES.md) · [Русский](i18n/TUTORIAL.ru-RU.md) · [简体中文](i18n/TUTORIAL.zh-CN.md)
 
-![Ilustração da barra lateral e de uma área de trabalho genérica](../assets/hero-ilustrativo.svg)
+## 1. Start the portable application
 
-## 1. Baixe e execute — sem instalar dependências
+Extract the WinSidebar 2.0 ZIP and run WinSidebar.exe. No installer or separate .NET runtime is required.
 
-1. Acesse a [página oficial da versão 1.0.0](https://github.com/hamthet/WinSidebar/releases/tag/v1.0.0).
-2. Em **Assets**, baixe `WinSidebar-v1.0.0-win-x64.zip` (não escolha os arquivos automáticos *Source code* se você só quer usar o programa).
-3. Extraia o ZIP para uma pasta do seu usuário, como **Downloads** ou **Documentos**. Dentro dele há apenas `WinSidebar.exe` e `LEIA-ME.txt`.
-4. Dê dois cliques em `WinSidebar.exe`. Pronto: sem instalador, PowerShell, Git, Visual Studio ou download separado do .NET.
+On a brand-new profile, English is preselected. The first-run chooser also offers Português (Brasil), Español, Русский and 简体中文. Your choice is stored in %LOCALAPPDATA%\WinSidebar.
 
-O programa destina-se ao **Windows 10 ou 11 de 64 bits**. O executável não possui assinatura digital; o Windows ou a política de sua organização pode alertar ou impedir a execução. Confirme sempre que baixou a versão no repositório oficial. Em computador administrado, respeite a política de TI; não contorne bloqueios de segurança.
+If Windows displays a SmartScreen warning, remember that the current executable is unsigned. Follow your organization’s security policy.
 
-## 2. Abra e recolha
+## 2. Open and close the sidebar
 
-A pequena **aba na lateral do monitor** permanece acessível. Clique nela para abrir ou recolher a lista de janelas. A janela aberta mostra os aplicativos organizados por monitor. Para voltar a um aplicativo, selecione-o na lista e dê dois cliques ou use o atalho de ativação.
+Use either method:
 
-Os atalhos de teclado são:
+- click the narrow tab attached to the screen edge;
+- press AltGr+Y.
 
-| Tecla | Ação |
+AltGr+Y is a toggle: collapsed becomes open, open becomes collapsed.
+
+The header controls let you move the sidebar to the opposite side and cycle through available widths and heights. These settings persist.
+
+## 3. Switch windows
+
+Open the sidebar and click an eligible window in the list. WinSidebar groups listed windows by monitor.
+
+Right-click a listed window for:
+
+- Rename — gives the current live window a temporary WinSidebar label;
+- Reset name — removes that temporary label;
+- Ignore this application — persistently hides windows belonging to that application.
+
+Use the general context menu to manage ignored applications and show them again.
+
+Window discovery uses Windows metadata and heuristics. A program may expose unusual top-level windows that do not exactly match the system Alt+Tab list.
+
+## 4. Configure shortcuts
+
+The Shortcuts section starts with four entries.
+
+- Left-click: open the configured folder or website.
+- Right-click: edit the shortcut.
+- +: add one row of four shortcuts.
+- −: remove the last added row, never below four.
+- Restore: restore only the shortcut section to defaults after confirmation.
+
+The product limit is 12 shortcuts.
+
+The editor can configure name, folder/website target, icon and browser behavior. Custom icons are copied into the WinSidebar profile.
+
+Global F1–F4 open shortcuts 1–4. Additional shortcuts are mouse-driven.
+
+## 5. Configure text snippets
+
+The Scripts section contains literal text snippets. They are not executable scripts.
+
+- Click the snippet row: paste its saved text into the most recently active eligible external application.
+- Gear: edit name, content and hotkey.
+- +: add one snippet.
+- −: remove the last added snippet, never below four.
+- Restore: restore only the snippets section after confirmation.
+
+The product limit is 8 snippets.
+
+Snippets 1–4 default to Shift+F1–F4. Each snippet can instead use None or Shift+F1 through Shift+F12. Duplicate snippet hotkeys are rejected.
+
+WinSidebar temporarily uses the Windows clipboard for paste injection, then attempts to restore the previous clipboard content. Input can fail when the target application runs at a higher integrity level, such as an elevated administrator process.
+
+## 6. Change language
+
+Open the general context menu and choose Language. The five supported runtime languages are:
+
+- English
+- Português (Brasil)
+- Español
+- Русский
+- 简体中文
+
+The selection takes effect in the application and is stored in settings.ini.
+
+New installations default to English regardless of the Windows display language. Older profiles created before the language setting existed may initially remain in Portuguese.
+
+## 7. Profile files
+
+WinSidebar keeps user state under:
+
+    %LOCALAPPDATA%\WinSidebar
+
+Depending on the features you use, the folder can contain:
+
+- settings.ini — language, position and layout preferences;
+- shortcuts.xml — shortcut definitions;
+- snippets.json — text snippet definitions and hotkeys;
+- ignored-apps.json — persistent ignored-application rules;
+- icons\ — copied custom shortcut icons;
+- .bak files WinSidebar may create while safely saving changes.
+
+User data such as shortcut names, paths, snippet contents and external window titles is never translated.
+
+## 8. Restore and recovery
+
+Shortcut Restore and Script Restore are intentionally independent. Restoring one section does not reset the other section.
+
+If a profile file becomes unreadable, preserve the original file before manually deleting or replacing it. A malformed file can contain useful recovery evidence.
+
+If you are moving from an older WinSidebar version, back up this profile first; profile migration between versions is not guaranteed.
+
+## 9. Uninstall
+
+Exit WinSidebar, then delete WinSidebar.exe and any extracted release documentation.
+
+The profile under %LOCALAPPDATA%\WinSidebar is independent. Delete it only if you also want to erase saved shortcuts, snippets, ignored applications, icons and preferences.
+
+## 10. Keyboard reference
+
+| Command | Action |
 | --- | --- |
-| `Shift + F1` | Abrir ou recolher a barra |
-| `Shift + F2` | Selecionar a janela anterior |
-| `Shift + F3` | Selecionar a próxima janela |
-| `Shift + F4` | Ativar a janela selecionada |
+| AltGr+Y | Toggle sidebar |
+| F1–F4 | Open shortcuts 1–4 |
+| Shift+F1–F4 | Default snippet hotkeys 1–4 |
+| Shift+F1–F12 | Available configurable snippet hotkeys |
 
-Se uma combinação estiver reservada por outro programa, feche a outra ferramenta ou use a interface com o mouse. Para evitar conflitos de atalhos globais, não deixe outra edição da barra aberta simultaneamente.
-
-## 3. Ajuste a posição e o tamanho
-
-No **cabeçalho**, use os controles para diminuir ou aumentar a largura, mover a barra para a borda oposta e encerrar pelo **X** vermelho. Para escolher entre monitor principal e secundário, abra o menu de contexto da aba/barra e selecione o monitor disponível. A presença de um monitor secundário depende da configuração do Windows.
-
-## 4. Configure seus quatro atalhos
-
-Na faixa **PASTAS / WEB**, clique na **engrenagem** para entrar no modo de configuração. Nesse modo, clicar em um ícone abre o editor **em vez de abrir a pasta ou o site**. Edite o nome, escolha o tipo de destino, selecione a pasta ou informe a URL, ajuste o ícone e, para sites, escolha o navegador desejado. Salve as alterações e clique novamente na engrenagem para sair do modo de configuração.
-
-A primeira execução oferece padrões genéricos: **Documentos**, **Downloads**, **Acervo** (sem destino definido) e **Google**. Não há pasta pessoal, nome de usuário ou site particular incorporado aos padrões da edição pública. O navegador configurado no atalho não muda o navegador padrão do Windows.
-
-## 5. Onde ficam as preferências?
-
-As configurações são gravadas na pasta `%LOCALAPPDATA%\WinSidebar`, separada das preferências de outras versões ou instalações. O executável não instala inicialização automática nem substitui outro aplicativo.
-
-Para remover o WinSidebar, encerre-o pelo X e apague `WinSidebar.exe`. Se também quiser apagar os atalhos e as preferências **desta edição**, remova `%LOCALAPPDATA%\WinSidebar`. Não remova pastas de outras versões.
-
-## 6. Ajuda, erros e sugestões
-
-Se algo não funcionar, abra uma [issue no repositório](https://github.com/hamthet/WinSidebar/issues/new) e informe sua versão do Windows, a ação executada e a mensagem de erro. Antes de enviar capturas, oculte nomes, caminhos, títulos de janelas, URLs e outras informações pessoais.
-
-**Download oficial:** [WinSidebar 1.0.0](https://github.com/hamthet/WinSidebar/releases/tag/v1.0.0).
+The old Shift+F window-list navigation is intentionally removed in 2.0.

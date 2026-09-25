@@ -1,0 +1,610 @@
+{
+  "startup.already_running": {
+    "pt-BR": "WinSidebar já está aberto.",
+    "en-US": "WinSidebar is already running."
+  },
+  "startup.failed": {
+    "pt-BR": "Falha ao iniciar:\n",
+    "en-US": "Could not start:\n"
+  },
+  "config.shortcuts_unreadable": {
+    "pt-BR": "A configuração de atalhos não pôde ser carregada. ",
+    "en-US": "Shortcut settings could not be loaded. "
+  },
+  "config.original_preserved": {
+    "pt-BR": "O arquivo original foi preservado.\n\n",
+    "en-US": "The original file was preserved.\n\n"
+  },
+  "config.ignored_unreadable": {
+    "pt-BR": "\n\nA lista de aplicativos ignorados não pôde ser carregada. O arquivo foi preservado.\n",
+    "en-US": "\n\nThe ignored apps list could not be loaded. The file was preserved.\n"
+  },
+  "sidebar.tab_hint": {
+    "pt-BR": "AltGr+Y: abrir/recolher",
+    "en-US": "AltGr+Y: expand/collapse"
+  },
+  "sidebar.exit_hint": {
+    "pt-BR": "Encerrar (com confirmação)",
+    "en-US": "Exit (with confirmation)"
+  },
+  "sidebar.exit_accessible": {
+    "pt-BR": "Encerrar WinSidebar",
+    "en-US": "Exit WinSidebar"
+  },
+  "sidebar.shrink": {
+    "pt-BR": "Diminuir largura",
+    "en-US": "Decrease width"
+  },
+  "sidebar.expand": {
+    "pt-BR": "Aumentar largura",
+    "en-US": "Increase width"
+  },
+  "sidebar.other_edge": {
+    "pt-BR": "Mover para a outra borda",
+    "en-US": "Move to the opposite edge"
+  },
+  "sidebar.move_accessible": {
+    "pt-BR": "Mover a barra para a outra borda",
+    "en-US": "Move the sidebar to the opposite edge"
+  },
+  "sidebar.move_right": {
+    "pt-BR": "Mover para a direita",
+    "en-US": "Move to the right"
+  },
+  "sidebar.move_left": {
+    "pt-BR": "Mover para a esquerda",
+    "en-US": "Move to the left"
+  },
+  "sidebar.shortcuts": {
+    "pt-BR": " ATALHOS",
+    "en-US": " SHORTCUTS"
+  },
+  "sidebar.configuring": {
+    "pt-BR": " CONFIGURANDO",
+    "en-US": " EDITING"
+  },
+  "sidebar.configure": {
+    "pt-BR": "Configurar atalhos",
+    "en-US": "Configure shortcuts"
+  },
+  "sidebar.configure_mode": {
+    "pt-BR": "Entrar ou sair do modo Configurar",
+    "en-US": "Enter or leave shortcut editing mode"
+  },
+  "sidebar.finish_editing": {
+    "pt-BR": "Concluir configuração",
+    "en-US": "Finish editing"
+  },
+  "sidebar.save_preferences": {
+    "pt-BR": "Salvar preferências",
+    "en-US": "Save preferences"
+  },
+  "sidebar.restore_defaults": {
+    "pt-BR": "Restaurar atalhos padrão",
+    "en-US": "Restore default shortcuts"
+  },
+  "sidebar.primary_monitor": {
+    "pt-BR": "Usar monitor principal",
+    "en-US": "Use primary monitor"
+  },
+  "sidebar.secondary_monitor": {
+    "pt-BR": "Usar monitor secundário",
+    "en-US": "Use secondary monitor"
+  },
+  "sidebar.exit_menu": {
+    "pt-BR": "Encerrar WinSidebar...",
+    "en-US": "Exit WinSidebar..."
+  },
+  "sidebar.manage_ignored": {
+    "pt-BR": "Gerenciar aplicativos ignorados...",
+    "en-US": "Manage ignored apps..."
+  },
+  "sidebar.hotkeys_unavailable": {
+    "pt-BR": "Atalhos indisponíveis: ",
+    "en-US": "Hotkeys unavailable: "
+  },
+  "sidebar.hotkeys_in_use": {
+    "pt-BR": "Atalhos em uso: ",
+    "en-US": "Hotkeys already in use: "
+  },
+  "sidebar.save_success": {
+    "pt-BR": "Preferências salvas.",
+    "en-US": "Preferences saved."
+  },
+  "sidebar.save_partial": {
+    "pt-BR": "Não foi possível salvar todas as preferências. Algumas alterações podem já estar gravadas.\n\n",
+    "en-US": "Could not save all preferences. Some changes may already have been written.\n\n"
+  },
+  "sidebar.restore_question": {
+    "pt-BR": "Restaurar atalhos, posição, navegador e aplicativos ignorados aos padrões?\nO idioma atual será mantido.",
+    "en-US": "Restore default shortcuts, position, browser and ignored apps?\nThe current language will be kept."
+  },
+  "sidebar.restore_prepare_error": {
+    "pt-BR": "Não foi possível preparar a restauração: ",
+    "en-US": "Could not prepare the reset: "
+  },
+  "sidebar.restore_success": {
+    "pt-BR": "Configurações padrão restauradas.",
+    "en-US": "Default settings restored."
+  },
+  "sidebar.recovery_error": {
+    "pt-BR": "\nFalha adicional ao recuperar arquivos: ",
+    "en-US": "\nAdditional error recovering files: "
+  },
+  "sidebar.restore_failed": {
+    "pt-BR": "Não foi possível concluir a restauração; foi tentada a recuperação das preferências anteriores.\n",
+    "en-US": "Could not finish resetting settings; an attempt was made to restore the previous preferences.\n"
+  },
+  "sidebar.exit_question": {
+    "pt-BR": "Deseja encerrar o WinSidebar?",
+    "en-US": "Exit WinSidebar?"
+  },
+  "sidebar.exit_title": {
+    "pt-BR": "Encerrar WinSidebar",
+    "en-US": "Exit WinSidebar"
+  },
+  "sidebar.edit_prefix": {
+    "pt-BR": "Editar: ",
+    "en-US": "Edit: "
+  },
+  "sidebar.open_prefix": {
+    "pt-BR": "Abrir: ",
+    "en-US": "Open: "
+  },
+  "sidebar.not_configured": {
+    "pt-BR": "Não configurado",
+    "en-US": "Not configured"
+  },
+  "sidebar.save_shortcut_failed": {
+    "pt-BR": "Não foi possível salvar o atalho. Os dados anteriores foram preservados.\n\n",
+    "en-US": "Could not save the shortcut. Previous data was preserved.\n\n"
+  },
+  "sidebar.shortcut_missing": {
+    "pt-BR": "Atalho não configurado. Clique com o botão direito para escolher o destino.",
+    "en-US": "Shortcut not configured. Right-click to choose a destination."
+  },
+  "sidebar.folder_missing": {
+    "pt-BR": "Pasta não encontrada:\n",
+    "en-US": "Folder not found:\n"
+  },
+  "sidebar.choose_browser": {
+    "pt-BR": "Clique com o botão direito em um atalho de site para escolher o navegador.\n",
+    "en-US": "Right-click a website shortcut to choose the browser.\n"
+  },
+  "sidebar.default_browser_not_used": {
+    "pt-BR": "O navegador padrão não será usado automaticamente.",
+    "en-US": "The default browser will not be used automatically."
+  },
+  "sidebar.open_failed": {
+    "pt-BR": "Não foi possível abrir:\n",
+    "en-US": "Could not open:\n"
+  },
+  "sidebar.monitor_prefix": {
+    "pt-BR": "Monitor ",
+    "en-US": "Monitor "
+  },
+  "sidebar.primary_suffix": {
+    "pt-BR": " - principal",
+    "en-US": " - primary"
+  },
+  "sidebar.secondary_suffix": {
+    "pt-BR": " - secundário",
+    "en-US": " - secondary"
+  },
+  "sidebar.window_count_suffix": {
+    "pt-BR": " janelas | F1-F4 atalhos | Shift+F1-F4 scripts",
+    "en-US": " windows | F1-F4 shortcuts | Shift+F1-F4 scripts"
+  },
+  "sidebar.error_prefix": {
+    "pt-BR": "Erro: ",
+    "en-US": "Error: "
+  },
+  "sidebar.language": {
+    "pt-BR": "Idioma",
+    "en-US": "Language"
+  },
+  "sidebar.language_save_failed": {
+    "pt-BR": "Não foi possível salvar o idioma. A preferência anterior foi mantida.\n\n",
+    "en-US": "Could not save the language. The previous preference was kept.\n\n"
+  },
+  "defaults.documents": {
+    "pt-BR": "Pasta local",
+    "en-US": "Documents"
+  },
+  "defaults.downloads": {
+    "pt-BR": "Downloads",
+    "en-US": "Downloads"
+  },
+  "defaults.archive": {
+    "pt-BR": "Acervo",
+    "en-US": "Archive"
+  },
+  "defaults.website": {
+    "pt-BR": "Site",
+    "en-US": "Website"
+  },
+  "store.too_large": {
+    "pt-BR": "Configuração de atalhos excessivamente grande.",
+    "en-US": "Shortcut settings file is too large."
+  },
+  "store.unknown_version": {
+    "pt-BR": "Versão de configuração de atalhos desconhecida.",
+    "en-US": "Unknown shortcut settings version."
+  },
+  "store.four_entries": {
+    "pt-BR": "A configuração precisa conter quatro atalhos.",
+    "en-US": "Settings must contain four shortcuts."
+  },
+  "store.invalid_entry": {
+    "pt-BR": "Atalho inválido.",
+    "en-US": "Invalid shortcut."
+  },
+  "store.invalid_id": {
+    "pt-BR": "Identificador de atalho inválido.",
+    "en-US": "Invalid shortcut identifier."
+  },
+  "store.invalid_fields": {
+    "pt-BR": "Nome, tipo ou destino de atalho inválido.",
+    "en-US": "Invalid shortcut name, type or destination."
+  },
+  "store.absolute_folder": {
+    "pt-BR": "A pasta precisa ter um caminho absoluto.",
+    "en-US": "Folder path must be absolute."
+  },
+  "store.valid_url": {
+    "pt-BR": "Informe uma URL HTTP ou HTTPS válida.",
+    "en-US": "Enter a valid HTTP or HTTPS URL."
+  },
+  "store.invalid_icon": {
+    "pt-BR": "Ícone inválido.",
+    "en-US": "Invalid icon."
+  },
+  "store.custom_icon_missing": {
+    "pt-BR": "O arquivo do ícone personalizado não foi encontrado.",
+    "en-US": "Custom icon file not found."
+  },
+  "store.requires_four": {
+    "pt-BR": "São necessários quatro atalhos.",
+    "en-US": "Four shortcuts are required."
+  },
+  "store.icon_size": {
+    "pt-BR": "Ícone inexistente ou maior que 1 MB.",
+    "en-US": "Icon does not exist or exceeds 1 MB."
+  },
+  "store.icon_type": {
+    "pt-BR": "Somente PNG e ICO são aceitos.",
+    "en-US": "Only PNG and ICO are accepted."
+  },
+  "store.icon_dimensions": {
+    "pt-BR": "Dimensões do ícone muito grandes.",
+    "en-US": "Icon dimensions are too large."
+  },
+  "editor.title": {
+    "pt-BR": "WinSidebar — configurar atalho",
+    "en-US": "WinSidebar — configure shortcut"
+  },
+  "editor.name": {
+    "pt-BR": "Nome",
+    "en-US": "Name"
+  },
+  "editor.type": {
+    "pt-BR": "Tipo",
+    "en-US": "Type"
+  },
+  "editor.folder": {
+    "pt-BR": "Pasta",
+    "en-US": "Folder"
+  },
+  "editor.target": {
+    "pt-BR": "Destino / URL",
+    "en-US": "Destination / URL"
+  },
+  "editor.browse": {
+    "pt-BR": "Procurar...",
+    "en-US": "Browse..."
+  },
+  "editor.folder_picker": {
+    "pt-BR": "Selecione a pasta do atalho",
+    "en-US": "Select the shortcut folder"
+  },
+  "editor.enter_url": {
+    "pt-BR": "Digite uma URL HTTP/HTTPS no campo Destino.",
+    "en-US": "Enter an HTTP/HTTPS URL in the Destination field."
+  },
+  "editor.icon": {
+    "pt-BR": "Ícone",
+    "en-US": "Icon"
+  },
+  "editor.images_filter": {
+    "pt-BR": "Imagens PNG/ICO|*.png;*.ico",
+    "en-US": "PNG/ICO images|*.png;*.ico"
+  },
+  "editor.browser_only_sites": {
+    "pt-BR": "Navegador (somente sites)",
+    "en-US": "Browser (websites only)"
+  },
+  "editor.system_browser": {
+    "pt-BR": "Usar navegador padrão do Windows",
+    "en-US": "Use Windows default browser"
+  },
+  "editor.choose_exe": {
+    "pt-BR": "Selecionar .exe",
+    "en-US": "Select .exe"
+  },
+  "editor.executables_filter": {
+    "pt-BR": "Executáveis|*.exe",
+    "en-US": "Executables|*.exe"
+  },
+  "editor.cancel": {
+    "pt-BR": "Cancelar",
+    "en-US": "Cancel"
+  },
+  "editor.save": {
+    "pt-BR": "Salvar",
+    "en-US": "Save"
+  },
+  "editor.choose_browser_error": {
+    "pt-BR": "Escolha um navegador .exe ou marque 'Usar navegador padrão'.",
+    "en-US": "Choose a browser .exe or select 'Use default browser'."
+  },
+  "editor.invalid_configuration": {
+    "pt-BR": "Configuração inválida",
+    "en-US": "Invalid configuration"
+  },
+  "editor.icon_folder": {
+    "pt-BR": "Pasta",
+    "en-US": "Folder"
+  },
+  "editor.icon_download": {
+    "pt-BR": "Download",
+    "en-US": "Download"
+  },
+  "editor.icon_archive": {
+    "pt-BR": "Acervo",
+    "en-US": "Archive"
+  },
+  "editor.icon_globe": {
+    "pt-BR": "Globo",
+    "en-US": "Globe"
+  },
+  "editor.icon_star": {
+    "pt-BR": "Estrela",
+    "en-US": "Star"
+  },
+  "editor.icon_briefcase": {
+    "pt-BR": "Maleta",
+    "en-US": "Briefcase"
+  },
+  "editor.icon_custom": {
+    "pt-BR": "Personalizado",
+    "en-US": "Custom"
+  },
+  "windows.ignored_file_too_large": {
+    "pt-BR": "A lista de aplicativos ignorados excede 64 KB.",
+    "en-US": "Ignored apps list exceeds 64 KB."
+  },
+  "windows.invalid_list": {
+    "pt-BR": "Lista de ignorados inválida.",
+    "en-US": "Invalid ignored apps list."
+  },
+  "windows.invalid_rule": {
+    "pt-BR": "Regra de aplicativo ignorado inválida.",
+    "en-US": "Invalid ignored-app rule."
+  },
+  "windows.load_failed": {
+    "pt-BR": "A lista de aplicativos ignorados não pôde ser carregada; o arquivo foi preservado.",
+    "en-US": "Ignored apps list could not be loaded; the file was preserved."
+  },
+  "windows.corrupt_store": {
+    "pt-BR": "A lista de ignorados existente está inválida. Restaure os padrões após confirmar que deseja substituí-la.",
+    "en-US": "The existing ignored apps list is invalid. Confirm a reset before replacing it."
+  },
+  "windows.identity_by_name": {
+    "pt-BR": " (identificado apenas pelo nome do processo)",
+    "en-US": " (identified by process name only)"
+  },
+  "windows.rename": {
+    "pt-BR": "Renomear janela...",
+    "en-US": "Rename window..."
+  },
+  "windows.reset_name": {
+    "pt-BR": "Restaurar nome da janela",
+    "en-US": "Reset window name"
+  },
+  "windows.ignore": {
+    "pt-BR": "Ignorar este aplicativo",
+    "en-US": "Ignore this app"
+  },
+  "windows.unavailable": {
+    "pt-BR": " (indisponível)",
+    "en-US": " (unavailable)"
+  },
+  "windows.ask_ignore": {
+    "pt-BR": "Ocultar todas as janelas deste aplicativo?\n",
+    "en-US": "Hide all windows belonging to this app?\n"
+  },
+  "windows.undo_hint": {
+    "pt-BR": "\n\nVocê poderá reverter no menu da área de notificação.",
+    "en-US": "\n\nYou can undo this from the notification-area menu."
+  },
+  "windows.rule_save_failed": {
+    "pt-BR": "Não foi possível salvar a regra:\n",
+    "en-US": "Could not save the rule:\n"
+  },
+  "windows.rename_title": {
+    "pt-BR": "Renomear janela no WinSidebar",
+    "en-US": "Rename window in WinSidebar"
+  },
+  "windows.ignored_title": {
+    "pt-BR": "Aplicativos ignorados",
+    "en-US": "Ignored apps"
+  },
+  "windows.show_again": {
+    "pt-BR": "Voltar a mostrar",
+    "en-US": "Show again"
+  },
+  "windows.show_all": {
+    "pt-BR": "Mostrar todos",
+    "en-US": "Show all"
+  },
+  "windows.close": {
+    "pt-BR": "Fechar",
+    "en-US": "Close"
+  },
+  "windows.could_not_save": {
+    "pt-BR": "Não foi possível salvar",
+    "en-US": "Could not save"
+  },
+  "windows.show_all_question": {
+    "pt-BR": "Voltar a mostrar todos os aplicativos ignorados?",
+    "en-US": "Show all ignored apps again?"
+  },
+  "snippets.title": {
+    "pt-BR": " SCRIPTS",
+    "en-US": " SCRIPTS"
+  },
+  "snippets.paste_hint_prefix": {
+    "pt-BR": "Colar: ",
+    "en-US": "Paste: "
+  },
+  "snippets.configure_hint_prefix": {
+    "pt-BR": "Configurar: ",
+    "en-US": "Configure: "
+  },
+  "snippets.editor_title": {
+    "pt-BR": "Configurar script",
+    "en-US": "Configure script"
+  },
+  "snippets.name": {
+    "pt-BR": "Nome",
+    "en-US": "Name"
+  },
+  "snippets.content": {
+    "pt-BR": "Conteúdo",
+    "en-US": "Content"
+  },
+  "snippets.invalid_name": {
+    "pt-BR": "Digite um nome entre 1 e 48 caracteres.",
+    "en-US": "Enter a name between 1 and 48 characters."
+  },
+  "snippets.empty": {
+    "pt-BR": "Este script está vazio. Configure-o primeiro.",
+    "en-US": "This script is empty. Configure it first."
+  },
+  "snippets.save_failed": {
+    "pt-BR": "Não foi possível salvar este script.",
+    "en-US": "Could not save this script."
+  },
+  "snippets.target_unavailable": {
+    "pt-BR": "Não foi possível identificar a janela onde o texto deve ser colado.",
+    "en-US": "Could not identify the window where the text should be pasted."
+  },
+  "snippets.modifier_timeout": {
+    "pt-BR": "Solte Ctrl, Shift e a tecla de função e tente novamente.",
+    "en-US": "Release Ctrl, Shift, and the function key, then try again."
+  },
+  "snippets.target_changed": {
+    "pt-BR": "A janela ativa mudou antes da colagem. Tente novamente.",
+    "en-US": "The active window changed before the paste. Try again."
+  },
+  "snippets.focus_failed": {
+    "pt-BR": "Não foi possível devolver o foco à janela de destino.",
+    "en-US": "Could not return focus to the target window."
+  },
+  "snippets.clipboard_failed": {
+    "pt-BR": "Não foi possível preparar a área de transferência.",
+    "en-US": "Could not prepare the clipboard."
+  },
+  "snippets.send_failed": {
+    "pt-BR": "O Windows bloqueou a colagem simulada. O aplicativo de destino pode estar executando como administrador.",
+    "en-US": "Windows blocked the simulated paste. The target app may be running as administrator."
+  },
+  "snippets.clipboard_restore_failed": {
+    "pt-BR": "O texto foi colado, mas não foi possível restaurar a área de transferência anterior.",
+    "en-US": "The text was pasted, but the previous clipboard could not be restored."
+  },
+  "snippets.pasted": {
+    "pt-BR": "Texto colado.",
+    "en-US": "Text pasted."
+  },
+  "config.snippets_unreadable": {
+    "pt-BR": "Os scripts de texto não puderam ser lidos. Os padrões foram carregados. ",
+    "en-US": "Text scripts could not be read. Defaults were loaded. "
+  },
+  "sidebar.next_width": {
+    "pt-BR": "Próxima largura",
+    "en-US": "Next width"
+  },
+  "sidebar.next_height": {
+    "pt-BR": "Próxima altura",
+    "en-US": "Next height"
+  },
+  "sidebar.add_shortcut_row": {
+    "pt-BR": "Adicionar linha de atalhos",
+    "en-US": "Add shortcut row"
+  },
+  "sidebar.edit_right_click": {
+    "pt-BR": "Clique direito para editar",
+    "en-US": "Right-click to edit"
+  },
+  "defaults.shortcut_prefix": {
+    "pt-BR": "Atalho",
+    "en-US": "Shortcut"
+  },
+  "snippets.add_row": {
+    "pt-BR": "Adicionar script",
+    "en-US": "Add script"
+  },
+  "sidebar.remove_shortcut_row": {
+    "pt-BR": "Remover última linha de atalhos",
+    "en-US": "Remove last shortcut row"
+  },
+  "sidebar.restore_shortcuts_question": {
+    "pt-BR": "Restaurar os atalhos padrão? As linhas extras e configurações personalizadas de atalhos serão removidas.",
+    "en-US": "Restore default shortcuts? Extra rows and custom shortcut settings will be removed."
+  },
+  "sidebar.restore_shortcuts_success": {
+    "pt-BR": "Atalhos padrão restaurados.",
+    "en-US": "Default shortcuts restored."
+  },
+  "snippets.remove_row": {
+    "pt-BR": "Remover último script",
+    "en-US": "Remove last script"
+  },
+  "snippets.restore_defaults": {
+    "pt-BR": "Restaurar scripts padrão",
+    "en-US": "Restore default scripts"
+  },
+  "snippets.restore_question": {
+    "pt-BR": "Restaurar os scripts padrão? Os textos salvos e scripts extras serão removidos.",
+    "en-US": "Restore default scripts? Saved text and extra scripts will be removed."
+  },
+  "snippets.restore_success": {
+    "pt-BR": "Scripts padrão restaurados.",
+    "en-US": "Default scripts restored."
+  },
+  "snippets.hotkey": {
+    "pt-BR": "Atalho de teclado",
+    "en-US": "Keyboard shortcut"
+  },
+  "snippets.hotkey_none": {
+    "pt-BR": "Sem atalho",
+    "en-US": "No shortcut"
+  },
+  "snippets.hotkey_duplicate": {
+    "pt-BR": "Esse atalho já está atribuído a outro script.",
+    "en-US": "That shortcut is already assigned to another script."
+  },
+  "config.settings_unreadable": {
+    "pt-BR": "As preferências salvas não puderam ser lidas nesta execução. As alterações de preferências não serão gravadas até reiniciar o WinSidebar.\n\n",
+    "en-US": "Saved preferences could not be read in this session. Preference changes will not be written until WinSidebar is restarted.\n\n"
+  },
+  "windows.reset_corrupt_question": {
+    "pt-BR": "Redefinir a lista ilegível de aplicativos ignorados? O arquivo anterior será preservado como backup.",
+    "en-US": "Reset the unreadable ignored-apps list? The previous file will be preserved as a backup."
+  },
+  "defaults.script_prefix": {
+    "pt-BR": "Script",
+    "en-US": "Script"
+  }
+}

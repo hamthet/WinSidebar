@@ -5,12 +5,13 @@
     <UseWindowsForms>true</UseWindowsForms>
     <AssemblyName>WinSidebar</AssemblyName>
     <RootNamespace>WinSidebar</RootNamespace>
+    <NeutralLanguage>en-US</NeutralLanguage>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-    <Version>1.0.0</Version>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
+    <Version>2.0</Version>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
     <Product>WinSidebar</Product>
-    <Description>Barra lateral de janelas e atalhos para Windows.</Description>
+    <Description>Windows sidebar for window switching, shortcuts, and text snippets.</Description>
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
@@ -27,5 +28,15 @@
   <ItemGroup>
     <Compile Include="src/WinSidebar.cs" />
     <Compile Include="src/ShortcutConfig.cs" />
+    <Compile Include="src/WindowManagement.cs" />
+    <Compile Include="src/Localization.cs" />
+    <Compile Include="src/FirstRunLanguageDialog.cs" />
+    <Compile Include="src/SnippetStore.cs" />
+    <Compile Include="src/SnippetEditor.cs" />
+    <Compile Include="src/TextInjection.cs" />
+    <EmbeddedResource Include="i18n/catalog.json" LogicalName="WinSidebar.i18n.catalog.json" />
+    <EmbeddedResource Include="i18n/es-ES.json" LogicalName="WinSidebar.i18n.es-ES.json" />
+    <EmbeddedResource Include="i18n/ru-RU.json" LogicalName="WinSidebar.i18n.ru-RU.json" />
+    <EmbeddedResource Include="i18n/zh-CN.json" LogicalName="WinSidebar.i18n.zh-CN.json" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,63 @@
+name: Verify five-language runtime localization
+
+# Manual only. Local owner-run tests remain authoritative while hosted Actions
+# are intentionally unavailable for the current workflow.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  locale-smoke:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Verify exact five-language key parity
+        shell: pwsh
+        run: |
+          @'
+          import json, re
+          from pathlib import Path
+
+          base = json.loads(Path('i18n/catalog.json').read_text(encoding='utf-8'))
+          refs = set()
+          for path in Path('src').glob('*.cs'):
+              refs.update(re.findall(r'Localization\.Text\("([\w.]+)"\)', path.read_text(encoding='utf-8')))
+
+          missing = refs - set(base)
+          assert not missing, f'Undefined source keys: {sorted(missing)}'
+
+          for key, entry in base.items():
+              assert set(entry) == {'en-US', 'pt-BR'}, key
+              assert all(isinstance(v, str) and v.strip() for v in entry.values()), key
+
+          for code in ('es-ES', 'ru-RU', 'zh-CN'):
+              locale = json.loads((Path('i18n') / f'{code}.json').read_text(encoding='utf-8'))
+              assert set(locale) == set(base), f'{code} catalog mismatch'
+              assert all(isinstance(v, str) and v.strip() for v in locale.values()), code
+
+          print(f'PASS: {len(refs)} referenced keys; {len(base)} entries in all five languages')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'Localization parity audit failed.' }
+
+      - name: Exercise embedded catalogs and English-default behavior
+        shell: pwsh
+        run: |
+          dotnet run --project .\tests\LocalizationSmoke.csproj -c Release
+          if ($LASTEXITCODE -ne 0) { throw 'Runtime localization smoke failed.' }
+
+      - name: Compile complete WinForms product
+        shell: pwsh
+        run: |
+          dotnet build .\WinSidebar.csproj -c Release
+          if ($LASTEXITCODE -ne 0) { throw 'WinSidebar compile failed.' }
