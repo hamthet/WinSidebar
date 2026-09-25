@@ -25,12 +25,12 @@ No feature PR is merged into `develop` or `main`. Older logs and stage sections 
 - **Integration record:** [`RELEASE-2.0.0-INTEGRATION-2026-09-24.md`](RELEASE-2.0.0-INTEGRATION-2026-09-24.md).
 
 ## Outstanding gates before official v2.0
-- **Current-head Windows gate:** on `chore/release-2.0` at `72a6a76f58d67751abdb2e4bb8025dcefafde11f`, run `tools/verify-release.ps1`. The owner has already approved runtime behavior; this rerun validates the current release-tooling/documentation head.
-- **Artifact sanity:** require the exact flat OutputRoot/ZIP and open the newly produced `WinSidebar.exe` once. This is not a reopening of feature acceptance.
-- **Pull Request:** review PR #7 against `main`; old stacked PRs remain historical development evidence and must not be merged wholesale.
-- **Merge:** only after the current-head gate passes.
+- **Canonical Windows gate: PASS.** `tools/verify-release.ps1` was run on `chore/release-2.0` at `72a6a76f58d67751abdb2e4bb8025dcefafde11f` with .NET SDK `8.0.425` and returned `WINSIDEBAR 2.0 RELEASE VERIFICATION: PASS`.
+- **Artifact sanity:** the gate produced the flat OutputRoot/ZIP contract. If not already done locally, open the newly produced `WinSidebar.exe` once; this is not a reopening of feature acceptance.
+- **Pull Request:** complete final review of PR #7 against `main`; old stacked PRs remain historical evidence and must not be merged wholesale.
+- **Merge:** separate explicit action after final review.
 - **Publication:** tag/release `v2.0` only after merge. Git merge and GitHub Release publication remain separate acts.
-- **Scope:** runtime behavior is frozen; avoid opportunistic functional changes during release review. Cross-version preference migration remains out of scope by owner decision.
+- **Scope:** runtime behavior is frozen and owner-approved; avoid opportunistic functional changes during release review. Cross-version preference migration remains out of scope by owner decision.
 
 Supporting records: [`BASELINE.md`](BASELINE.md), [`ENGINEERING-NOTES.md`](ENGINEERING-NOTES.md), [`IMPLEMENTATION-BACKLOG.md`](IMPLEMENTATION-BACKLOG.md), [`PLAN.md`](PLAN.md), [`PRODUCT-REVIEW.md`](PRODUCT-REVIEW.md), [`VERIFICATION.md`](VERIFICATION.md), [`RELEASE-GATE-OVERRIDE.md`](RELEASE-GATE-OVERRIDE.md), [`DECISIONS.md`](DECISIONS.md), [`LOG.md`](LOG.md), dated `LOG-*.md` and locale dossiers.
 

@@ -13,7 +13,7 @@ Current checkpoint:
 - verifier now requires the complete five-language public documentation/artwork set and an exact flat OutputRoot with no leftover technical directories or unrelated stale content;
 - PR #7 records explicit owner runtime approval.
 
-Remaining gate: run `.\tools\verify-release.ps1` on Windows from this exact head, confirm PASS and the flat artifacts, then open the produced EXE once as an artifact sanity check. After that, review/merge and GitHub Release publication remain separate actions.
+Canonical gate result: PASS. The owner ran `.\tools\verify-release.ps1` on Windows from this exact head with .NET SDK `8.0.425`; it returned `WINSIDEBAR 2.0 RELEASE VERIFICATION: PASS` and produced the documented flat release artifacts. If not already done, opening the produced EXE once remains an artifact sanity check only. Final PR review, merge and GitHub Release publication remain separate actions.
 
 The historical integration sequence below is preserved for provenance and must not override this current closure.
 

@@ -19,17 +19,18 @@ This file is the current internal entry point on `develop`. The older dated plan
 - The canonical verifier now requires the complete five-language public documentation/artwork set and requires the successful OutputRoot to be exactly flat: EXE, ZIP, checksums, LICENSE and five START-HERE files, with no technical subdirectories or stale unrelated content.
 - User-facing docs are separated from maintainer/AI documentation. Internal `development/**` remains excluded from shipping `main` and the ZIP.
 
-## Remaining release gate
+## Current release gate result
 
-On Windows, from a clean checkout of the current `chore/release-2.0` head:
+The canonical Windows release gate was executed on `chore/release-2.0` at `72a6a76f58d67751abdb2e4bb8025dcefafde11f` and returned:
 
-1. run `.\tools\verify-release.ps1`;
-2. require `WINSIDEBAR 2.0 RELEASE VERIFICATION: PASS`;
-3. confirm the flat OutputRoot and ZIP;
-4. open the newly produced `WinSidebar.exe` once as an artifact sanity check;
-5. review the final PR #7 diff.
+- `WINSIDEBAR 2.0 RELEASE VERIFICATION: PASS`;
+- .NET SDK `8.0.425`;
+- flat OutputRoot under `artifacts\release`;
+- generated `WinSidebar.exe`, `WinSidebar-v2.0-win-x64.zip` and `SHA256SUMS.txt`.
 
-Runtime feature acceptance is not being reopened by this gate. Merge to `main`, tag `v2.0` and GitHub Release publication are separate actions and must follow the successful current-head gate.
+This PASS validates the current documentation/release-tooling head. Runtime feature acceptance remains the previously recorded owner approval and is not being reopened.
+
+Remaining before merge: final PR #7 diff review and, if not already done locally, one launch of the produced `WinSidebar.exe` as an artifact sanity check. Merge to `main`, tag `v2.0` and GitHub Release publication remain separate actions.
 
 ## Historical material
 
