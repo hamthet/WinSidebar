@@ -29,7 +29,7 @@ If dotnet is not on PATH, pass its executable explicitly:
 
     .\tools\verify-release.ps1 -Dotnet 'C:\path\to\dotnet.exe'
 
-The script verifies release metadata, five-language catalog parity, source localization keys, both smoke tests, self-contained single-file publish, ZIP contents and SHA-256 output. Default artifacts go under artifacts\release, which is ignored by Git.
+The script verifies release metadata, five-language catalog parity, source localization keys, both smoke tests, self-contained single-file publish, ZIP contents and SHA-256 output. Default artifacts go under artifacts\release, which is ignored by Git. After PASS, that output directory is flat: executable, ZIP, checksums, license and START-HERE files are directly visible; transient publish/staging/dist folders are removed.
 
 For a publish-only diagnostic:
 
