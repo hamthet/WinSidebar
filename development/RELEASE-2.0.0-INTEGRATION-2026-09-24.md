@@ -13,6 +13,14 @@ Current release integration:
 
 Do not treat the older 2.0.0 public naming in the historical section as the current release contract.
 
+Current repository-organization closure (2026-09-25):
+- `PROJECT.md` is the human-readable maintainer/AI entry point;
+- `project.json` is a machine-readable index and is validated by the canonical release verifier;
+- `tools/verify-release.ps1` is the single local build/test/package gate and the manual build workflow delegates to it;
+- `SUPPORT.md`, localized support pages and the GitHub bug form provide beginner-friendly, privacy-aware reporting;
+- release ZIP entry documents are named `START-HERE*.txt` and the executable remains at archive root;
+- PR #7 is the active draft; PR #6 remains closed/superseded.
+
 ---
 
 # WinSidebar 2.0.0 — clean release integration
