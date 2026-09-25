@@ -110,3 +110,17 @@ A documentation-only follow-up was prepared from published `main` to make the Gi
 - PR #8 is open, ready for review and currently mergeable.
 
 Important branch-authority rule: after the v2.0 publication, `main` plus the immutable `v2.0` tag are the producer authority. The non-`development/**` tree on this historical `develop` branch is older and must not be used to infer current source, workflows, packaging or product state. Use `develop` only for the internal dossier until a separately authorized synchronization/merge decision is made.
+
+
+## 2026-09-25 — post-release documentation sync merged
+
+PR #8 (`docs: align repository with published WinSidebar 2.0`) merged successfully into `main` as `790cd352b11f67625f121a8fb9dcd4d9022ed6e0`.
+
+Post-merge verification:
+- `main` differs from the published v2.0 source baseline only by the PR #8 documentation/index change and its merge commit;
+- changed paths are limited to `CONTRIBUTING.md`, `PROJECT.md`, `project.json`, `docs/README.md`, `docs/DEVELOPMENT.md`, `docs/DESIGN-DECISIONS.md` and `docs/RELEASE.md`;
+- annotated tag `v2.0` remains unchanged and continues to target published source commit `2597fe5ddda8906fd4e2a31ab8591ed4e7f6a2a4`;
+- GitHub Release `v2.0` remains public/non-draft/non-prerelease with `WinSidebar-v2.0-win-x64.zip` and `SHA256SUMS.txt`;
+- no runtime, localization, test, packaging, verifier or workflow change occurred.
+
+Current authority is now explicit in public documentation: use `v2.0` for the exact shipped 2.0 source baseline and `main` for current repository/maintenance guidance.

@@ -90,3 +90,10 @@ The 2.0 release cycle is closed. Future product work should start from current `
 PR #8 (`docs/post-release-2.0-sync`, commit `b8a1990daea0da11cf610bb8b8ac0577a7322b07`) updates the public maintainer/docs index to describe the already-published v2.0 state. It records the immutable release tag/commit, distinguishes `main` from the published baseline, and adds live publication metadata to `project.json`. The diff is documentation/index only and is currently mergeable.
 
 For current software facts, use `main` and tag `v2.0`. The code/workflow tree inherited by this `develop` branch predates the final clean release and is historical; only `development/**` is intentionally maintained here as the internal dossier. Do not use older `develop` source/workflows as implementation authority.
+
+
+## 2026-09-25 — PR #8 merged
+
+The post-release repository documentation sync merged to `main` as `790cd352b11f67625f121a8fb9dcd4d9022ed6e0`. Public guidance now explicitly distinguishes immutable release baseline `v2.0` from the ongoing `main` maintenance line. The release tag and published assets were rechecked after the merge and remain unchanged.
+
+This was documentation/index-only work. No new software release was created and v2.0 was not retagged.
