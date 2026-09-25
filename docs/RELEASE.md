@@ -26,6 +26,22 @@ If dotnet is not on PATH, use -Dotnet with the .NET 8 SDK executable. The script
 
 A PASS from this script is build/test evidence only; it does not authorize merge or publication.
 
+## Final user-facing release folder
+
+After a successful canonical gate, the selected OutputRoot is flat. Temporary build folders are removed. The final directory contains:
+
+    WinSidebar.exe
+    WinSidebar-v2.0-win-x64.zip
+    SHA256SUMS.txt
+    START-HERE.txt
+    START-HERE.pt-BR.txt
+    START-HERE.es-ES.txt
+    START-HERE.ru-RU.txt
+    START-HERE.zh-CN.txt
+    LICENSE
+
+This flat directory is for humans. Internal publish/staging/dist folders are build implementation details and must not remain after a PASS.
+
 ## End-user ZIP
 
 Name: WinSidebar-v2.0-win-x64.zip
