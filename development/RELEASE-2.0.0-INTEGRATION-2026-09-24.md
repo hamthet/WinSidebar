@@ -5,7 +5,7 @@
 The active clean release branch is `chore/release-2.0`, not the historical `chore/release-2.0.0` branch described later in this file.
 
 Current checkpoint:
-- head: `72a6a76f58d67751abdb2e4bb8025dcefafde11f`;
+- head: `a156c3fff7497fc7f33c262eb3d20f029818d59e`;
 - PR: #7 `release: prepare WinSidebar 2.0` -> `main`;
 - live comparison at this checkpoint: 28 commits ahead / 0 behind `main`;
 - runtime/source behavior: unchanged from the owner-approved 2.0 candidate;
@@ -13,7 +13,7 @@ Current checkpoint:
 - verifier now requires the complete five-language public documentation/artwork set and an exact flat OutputRoot with no leftover technical directories or unrelated stale content;
 - PR #7 records explicit owner runtime approval.
 
-Canonical gate result: PASS. The owner ran `.\tools\verify-release.ps1` on Windows from this exact head with .NET SDK `8.0.425`; it returned `WINSIDEBAR 2.0 RELEASE VERIFICATION: PASS` and produced the documented flat release artifacts. If not already done, opening the produced EXE once remains an artifact sanity check only. Final PR review, merge and GitHub Release publication remain separate actions.
+Canonical gate result: PASS. The owner ran `.\tools\verify-release.ps1` on Windows at artifact-producing head `72a6a76f58d67751abdb2e4bb8025dcefafde11f` with .NET SDK `8.0.425`; it returned `WINSIDEBAR 2.0 RELEASE VERIFICATION: PASS` and produced the documented flat release artifacts. Current head `a156c3fff7497fc7f33c262eb3d20f029818d59e` changes only the manual workflow upload path from the removed `dist/` directory to the flat `artifacts/release/` directory, so the validated artifact-producing inputs are unchanged. If not already done, opening the produced EXE once remains an artifact sanity check only. Final PR review is complete with no release blocker found and PR #7 is ready for review. Merge and GitHub Release publication remain separate actions.
 
 The historical integration sequence below is preserved for provenance and must not override this current closure.
 

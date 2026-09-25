@@ -25,9 +25,9 @@ No feature PR is merged into `develop` or `main`. Older logs and stage sections 
 - **Integration record:** [`RELEASE-2.0.0-INTEGRATION-2026-09-24.md`](RELEASE-2.0.0-INTEGRATION-2026-09-24.md).
 
 ## Outstanding gates before official v2.0
-- **Canonical Windows gate: PASS.** `tools/verify-release.ps1` was run on `chore/release-2.0` at `72a6a76f58d67751abdb2e4bb8025dcefafde11f` with .NET SDK `8.0.425` and returned `WINSIDEBAR 2.0 RELEASE VERIFICATION: PASS`.
+- **Canonical Windows gate: PASS.** `tools/verify-release.ps1` was run on artifact-producing head `72a6a76f58d67751abdb2e4bb8025dcefafde11f` with .NET SDK `8.0.425` and returned `WINSIDEBAR 2.0 RELEASE VERIFICATION: PASS`. Current release head `a156c3fff7497fc7f33c262eb3d20f029818d59e` differs only by the manual workflow upload path; runtime, verifier and package inputs are unchanged.
 - **Artifact sanity:** the gate produced the flat OutputRoot/ZIP contract. If not already done locally, open the newly produced `WinSidebar.exe` once; this is not a reopening of feature acceptance.
-- **Pull Request:** complete final review of PR #7 against `main`; old stacked PRs remain historical evidence and must not be merged wholesale.
+- **Pull Request:** final review of PR #7 against `main` is complete with no release blocker found; PR #7 is now ready for review. Old stacked PRs remain historical evidence and must not be merged wholesale.
 - **Merge:** separate explicit action after final review.
 - **Publication:** tag/release `v2.0` only after merge. Git merge and GitHub Release publication remain separate acts.
 - **Scope:** runtime behavior is frozen and owner-approved; avoid opportunistic functional changes during release review. Cross-version preference migration remains out of scope by owner decision.
@@ -41,4 +41,4 @@ Owner reported the WinSidebar 2.0 clean candidate as tested and approved. Runtim
 
 Final release-tooling presentation was then simplified: canonical verifier work folders `publish/`, `staging/` and `dist/` are transient only. After PASS, OutputRoot is flat with the EXE, ZIP, checksums, LICENSE and five START-HERE files directly visible. This is a packaging/tooling presentation change only; runtime source was not changed.
 
-Follow-up audit commit `72a6a76f58d67751abdb2e4bb8025dcefafde11f` strengthens that contract: the verifier now rejects unrelated pre-existing OutputRoot content, requires an exact flat final file set, requires all localized README/tutorial/release-note/outreach files plus localized concept-art SVGs, and performs stable-token parity checks across the main translated product docs. The same commit makes end-user recovery wording less engineering-oriented. No `src/**` or runtime localization catalog changed.
+Follow-up audit commit `a156c3fff7497fc7f33c262eb3d20f029818d59e` strengthens that contract: the verifier now rejects unrelated pre-existing OutputRoot content, requires an exact flat final file set, requires all localized README/tutorial/release-note/outreach files plus localized concept-art SVGs, and performs stable-token parity checks across the main translated product docs. The same commit makes end-user recovery wording less engineering-oriented. No `src/**` or runtime localization catalog changed.

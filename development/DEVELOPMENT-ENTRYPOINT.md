@@ -13,7 +13,7 @@ This file is the current internal entry point on `develop`. The older dated plan
 
 - WinSidebar 2.0 runtime behavior is frozen and explicitly owner-approved.
 - Active clean shipping branch: `chore/release-2.0`.
-- Current shipping head: `72a6a76f58d67751abdb2e4bb8025dcefafde11f`.
+- Current shipping head: `a156c3fff7497fc7f33c262eb3d20f029818d59e`.
 - Draft PR #7 targets `main`; live comparison is 28 commits ahead / 0 behind at this checkpoint.
 - The current head changes public documentation and release verification only; it does not modify `src/**`, runtime localization catalogs or persisted-data contracts.
 - The canonical verifier now requires the complete five-language public documentation/artwork set and requires the successful OutputRoot to be exactly flat: EXE, ZIP, checksums, LICENSE and five START-HERE files, with no technical subdirectories or stale unrelated content.
@@ -21,16 +21,16 @@ This file is the current internal entry point on `develop`. The older dated plan
 
 ## Current release gate result
 
-The canonical Windows release gate was executed on `chore/release-2.0` at `72a6a76f58d67751abdb2e4bb8025dcefafde11f` and returned:
+The canonical Windows release gate was executed on artifact-producing head `72a6a76f58d67751abdb2e4bb8025dcefafde11f` and returned:
 
 - `WINSIDEBAR 2.0 RELEASE VERIFICATION: PASS`;
 - .NET SDK `8.0.425`;
 - flat OutputRoot under `artifacts\release`;
 - generated `WinSidebar.exe`, `WinSidebar-v2.0-win-x64.zip` and `SHA256SUMS.txt`.
 
-This PASS validates the current documentation/release-tooling head. Runtime feature acceptance remains the previously recorded owner approval and is not being reopened.
+This PASS validates all artifact-producing inputs. The only later release-branch commit is `a156c3fff7497fc7f33c262eb3d20f029818d59e`, which changes only `.github/workflows/build.yml` so the manual workflow uploads the verified flat `artifacts\release\` directory instead of the now-transient/removed `dist\` directory. Runtime, verifier and package inputs are unchanged. Runtime feature acceptance remains the previously recorded owner approval and is not being reopened.
 
-Remaining before merge: final PR #7 diff review and, if not already done locally, one launch of the produced `WinSidebar.exe` as an artifact sanity check. Merge to `main`, tag `v2.0` and GitHub Release publication remain separate actions.
+Final PR #7 diff review is complete with no release blocker found, and PR #7 is ready for review. If not already done locally, one launch of the produced `WinSidebar.exe` remains a lightweight artifact sanity check. Merge to `main`, tag `v2.0` and GitHub Release publication remain separate actions.
 
 ## Historical material
 
