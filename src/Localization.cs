@@ -12,6 +12,7 @@ internal static class Localization
 {
     private static readonly Dictionary<string, Dictionary<string, string>> Catalog = ReadCatalog();
     internal static string Current { get; private set; } = "en-US";
+    internal static bool SettingsFileExists { get; private set; }
     internal static bool SettingsReadFailed { get; private set; }
 
     private static Dictionary<string, Dictionary<string, string>> ReadCatalog()
@@ -71,29 +72,36 @@ internal static class Localization
 
     internal static void Initialize(string settingsFile)
     {
+        SettingsFileExists = false;
         SettingsReadFailed = false;
-        bool existingProfile = File.Exists(settingsFile);
-        // English is the product default for new installations. A readable legacy
-        // profile without language= retains Portuguese. If an existing file cannot
-        // be read, fail closed for this session instead of guessing and later
-        // overwriting the user's persisted language/layout.
+        // English is the product default for new installations. Read the file
+        // directly so "missing" stays distinct from "present but inaccessible";
+        // File.Exists can collapse those states.
         string chosen = "en-US";
-        if (existingProfile)
+        try
         {
-            try
+            string[] lines = File.ReadAllLines(settingsFile);
+            SettingsFileExists = true;
+            chosen = "pt-BR";
+            foreach (string line in lines)
             {
-                string[] lines = File.ReadAllLines(settingsFile);
-                chosen = "pt-BR";
-                foreach (string line in lines)
-                {
-                    if (!line.StartsWith("language=", StringComparison.Ordinal)) continue;
-                    string code = line.Substring("language=".Length).Trim();
-                    if (code == "pt-BR" || code == "en-US" || code == "es-ES" ||
-                        code == "ru-RU" || code == "zh-CN") chosen = code;
-                }
+                if (!line.StartsWith("language=", StringComparison.Ordinal)) continue;
+                string code = line.Substring("language=".Length).Trim();
+                if (code == "pt-BR" || code == "en-US" || code == "es-ES" ||
+                    code == "ru-RU" || code == "zh-CN") chosen = code;
             }
-            catch (IOException) { SettingsReadFailed = true; }
-            catch (UnauthorizedAccessException) { SettingsReadFailed = true; }
+        }
+        catch (FileNotFoundException) { }
+        catch (DirectoryNotFoundException) { }
+        catch (IOException)
+        {
+            SettingsFileExists = true;
+            SettingsReadFailed = true;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            SettingsFileExists = true;
+            SettingsReadFailed = true;
         }
         Select(chosen);
     }

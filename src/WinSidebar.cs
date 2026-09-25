@@ -656,7 +656,7 @@ internal sealed class SidebarWindow : Form
     {
         try
         {
-            if (!File.Exists(settingsPath)) return;
+            if (!Localization.SettingsFileExists) return;
             foreach (string line in File.ReadAllLines(settingsPath))
             {
                 string[] pair = line.Split(new char[] { '=' }, 2);
@@ -723,9 +723,18 @@ internal sealed class SidebarWindow : Form
 
     private static FileSnapshot SnapshotFile(string path)
     {
-        bool existed = File.Exists(path);
-        byte[] bytes = existed ? File.ReadAllBytes(path) : null;
-        return new FileSnapshot { Existed = existed, Bytes = bytes };
+        try
+        {
+            return new FileSnapshot { Existed = true, Bytes = File.ReadAllBytes(path) };
+        }
+        catch (FileNotFoundException)
+        {
+            return new FileSnapshot { Existed = false, Bytes = null };
+        }
+        catch (DirectoryNotFoundException)
+        {
+            return new FileSnapshot { Existed = false, Bytes = null };
+        }
     }
 
     private static void RestoreFile(string path, FileSnapshot snapshot)
@@ -1513,8 +1522,8 @@ internal static class Program
         string settingsFile = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "WinSidebar", "settings.ini");
-        bool firstUse = !File.Exists(settingsFile);
         Localization.Initialize(settingsFile);
+        bool firstUse = !Localization.SettingsFileExists;
 
         bool first;
         using (System.Threading.Mutex mutex = new System.Threading.Mutex(true,

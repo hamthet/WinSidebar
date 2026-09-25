@@ -74,20 +74,23 @@ internal static class LocalizationSmoke
                 if (File.Exists(path)) File.Delete(path);
                 Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(cultureName);
                 Localization.Initialize(path);
-                Check(Localization.Current == "en-US",
+                Check(Localization.Current == "en-US" && !Localization.SettingsFileExists &&
+                    !Localization.SettingsReadFailed,
                     "new installation defaults to English regardless of Windows UI culture: " + cultureName);
             }
 
             File.WriteAllLines(path, new[] { "width=1", "left=1" });
             Localization.Initialize(path);
-            Check(Localization.Current == "pt-BR" && !Localization.SettingsReadFailed,
+            Check(Localization.Current == "pt-BR" && Localization.SettingsFileExists &&
+                !Localization.SettingsReadFailed,
                 "readable legacy existing profile without language retains Portuguese");
 
             File.WriteAllLines(path, new[] { "width=1", "language=es-ES", "left=1" });
             using (FileStream locked = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
             {
                 Localization.Initialize(path);
-                Check(Localization.SettingsReadFailed && Localization.Current == "en-US",
+                Check(Localization.SettingsFileExists && Localization.SettingsReadFailed &&
+                    Localization.Current == "en-US",
                     "unreadable existing profile fails closed without assuming legacy Portuguese");
             }
             Localization.Initialize(path);
