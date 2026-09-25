@@ -194,9 +194,26 @@ $sum = Join-Path $dist 'SHA256SUMS.txt'
     "$zipHash  WinSidebar-v2.0-win-x64.zip"
 ), $utf8)
 
+# Build folders are implementation details. Flatten the successful result so the
+# release directory itself is immediately understandable to a non-technical user.
+Get-ChildItem -LiteralPath $staging -File | ForEach-Object {
+    Copy-Item -LiteralPath $_.FullName -Destination (Join-Path $output $_.Name) -Force
+}
+$finalZip = Join-Path $output 'WinSidebar-v2.0-win-x64.zip'
+$finalSum = Join-Path $output 'SHA256SUMS.txt'
+Copy-Item -LiteralPath $zip -Destination $finalZip -Force
+Copy-Item -LiteralPath $sum -Destination $finalSum -Force
+
+foreach ($dir in @($publish,$staging,$dist)) {
+    if (Test-Path -LiteralPath $dir) { Remove-Item -LiteralPath $dir -Recurse -Force }
+}
+
+$finalExe = Join-Path $output 'WinSidebar.exe'
+
 Write-Host ''
 Write-Host 'WINSIDEBAR 2.0 RELEASE VERIFICATION: PASS'
 Write-Host "SDK: $sdkVersion"
-Write-Host "EXE: $($published[0].FullName)"
-Write-Host "ZIP: $zip"
-Write-Host "SHA256: $sum"
+Write-Host "OUTPUT: $output"
+Write-Host "EXE: $finalExe"
+Write-Host "ZIP: $finalZip"
+Write-Host "SHA256: $finalSum"
