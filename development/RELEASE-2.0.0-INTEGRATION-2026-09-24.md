@@ -177,3 +177,8 @@ Current release head is `81a80987fe37eca822bc7462355a0e1c63dbc1bc`. It replaces 
 ### Final-head gate result
 
 `81a80987fe37eca822bc7462355a0e1c63dbc1bc` passed `.\tools\verify-release.ps1` on Windows with SDK `8.0.425`. Flat EXE/ZIP/checksum artifacts were produced. All review threads are resolved and PR #7 is mergeable. One final artifact sanity launch of this exact build remains before the already-authorized merge.
+
+
+### Merge completion
+
+PR #7 merged to `main` as `2597fe5ddda8906fd4e2a31ab8591ed4e7f6a2a4`. Its tree SHA is `00d4c1502e529bcaea609a8da6971088171fa6aa`, exactly equal to the tree of tested head `81a80987fe37eca822bc7462355a0e1c63dbc1bc`. Publication is the only remaining release act: tag `v2.0` and GitHub Release with the verified ZIP/checksum assets.

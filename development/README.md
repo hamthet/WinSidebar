@@ -57,3 +57,10 @@ Follow-up commit `81a80987fe37eca822bc7462355a0e1c63dbc1bc` hardens missing-vs-u
 
 
 Final preservation head `81a80987fe37eca822bc7462355a0e1c63dbc1bc` passed the canonical Windows verifier with .NET SDK `8.0.425`. All PR review threads are resolved and the PR is mergeable. Remaining technical gate: launch the EXE produced by this exact PASS once; the prior launch applied to an earlier build.
+
+
+## 2026-09-25 — PR #7 merged
+
+PR #7 merged successfully into `main` as `2597fe5ddda8906fd4e2a31ab8591ed4e7f6a2a4`. The merge commit tree equals the tested head tree exactly: `00d4c1502e529bcaea609a8da6971088171fa6aa`. Thus the merged repository state matches the canonical-PASS/artifact-launched build.
+
+Publication step remains: create tag `v2.0` from this `main` commit and publish a GitHub Release with the verified ZIP and `SHA256SUMS.txt`. No `v2.0` tag/release existed at this checkpoint.

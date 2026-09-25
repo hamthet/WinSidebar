@@ -66,3 +66,12 @@ Follow-up hardening in `81a80987fe37eca822bc7462355a0e1c63dbc1bc` removes the re
 The owner ran `.\tools\verify-release.ps1` on `81a80987fe37eca822bc7462355a0e1c63dbc1bc` with .NET SDK `8.0.425`. Result: `WINSIDEBAR 2.0 RELEASE VERIFICATION: PASS`. The expected flat EXE/ZIP/checksum artifacts were produced under `artifacts\release`.
 
 All review threads are resolved and PR #7 is mergeable. One current-head technical check remains: open the `WinSidebar.exe` produced by this exact PASS once. The earlier artifact launch covered the pre-hardening build and does not substitute for this final-head launch. Owner authorization for merge and publication remains in force after that final launch.
+
+
+## 2026-09-25 — merge complete; publication pending
+
+PR #7 was merged to `main` with merge commit `2597fe5ddda8906fd4e2a31ab8591ed4e7f6a2a4`.
+
+The tested release head `81a80987fe37eca822bc7462355a0e1c63dbc1bc` and the merge commit have identical Git tree SHA `00d4c1502e529bcaea609a8da6971088171fa6aa`. Therefore the files now on `main` are byte-for-byte the same repository tree that passed the canonical verifier and artifact sanity launch.
+
+The intended public tag remains `v2.0`. At this checkpoint no `v2.0` tag or GitHub Release exists yet; the only public release observed is `v1.0.0`. Publication remains authorized by the owner and pending through the local `gh` workflow because the connected GitHub write surface does not expose tag/release creation.
