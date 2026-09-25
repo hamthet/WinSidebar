@@ -34,7 +34,7 @@ jobs:
           if (Test-Path -LiteralPath '.\development') { throw 'Internal development dossier must not ship on the release branch.' }
           foreach ($required in @(
             'README.md',
-            'README.txt',
+            'START-HERE.txt',
             'docs\TUTORIAL.md',
             'docs\OUTREACH.md',
             'docs\i18n\README.pt-BR.md',
@@ -85,22 +85,22 @@ jobs:
           New-Item -ItemType Directory -Path staging,dist -Force | Out-Null
           Copy-Item publish\WinSidebar.exe staging\WinSidebar.exe
           Copy-Item LICENSE staging\LICENSE
-          Copy-Item README.txt staging\README.txt
-          Copy-Item docs\i18n\README.pt-BR.txt staging\README.pt-BR.txt
-          Copy-Item docs\i18n\README.es-ES.txt staging\README.es-ES.txt
-          Copy-Item docs\i18n\README.ru-RU.txt staging\README.ru-RU.txt
-          Copy-Item docs\i18n\README.zh-CN.txt staging\README.zh-CN.txt
+          Copy-Item START-HERE.txt staging\START-HERE.txt
+          Copy-Item docs\i18n\START-HERE.pt-BR.txt staging\START-HERE.pt-BR.txt
+          Copy-Item docs\i18n\START-HERE.es-ES.txt staging\START-HERE.es-ES.txt
+          Copy-Item docs\i18n\START-HERE.ru-RU.txt staging\START-HERE.ru-RU.txt
+          Copy-Item docs\i18n\START-HERE.zh-CN.txt staging\START-HERE.zh-CN.txt
 
           $zip = 'dist\WinSidebar-v2.0-win-x64.zip'
           Compress-Archive staging\* $zip -CompressionLevel Optimal
 
           $expected = @(
             'LICENSE',
-            'README.es-ES.txt',
-            'README.pt-BR.txt',
-            'README.ru-RU.txt',
-            'README.txt',
-            'README.zh-CN.txt',
+            'START-HERE.es-ES.txt',
+            'START-HERE.pt-BR.txt',
+            'START-HERE.ru-RU.txt',
+            'START-HERE.txt',
+            'START-HERE.zh-CN.txt',
             'WinSidebar.exe'
           )
           $archive = [IO.Compression.ZipFile]::OpenRead((Resolve-Path $zip).Path)
