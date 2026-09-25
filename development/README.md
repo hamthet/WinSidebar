@@ -26,9 +26,9 @@ No feature PR is merged into `develop` or `main`. Older logs and stage sections 
 
 ## Outstanding gates before official v2.0
 - **Canonical Windows gate: PASS.** `tools/verify-release.ps1` was run on artifact-producing head `72a6a76f58d67751abdb2e4bb8025dcefafde11f` with .NET SDK `8.0.425` and returned `WINSIDEBAR 2.0 RELEASE VERIFICATION: PASS`. Current release head `a156c3fff7497fc7f33c262eb3d20f029818d59e` differs only by the manual workflow upload path; runtime, verifier and package inputs are unchanged.
-- **Artifact sanity:** the gate produced the flat OutputRoot/ZIP contract. If not already done locally, open the newly produced `WinSidebar.exe` once; this is not a reopening of feature acceptance.
+- **Artifact sanity: PASS.** The owner opened the generated `WinSidebar.exe` successfully after the canonical release gate. This did not reopen feature acceptance.
 - **Pull Request:** final review of PR #7 against `main` is complete with no release blocker found; PR #7 is now ready for review. Old stacked PRs remain historical evidence and must not be merged wholesale.
-- **Merge:** separate explicit action after final review.
+- **Merge:** all known technical gates are closed; merge remains a separate explicit action.
 - **Publication:** tag/release `v2.0` only after merge. Git merge and GitHub Release publication remain separate acts.
 - **Scope:** runtime behavior is frozen and owner-approved; avoid opportunistic functional changes during release review. Cross-version preference migration remains out of scope by owner decision.
 

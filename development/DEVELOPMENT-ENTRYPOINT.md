@@ -30,7 +30,7 @@ The canonical Windows release gate was executed on artifact-producing head `72a6
 
 This PASS validates all artifact-producing inputs. The only later release-branch commit is `a156c3fff7497fc7f33c262eb3d20f029818d59e`, which changes only `.github/workflows/build.yml` so the manual workflow uploads the verified flat `artifacts\release\` directory instead of the now-transient/removed `dist\` directory. Runtime, verifier and package inputs are unchanged. Runtime feature acceptance remains the previously recorded owner approval and is not being reopened.
 
-Final PR #7 diff review is complete with no release blocker found, and PR #7 is ready for review. If not already done locally, one launch of the produced `WinSidebar.exe` remains a lightweight artifact sanity check. Merge to `main`, tag `v2.0` and GitHub Release publication remain separate actions.
+Final PR #7 diff review is complete with no release blocker found, PR #7 is ready for review, and the owner has opened the generated `WinSidebar.exe` successfully after the canonical PASS. All known technical release gates are closed. Merge to `main` and GitHub Release publication remain separate explicit actions. Merge to `main`, tag `v2.0` and GitHub Release publication remain separate actions.
 
 ## Historical material
 
