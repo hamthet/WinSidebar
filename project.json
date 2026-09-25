@@ -78,7 +78,9 @@
     "dataFormats": "docs/DATA-FORMATS.md",
     "development": "docs/DEVELOPMENT.md",
     "release": "docs/RELEASE.md",
-    "support": "SUPPORT.md"
+    "support": "SUPPORT.md",
+    "designDecisions": "docs/DESIGN-DECISIONS.md",
+    "knownLimitations": "docs/KNOWN-LIMITATIONS.md"
   },
   "sourceMap": {
     "mainUi": "src/WinSidebar.cs",

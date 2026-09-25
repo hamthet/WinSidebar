@@ -19,10 +19,12 @@ This is the technical entry point for maintainers, reviewers, automation and AI 
 2. project.json — compact machine-readable repository/product index.
 3. docs/ARCHITECTURE.md — component boundaries and runtime flow.
 4. docs/DATA-FORMATS.md — persisted user data and compatibility rules.
-5. docs/DEVELOPMENT.md — build and test commands.
-6. docs/RELEASE.md — release procedure and gates.
-7. tests/ — executable behavioral contracts.
-8. src/ and i18n/ — implementation and runtime language resources.
+5. docs/DESIGN-DECISIONS.md — intentional product/technical decisions.
+6. docs/KNOWN-LIMITATIONS.md — explicit product boundaries and failure modes.
+7. docs/DEVELOPMENT.md — build and test commands.
+8. docs/RELEASE.md — release procedure and gates.
+9. tests/ — executable behavioral contracts.
+10. src/ and i18n/ — implementation and runtime language resources.
 
 Historical branches and old Pull Requests are development evidence, not the current product contract.
 
@@ -63,7 +65,7 @@ Historical branches and old Pull Requests are development evidence, not the curr
     .github/workflows/   Manual verification workflows
     assets/              English-default concept artwork
     assets/i18n/         Localized concept artwork
-    docs/                User and maintainer documentation
+    docs/                User and maintainer documentation (including decisions/limitations)
     docs/i18n/           Localized user documentation
     i18n/                Runtime localization catalogs
     src/                 WinForms implementation

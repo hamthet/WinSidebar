@@ -15,6 +15,8 @@
 Start with ../PROJECT.md. Tools and AI can also read ../project.json for a compact machine-readable map. Then:
 - ARCHITECTURE.md
 - DATA-FORMATS.md
+- DESIGN-DECISIONS.md
+- KNOWN-LIMITATIONS.md
 - DEVELOPMENT.md
 - RELEASE.md
 - ../CONTRIBUTING.md
