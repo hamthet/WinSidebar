@@ -4,7 +4,7 @@
   "config.shortcuts_unreadable": "No se pudo cargar la configuración de los accesos directos. ",
   "config.original_preserved": "Se ha conservado el archivo original.\n\n",
   "config.ignored_unreadable": "\n\nNo se pudo cargar la lista de aplicaciones ignoradas. Se ha conservado el archivo.\n",
-  "sidebar.tab_hint": "Shift+F1: expandir/contraer",
+  "sidebar.tab_hint": "AltGr+Y: expandir/contraer",
   "sidebar.exit_hint": "Salir (con confirmación)",
   "sidebar.exit_accessible": "Salir de WinSidebar",
   "sidebar.shrink": "Reducir anchura",
@@ -147,5 +147,8 @@
   "snippets.restore_success": "Scripts predeterminados restaurados.",
   "snippets.hotkey": "Atajo de teclado",
   "snippets.hotkey_none": "Sin atajo",
-  "snippets.hotkey_duplicate": "Ese atajo ya está asignado a otro script."
+  "snippets.hotkey_duplicate": "Ese atajo ya está asignado a otro script.",
+  "config.settings_unreadable": "No se pudieron leer las preferencias guardadas en esta sesión. Los cambios de preferencias no se escribirán hasta reiniciar WinSidebar.\n\n",
+  "windows.reset_corrupt_question": "¿Restablecer la lista ilegible de aplicaciones ignoradas? El archivo anterior se conservará como copia de seguridad.",
+  "defaults.script_prefix": "Fragmento"
 }

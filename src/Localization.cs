@@ -12,6 +12,7 @@ internal static class Localization
 {
     private static readonly Dictionary<string, Dictionary<string, string>> Catalog = ReadCatalog();
     internal static string Current { get; private set; } = "en-US";
+    internal static bool SettingsReadFailed { get; private set; }
 
     private static Dictionary<string, Dictionary<string, string>> ReadCatalog()
     {
@@ -70,16 +71,20 @@ internal static class Localization
 
     internal static void Initialize(string settingsFile)
     {
+        SettingsReadFailed = false;
         bool existingProfile = File.Exists(settingsFile);
-        // English is the product default for new installations. Profiles created
-        // before language persistence existed retain Portuguese unless they already
-        // contain an explicit supported language= value.
-        string chosen = existingProfile ? "pt-BR" : "en-US";
+        // English is the product default for new installations. A readable legacy
+        // profile without language= retains Portuguese. If an existing file cannot
+        // be read, fail closed for this session instead of guessing and later
+        // overwriting the user's persisted language/layout.
+        string chosen = "en-US";
         if (existingProfile)
         {
             try
             {
-                foreach (string line in File.ReadAllLines(settingsFile))
+                string[] lines = File.ReadAllLines(settingsFile);
+                chosen = "pt-BR";
+                foreach (string line in lines)
                 {
                     if (!line.StartsWith("language=", StringComparison.Ordinal)) continue;
                     string code = line.Substring("language=".Length).Trim();
@@ -87,8 +92,8 @@ internal static class Localization
                         code == "ru-RU" || code == "zh-CN") chosen = code;
                 }
             }
-            catch (IOException) { }
-            catch (UnauthorizedAccessException) { }
+            catch (IOException) { SettingsReadFailed = true; }
+            catch (UnauthorizedAccessException) { SettingsReadFailed = true; }
         }
         Select(chosen);
     }

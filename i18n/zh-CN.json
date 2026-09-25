@@ -4,7 +4,7 @@
   "config.shortcuts_unreadable": "无法加载快捷方式配置。",
   "config.original_preserved": "已保留原始文件。\n\n",
   "config.ignored_unreadable": "\n\n无法加载已忽略的应用列表。已保留原始文件。\n",
-  "sidebar.tab_hint": "Shift+F1：展开或收起",
+  "sidebar.tab_hint": "AltGr+Y：打开/收起",
   "sidebar.exit_hint": "退出（需要确认）",
   "sidebar.exit_accessible": "退出 WinSidebar",
   "sidebar.shrink": "缩小宽度",
@@ -147,5 +147,8 @@
   "snippets.restore_success": "已恢复默认脚本。",
   "snippets.hotkey": "键盘快捷键",
   "snippets.hotkey_none": "无快捷键",
-  "snippets.hotkey_duplicate": "此快捷键已分配给另一个脚本。"
+  "snippets.hotkey_duplicate": "此快捷键已分配给另一个脚本。",
+  "config.settings_unreadable": "本次运行无法读取已保存的设置。重新启动 WinSidebar 之前，不会写入设置更改。\n\n",
+  "windows.reset_corrupt_question": "是否重置无法读取的已忽略应用列表？原文件将保留为备份。",
+  "defaults.script_prefix": "片段"
 }

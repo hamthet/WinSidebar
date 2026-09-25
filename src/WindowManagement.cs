@@ -17,6 +17,11 @@ internal sealed class WindowManagement
         internal string Label;
     }
 
+    private const int MaxRules = 128;
+    private const int MaxIdentityLength = 2048;
+    private const int MaxDisplayLength = 256;
+    private const int MaxFileBytes = 65536;
+
     private readonly Dictionary<IntPtr, Alias> aliases = new Dictionary<IntPtr, Alias>();
     private Dictionary<string, string> ignored = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
     private readonly string file = Path.Combine(ShortcutStore.Root, "ignored-apps.json");
@@ -25,22 +30,36 @@ internal sealed class WindowManagement
     internal string FilePath { get { return file; } }
     internal string[] IgnoredKeys { get { return ignored.Keys.ToArray(); } }
 
+    private static void ValidateRules(Dictionary<string, string> rules)
+    {
+        if (rules == null || rules.Count > MaxRules)
+            throw new InvalidDataException(Localization.Text("windows.invalid_list"));
+        foreach (KeyValuePair<string, string> item in rules)
+            if (string.IsNullOrWhiteSpace(item.Key) || item.Key.Length > MaxIdentityLength ||
+                !(item.Key.StartsWith("path:", StringComparison.OrdinalIgnoreCase) ||
+                  item.Key.StartsWith("name:", StringComparison.OrdinalIgnoreCase)) ||
+                string.IsNullOrWhiteSpace(item.Value) || item.Value.Length > MaxDisplayLength)
+                throw new InvalidDataException(Localization.Text("windows.invalid_rule"));
+    }
+
     internal void Load()
     {
         if (!File.Exists(file)) return;
-        if (new FileInfo(file).Length > 65536) { corruptStore = true; throw new InvalidDataException(Localization.Text("windows.ignored_file_too_large")); }
+        if (new FileInfo(file).Length > MaxFileBytes)
+        {
+            corruptStore = true;
+            throw new InvalidDataException(Localization.Text("windows.ignored_file_too_large"));
+        }
         try
         {
-            Dictionary<string, string> parsed = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(file));
-            if (parsed == null || parsed.Count > 128) throw new InvalidDataException(Localization.Text("windows.invalid_list"));
-            foreach (KeyValuePair<string, string> item in parsed)
-                if (string.IsNullOrWhiteSpace(item.Key) || item.Key.Length > 2048 ||
-                    !(item.Key.StartsWith("path:", StringComparison.OrdinalIgnoreCase) || item.Key.StartsWith("name:", StringComparison.OrdinalIgnoreCase)) ||
-                    string.IsNullOrWhiteSpace(item.Value) || item.Value.Length > 256)
-                    throw new InvalidDataException(Localization.Text("windows.invalid_rule"));
+            Dictionary<string, string> parsed =
+                JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(file));
+            ValidateRules(parsed);
+            // A case-insensitive runtime identity map must reject JSON that contains
+            // two otherwise-valid rules differing only by case.
             ignored = new Dictionary<string, string>(parsed, StringComparer.OrdinalIgnoreCase);
         }
-        catch (Exception ex) when (ex is JsonException || ex is InvalidDataException)
+        catch (Exception ex) when (ex is JsonException || ex is InvalidDataException || ex is ArgumentException)
         {
             corruptStore = true;
             throw new InvalidDataException(Localization.Text("windows.load_failed"), ex);
@@ -50,11 +69,17 @@ internal sealed class WindowManagement
     internal void Save()
     {
         if (corruptStore) throw new InvalidDataException(Localization.Text("windows.corrupt_store"));
+        ValidateRules(ignored);
+        string json = JsonSerializer.Serialize(ignored);
+        byte[] bytes = new System.Text.UTF8Encoding(false).GetBytes(json);
+        if (bytes.LongLength > MaxFileBytes)
+            throw new InvalidDataException(Localization.Text("windows.ignored_file_too_large"));
+
         Directory.CreateDirectory(ShortcutStore.Root);
         string temp = file + "." + Guid.NewGuid().ToString("N") + ".tmp";
         try
         {
-            File.WriteAllText(temp, JsonSerializer.Serialize(ignored), new System.Text.UTF8Encoding(false));
+            File.WriteAllBytes(temp, bytes);
             if (File.Exists(file)) File.Replace(temp, file, file + ".bak", true);
             else File.Move(temp, file);
         }
@@ -63,10 +88,21 @@ internal sealed class WindowManagement
 
     internal void ResetRules()
     {
-        ignored.Clear();
+        Dictionary<string, string> previous = ignored;
+        bool previousCorrupt = corruptStore;
+        ignored = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         corruptStore = false;
-        aliases.Clear();
-        Save();
+        try
+        {
+            Save();
+            aliases.Clear();
+        }
+        catch
+        {
+            ignored = previous;
+            corruptStore = previousCorrupt;
+            throw;
+        }
     }
 
     internal void ForgetAliases() { aliases.Clear(); }
@@ -268,6 +304,15 @@ internal sealed class WindowManagement
                 catch (Exception ex) { ignored[item.Key] = item.Value; MessageBox.Show(dialog, ex.Message, Localization.Text("windows.could_not_save"), MessageBoxButtons.OK, MessageBoxIcon.Warning); }
             };
             clear.Click += delegate {
+                if (corruptStore)
+                {
+                    if (MessageBox.Show(dialog, Localization.Text("windows.reset_corrupt_question"), "WinSidebar",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                        MessageBoxDefaultButton.Button2) != DialogResult.Yes) return;
+                    try { ResetRules(); list.Items.Clear(); changed(); }
+                    catch (Exception ex) { MessageBox.Show(dialog, ex.Message, Localization.Text("windows.could_not_save"), MessageBoxButtons.OK, MessageBoxIcon.Warning); }
+                    return;
+                }
                 if (ignored.Count == 0 || MessageBox.Show(dialog, Localization.Text("windows.show_all_question"), "WinSidebar", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
                 Dictionary<string, string> old = new Dictionary<string, string>(ignored, StringComparer.OrdinalIgnoreCase);
                 ignored.Clear();

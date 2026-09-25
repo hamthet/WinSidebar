@@ -244,6 +244,21 @@ internal sealed class TextInjector : IDisposable
             return;
         }
 
+        // Clipboard capture can block while another owner supplies formats. Recheck
+        // the target after staging our payload and immediately before SendInput.
+        if (!IsExternalTarget(target))
+        {
+            TryRestoreAfterFailure();
+            Fail(TextInjectionFailure.TargetUnavailable);
+            return;
+        }
+        if (Native.GetForegroundWindow() != target)
+        {
+            TryRestoreAfterFailure();
+            Fail(TextInjectionFailure.TargetChanged);
+            return;
+        }
+
         if (!SendPasteKeystroke())
         {
             TryRestoreAfterFailure();
@@ -302,7 +317,25 @@ internal sealed class TextInjector : IDisposable
             KeyboardInput(Keys.V, true),
             KeyboardInput(Keys.ControlKey, true)
         };
-        return SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(INPUT))) == (uint)inputs.Length;
+        uint inserted = SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(INPUT)));
+        if (inserted == (uint)inputs.Length) return true;
+
+        // SendInput may accept only a prefix of the sequence. Release any key-down
+        // events from that accepted prefix so a failed paste cannot leave Ctrl/V down.
+        if (inserted == 1 || inserted == 3)
+        {
+            INPUT[] cleanup = new INPUT[] { KeyboardInput(Keys.ControlKey, true) };
+            SendInput((uint)cleanup.Length, cleanup, Marshal.SizeOf(typeof(INPUT)));
+        }
+        else if (inserted == 2)
+        {
+            INPUT[] cleanup = new INPUT[] {
+                KeyboardInput(Keys.V, true),
+                KeyboardInput(Keys.ControlKey, true)
+            };
+            SendInput((uint)cleanup.Length, cleanup, Marshal.SizeOf(typeof(INPUT)));
+        }
+        return false;
     }
 
     private bool ClipboardStillOwned()

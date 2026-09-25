@@ -35,6 +35,7 @@ internal static class SnippetStoreSmoke
 
         try
         {
+            Localization.Select("en-US");
             SnippetEntry[] defaults = SnippetStore.Read(path);
             Check(defaults.Length == 4, "missing file yields four defaults");
             for (int i = 0; i < 4; i++)
@@ -43,6 +44,14 @@ internal static class SnippetStoreSmoke
                 Check(defaults[i].Content == "", "default content empty " + i);
                 Check(defaults[i].Hotkey == "Shift+F" + (i + 1), "default hotkey " + i);
             }
+
+            Localization.Select("es-ES");
+            Check(SnippetStore.CreateDefault(0).Name == "Fragmento 1", "Spanish default snippet name");
+            Localization.Select("ru-RU");
+            Check(SnippetStore.CreateDefault(0).Name == "Фрагмент 1", "Russian default snippet name");
+            Localization.Select("zh-CN");
+            Check(SnippetStore.CreateDefault(0).Name == "片段 1", "Simplified Chinese default snippet name");
+            Localization.Select("en-US");
 
             SnippetEntry[] first = SnippetStore.Defaults();
             first[0].Name = "  Resposta multilíngue  ";

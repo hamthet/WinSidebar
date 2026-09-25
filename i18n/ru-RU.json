@@ -4,7 +4,7 @@
   "config.shortcuts_unreadable": "Не удалось загрузить настройки ярлыков. ",
   "config.original_preserved": "Исходный файл сохранён.\n\n",
   "config.ignored_unreadable": "\n\nНе удалось загрузить список игнорируемых приложений. Файл сохранён.\n",
-  "sidebar.tab_hint": "Shift+F1: развернуть/свернуть",
+  "sidebar.tab_hint": "AltGr+Y: открыть/свернуть",
   "sidebar.exit_hint": "Выход с подтверждением",
   "sidebar.exit_accessible": "Закрыть WinSidebar",
   "sidebar.shrink": "Уменьшить ширину",
@@ -147,5 +147,8 @@
   "snippets.restore_success": "Стандартные скрипты восстановлены.",
   "snippets.hotkey": "Сочетание клавиш",
   "snippets.hotkey_none": "Без сочетания",
-  "snippets.hotkey_duplicate": "Это сочетание уже назначено другому скрипту."
+  "snippets.hotkey_duplicate": "Это сочетание уже назначено другому скрипту.",
+  "config.settings_unreadable": "Не удалось прочитать сохранённые настройки в этом сеансе. Изменения настроек не будут записываться до перезапуска WinSidebar.\n\n",
+  "windows.reset_corrupt_question": "Сбросить нечитаемый список игнорируемых приложений? Предыдущий файл будет сохранён как резервная копия.",
+  "defaults.script_prefix": "Фрагмент"
 }

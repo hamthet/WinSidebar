@@ -80,8 +80,20 @@ internal static class LocalizationSmoke
 
             File.WriteAllLines(path, new[] { "width=1", "left=1" });
             Localization.Initialize(path);
-            Check(Localization.Current == "pt-BR",
-                "legacy existing profile without language retains Portuguese");
+            Check(Localization.Current == "pt-BR" && !Localization.SettingsReadFailed,
+                "readable legacy existing profile without language retains Portuguese");
+
+            File.WriteAllLines(path, new[] { "width=1", "language=es-ES", "left=1" });
+            using (FileStream locked = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+            {
+                Localization.Initialize(path);
+                Check(Localization.SettingsReadFailed && Localization.Current == "en-US",
+                    "unreadable existing profile fails closed without assuming legacy Portuguese");
+            }
+            Localization.Initialize(path);
+            Check(!Localization.SettingsReadFailed && Localization.Current == "es-ES",
+                "settings-read guard clears after a successful restart/read");
+
             File.Delete(path);
             Localization.SaveInitialSelection(path, "es-ES");
             Localization.Initialize(path);

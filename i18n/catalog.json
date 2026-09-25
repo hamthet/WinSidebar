@@ -20,8 +20,8 @@
     "en-US": "\n\nThe ignored apps list could not be loaded. The file was preserved.\n"
   },
   "sidebar.tab_hint": {
-    "pt-BR": "Shift+F1: abrir/recolher",
-    "en-US": "Shift+F1: expand/collapse"
+    "pt-BR": "AltGr+Y: abrir/recolher",
+    "en-US": "AltGr+Y: expand/collapse"
   },
   "sidebar.exit_hint": {
     "pt-BR": "Encerrar (com confirmação)",
@@ -594,5 +594,17 @@
   "snippets.hotkey_duplicate": {
     "pt-BR": "Esse atalho já está atribuído a outro script.",
     "en-US": "That shortcut is already assigned to another script."
+  },
+  "config.settings_unreadable": {
+    "pt-BR": "As preferências salvas não puderam ser lidas nesta execução. As alterações de preferências não serão gravadas até reiniciar o WinSidebar.\n\n",
+    "en-US": "Saved preferences could not be read in this session. Preference changes will not be written until WinSidebar is restarted.\n\n"
+  },
+  "windows.reset_corrupt_question": {
+    "pt-BR": "Redefinir a lista ilegível de aplicativos ignorados? O arquivo anterior será preservado como backup.",
+    "en-US": "Reset the unreadable ignored-apps list? The previous file will be preserved as a backup."
+  },
+  "defaults.script_prefix": {
+    "pt-BR": "Script",
+    "en-US": "Script"
   }
 }

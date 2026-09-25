@@ -10,5 +10,10 @@
   <ItemGroup>
     <Compile Include="SnippetStoreSmoke.cs" />
     <Compile Include="../src/SnippetStore.cs" Link="SnippetStore.cs" />
+    <Compile Include="../src/Localization.cs" Link="Localization.cs" />
+    <EmbeddedResource Include="../i18n/catalog.json" LogicalName="WinSidebar.i18n.catalog.json" />
+    <EmbeddedResource Include="../i18n/es-ES.json" LogicalName="WinSidebar.i18n.es-ES.json" />
+    <EmbeddedResource Include="../i18n/ru-RU.json" LogicalName="WinSidebar.i18n.ru-RU.json" />
+    <EmbeddedResource Include="../i18n/zh-CN.json" LogicalName="WinSidebar.i18n.zh-CN.json" />
   </ItemGroup>
 </Project>

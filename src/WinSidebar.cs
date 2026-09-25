@@ -53,7 +53,8 @@ internal static class Native
         catch (DllNotFoundException) { }
         catch (EntryPointNotFoundException) { }
         finally { if (path != IntPtr.Zero) Marshal.FreeCoTaskMem(path); }
-        return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), Localization.Text("defaults.downloads"));
+        // The display label is localized, but the fallback filesystem component is not.
+        return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
     }
 }
 
@@ -209,12 +210,17 @@ internal sealed class SidebarWindow : Form
     private string hotkeyErrors = "";
     private string browserExecutable = "";
     private bool browserUseSystem;
+    private bool settingsReadFailed;
     private string configurationError = "";
 
     internal SidebarWindow()
     {
         browserUseSystem = true;
+        settingsReadFailed = Localization.SettingsReadFailed;
         LoadSettings();
+        if (settingsReadFailed)
+            configurationError = Localization.Text("config.settings_unreadable") +
+                Localization.Text("config.original_preserved");
         try { entries = ShortcutStore.Read(); }
         catch (Exception ex)
         {
@@ -665,11 +671,12 @@ internal sealed class SidebarWindow : Form
                 if (pair[0] == "browserSystem") browserUseSystem = pair[1] == "1";
             }
         }
-        catch (IOException) { }
-        catch (UnauthorizedAccessException) { }
+        catch (IOException) { settingsReadFailed = true; }
+        catch (UnauthorizedAccessException) { settingsReadFailed = true; }
     }
     private void SaveSettings()
     {
+        if (settingsReadFailed) return;
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(settingsPath));
@@ -688,6 +695,8 @@ internal sealed class SidebarWindow : Form
     // Unlike legacy auto-save, explicit Save reports errors and replaces the file atomically.
     private void SaveSettingsStrict()
     {
+        if (settingsReadFailed)
+            throw new InvalidDataException(Localization.Text("config.settings_unreadable"));
         Directory.CreateDirectory(Path.GetDirectoryName(settingsPath));
         string temporary = settingsPath + "." + Guid.NewGuid().ToString("N") + ".tmp";
         try
@@ -706,11 +715,30 @@ internal sealed class SidebarWindow : Form
         finally { if (File.Exists(temporary)) File.Delete(temporary); }
     }
 
-    private static byte[] SnapshotFile(string path) { return File.Exists(path) ? File.ReadAllBytes(path) : null; }
-    private static void RestoreFile(string path, byte[] bytes)
+    private sealed class FileSnapshot
     {
-        if (bytes == null) { if (File.Exists(path)) File.Delete(path); }
-        else { Directory.CreateDirectory(Path.GetDirectoryName(path)); File.WriteAllBytes(path, bytes); }
+        internal bool Existed;
+        internal byte[] Bytes;
+    }
+
+    private static FileSnapshot SnapshotFile(string path)
+    {
+        bool existed = File.Exists(path);
+        byte[] bytes = existed ? File.ReadAllBytes(path) : null;
+        return new FileSnapshot { Existed = existed, Bytes = bytes };
+    }
+
+    private static void RestoreFile(string path, FileSnapshot snapshot)
+    {
+        // A null snapshot means snapshot acquisition failed. Never delete or replace
+        // an original file when rollback evidence was not captured successfully.
+        if (snapshot == null) return;
+        if (!snapshot.Existed) { if (File.Exists(path)) File.Delete(path); }
+        else
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
+            File.WriteAllBytes(path, snapshot.Bytes);
+        }
     }
 
 
@@ -720,7 +748,7 @@ internal sealed class SidebarWindow : Form
             "WinSidebar", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
             MessageBoxDefaultButton.Button2) != DialogResult.Yes) return;
 
-        byte[] oldFile = null;
+        FileSnapshot oldFile = null;
         ShortcutEntry[] previous = new ShortcutEntry[entries.Length];
         for (int i = 0; i < entries.Length; i++) previous[i] = entries[i].Copy();
         try
@@ -753,7 +781,7 @@ internal sealed class SidebarWindow : Form
             "WinSidebar", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
             MessageBoxDefaultButton.Button2) != DialogResult.Yes) return;
 
-        byte[] oldFile = null;
+        FileSnapshot oldFile = null;
         SnippetEntry[] previous = new SnippetEntry[snippetEntries.Length];
         for (int i = 0; i < snippetEntries.Length; i++) previous[i] = snippetEntries[i].Copy();
         try

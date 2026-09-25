@@ -51,7 +51,7 @@ internal static class SnippetStore
     internal static SnippetEntry CreateDefault(int index)
     {
         return new SnippetEntry {
-            Name = "Script " + (index + 1),
+            Name = Localization.Text("defaults.script_prefix") + " " + (index + 1),
             Content = "",
             Hotkey = index < HotkeySlots ? "Shift+F" + (index + 1) : ""
         };
