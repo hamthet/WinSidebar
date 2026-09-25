@@ -97,3 +97,7 @@ WinSidebar 2.0 面向 Windows x64，以单个自包含可执行文件发布。.N
 源代码、语言目录和测试均位于本仓库。WinSidebar 采用 [MIT 许可证](../../LICENSE)。
 
 详细使用方法请参阅[简体中文教程](TUTORIAL.zh-CN.md)。
+
+## 帮助与支持
+
+如果遇到问题，请阅读 [获取帮助](SUPPORT.zh-CN.md)。报告问题不需要技术背景。

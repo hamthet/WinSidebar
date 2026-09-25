@@ -97,3 +97,7 @@ To uninstall, exit WinSidebar and delete the executable. Delete %LOCALAPPDATA%\W
 Source code, localization catalogs and tests are in this repository. WinSidebar is released under the [MIT License](LICENSE).
 
 For detailed use, see the [English tutorial](docs/TUTORIAL.md). Maintainers and AI assistants should start with [PROJECT.md](PROJECT.md) and the [documentation map](docs/README.md).
+
+## Help and support
+
+If something does not work, see [Getting help](SUPPORT.md). You do not need technical knowledge to file a bug report.

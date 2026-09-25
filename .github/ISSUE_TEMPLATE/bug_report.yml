@@ -1,0 +1,85 @@
+name: Bug report
+description: Tell us what went wrong. No technical knowledge required.
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a WinSidebar 2.0 problem. Please do not post passwords, private snippet text, confidential paths, or unreviewed profile files.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the problem in your own words.
+      placeholder: I clicked..., then...
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List the smallest set of steps that makes the problem happen again.
+      placeholder: |
+        1. Open WinSidebar
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: dropdown
+    id: windows
+    attributes:
+      label: Windows version
+      options:
+        - Windows 11
+        - Windows 10
+        - I am not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: language
+    attributes:
+      label: WinSidebar language
+      options:
+        - English
+        - Português (Brasil)
+        - Español
+        - Русский
+        - 简体中文
+        - I am not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: monitors
+    attributes:
+      label: Number of monitors
+      options:
+        - "1"
+        - "2"
+        - "3 or more"
+        - I am not sure
+  - type: dropdown
+    id: elevated
+    attributes:
+      label: If this is a paste problem, was the target app running as administrator?
+      options:
+        - "No"
+        - "Yes"
+        - I am not sure
+        - Not a paste problem
+  - type: textarea
+    id: exact-message
+    attributes:
+      label: Exact error message, if any
+      description: Copy the text if possible. Review it first for private information.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: I reviewed anything I pasted or uploaded and removed passwords, confidential text and private paths.
+          required: true

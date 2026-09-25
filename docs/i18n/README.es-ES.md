@@ -97,3 +97,7 @@ Para desinstalar, cierra WinSidebar y elimina el ejecutable. Elimina %LOCALAPPDA
 El código fuente, los catálogos de idioma y las pruebas están en este repositorio. WinSidebar se distribuye bajo la [Licencia MIT](../../LICENSE).
 
 Para más detalles, consulta el [tutorial en español](TUTORIAL.es-ES.md).
+
+## Ayuda y soporte
+
+Si algo no funciona, consulta [Cómo pedir ayuda](SUPPORT.es-ES.md). No necesitas conocimientos técnicos para informar de un problema.

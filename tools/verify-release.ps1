@@ -41,13 +41,15 @@ if (Test-Path -LiteralPath (Join-Path $root 'development')) {
 }
 
 $required = @(
-    'README.md', 'START-HERE.txt', 'PROJECT.md', 'project.json', 'CONTRIBUTING.md',
+    'README.md', 'START-HERE.txt', 'SUPPORT.md', 'PROJECT.md', 'project.json', 'CONTRIBUTING.md',
     'docs\README.md', 'docs\FAQ.md', 'docs\TUTORIAL.md', 'docs\RELEASE-NOTES.md',
     'docs\ARCHITECTURE.md', 'docs\DATA-FORMATS.md', 'docs\DEVELOPMENT.md', 'docs\RELEASE.md',
     'docs\i18n\START-HERE.pt-BR.txt', 'docs\i18n\START-HERE.es-ES.txt',
     'docs\i18n\START-HERE.ru-RU.txt', 'docs\i18n\START-HERE.zh-CN.txt',
     'docs\i18n\FAQ.pt-BR.md', 'docs\i18n\FAQ.es-ES.md',
-    'docs\i18n\FAQ.ru-RU.md', 'docs\i18n\FAQ.zh-CN.md'
+    'docs\i18n\FAQ.ru-RU.md', 'docs\i18n\FAQ.zh-CN.md',
+    'docs\i18n\SUPPORT.pt-BR.md', 'docs\i18n\SUPPORT.es-ES.md',
+    'docs\i18n\SUPPORT.ru-RU.md', 'docs\i18n\SUPPORT.zh-CN.md'
 )
 foreach ($path in $required) {
     if (-not (Test-Path -LiteralPath (Join-Path $root $path) -PathType Leaf)) {

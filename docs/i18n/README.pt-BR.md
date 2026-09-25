@@ -97,3 +97,7 @@ Para remover, encerre o WinSidebar e apague o executável. Apague %LOCALAPPDATA%
 Código-fonte, catálogos de idioma e testes estão neste repositório. WinSidebar é distribuído sob a [Licença MIT](../../LICENSE).
 
 Para uso detalhado, consulte o [tutorial em português](TUTORIAL.pt-BR.md).
+
+## Ajuda e suporte
+
+Se algo não funcionar, consulte [Como pedir ajuda](SUPPORT.pt-BR.md). Não é necessário entender de programação para relatar um problema.

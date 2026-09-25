@@ -77,7 +77,8 @@
     "architecture": "docs/ARCHITECTURE.md",
     "dataFormats": "docs/DATA-FORMATS.md",
     "development": "docs/DEVELOPMENT.md",
-    "release": "docs/RELEASE.md"
+    "release": "docs/RELEASE.md",
+    "support": "SUPPORT.md"
   },
   "sourceMap": {
     "mainUi": "src/WinSidebar.cs",
