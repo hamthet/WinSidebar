@@ -32,3 +32,10 @@ No feature PR is merged into `develop` or `main`. Older logs and stage sections 
 - **Scope:** runtime behavior is frozen for this release candidate; avoid opportunistic functional changes during release documentation/review. Cross-version preference migration remains out of scope by owner decision.
 
 Supporting records: [`BASELINE.md`](BASELINE.md), [`ENGINEERING-NOTES.md`](ENGINEERING-NOTES.md), [`IMPLEMENTATION-BACKLOG.md`](IMPLEMENTATION-BACKLOG.md), [`PLAN.md`](PLAN.md), [`PRODUCT-REVIEW.md`](PRODUCT-REVIEW.md), [`VERIFICATION.md`](VERIFICATION.md), [`RELEASE-GATE-OVERRIDE.md`](RELEASE-GATE-OVERRIDE.md), [`DECISIONS.md`](DECISIONS.md), [`LOG.md`](LOG.md), dated `LOG-*.md` and locale dossiers.
+
+
+## 2026-09-25 — owner approval / flat release presentation
+
+Owner reported the WinSidebar 2.0 clean candidate as tested and approved. Runtime behavior is approved.
+
+Final release-tooling presentation was then simplified: canonical verifier work folders `publish/`, `staging/` and `dist/` are transient only. After PASS, OutputRoot is flat with the EXE, ZIP, checksums, LICENSE and five START-HERE files directly visible. This is a packaging/tooling presentation change only; runtime source was not changed.
