@@ -95,3 +95,18 @@ This section supersedes the pre-publication checkpoints above for current state.
 - No further merge/tag/publication action remains for WinSidebar 2.0.
 
 The `develop` dossier remains internal provenance only. Do not merge `development/**` into shipping `main`.
+
+
+## 2026-09-25 — post-release repository-state synchronization
+
+A documentation-only follow-up was prepared from published `main` to make the GitHub repository describe the current post-release state explicitly:
+
+- branch: `docs/post-release-2.0-sync`;
+- commit: `b8a1990daea0da11cf610bb8b8ac0577a7322b07`;
+- PR: #8 `docs: align repository with published WinSidebar 2.0`;
+- scope: `PROJECT.md`, `project.json`, `CONTRIBUTING.md`, `docs/README.md`, `docs/DEVELOPMENT.md`, `docs/DESIGN-DECISIONS.md`, `docs/RELEASE.md` only;
+- no runtime, localization, test, verifier, packaging or workflow files changed;
+- live tag/release metadata was cross-checked against GitHub and matches the proposed `project.json` release record;
+- PR #8 is open, ready for review and currently mergeable.
+
+Important branch-authority rule: after the v2.0 publication, `main` plus the immutable `v2.0` tag are the producer authority. The non-`development/**` tree on this historical `develop` branch is older and must not be used to infer current source, workflows, packaging or product state. Use `develop` only for the internal dossier until a separately authorized synchronization/merge decision is made.

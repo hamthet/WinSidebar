@@ -83,3 +83,10 @@ WinSidebar 2.0 is publicly released.
 - release body matches the versioned `docs/RELEASE-NOTES.md` after line-ending normalization.
 
 The 2.0 release cycle is closed. Future product work should start from current `main`; retain this `develop` dossier as provenance and planning history, not as shipping source.
+
+
+## 2026-09-25 — repository documentation sync after v2.0
+
+PR #8 (`docs/post-release-2.0-sync`, commit `b8a1990daea0da11cf610bb8b8ac0577a7322b07`) updates the public maintainer/docs index to describe the already-published v2.0 state. It records the immutable release tag/commit, distinguishes `main` from the published baseline, and adds live publication metadata to `project.json`. The diff is documentation/index only and is currently mergeable.
+
+For current software facts, use `main` and tag `v2.0`. The code/workflow tree inherited by this `develop` branch predates the final clean release and is historical; only `development/**` is intentionally maintained here as the internal dossier. Do not use older `develop` source/workflows as implementation authority.
