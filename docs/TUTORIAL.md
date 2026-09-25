@@ -1,10 +1,10 @@
-# WinSidebar 2.0.0 tutorial
+# WinSidebar 2.0 tutorial
 
 [README](../README.md) · [Português](i18n/TUTORIAL.pt-BR.md) · [Español](i18n/TUTORIAL.es-ES.md) · [Русский](i18n/TUTORIAL.ru-RU.md) · [简体中文](i18n/TUTORIAL.zh-CN.md)
 
 ## 1. Start the portable application
 
-Extract the WinSidebar 2.0.0 ZIP and run WinSidebar.exe. No installer or separate .NET runtime is required.
+Extract the WinSidebar 2.0 ZIP and run WinSidebar.exe. No installer or separate .NET runtime is required.
 
 On a brand-new profile, English is preselected. The first-run chooser also offers Português (Brasil), Español, Русский and 简体中文. Your choice is stored in %LOCALAPPDATA%\WinSidebar.
 
@@ -104,7 +104,7 @@ Shortcut Restore and Script Restore are intentionally independent. Restoring one
 
 If a profile file becomes unreadable, preserve the original file before manually deleting or replacing it. A malformed file can contain useful recovery evidence.
 
-Cross-version preference migration is not part of the 2.0.0 validation contract.
+Cross-version preference migration is not part of the 2.0 validation contract.
 
 ## 9. Uninstall
 
@@ -121,4 +121,4 @@ The profile under %LOCALAPPDATA%\WinSidebar is independent. Delete it only if yo
 | Shift+F1–F4 | Default snippet hotkeys 1–4 |
 | Shift+F1–F12 | Available configurable snippet hotkeys |
 
-The old Shift+F window-list navigation is intentionally removed in 2.0.0.
+The old Shift+F window-list navigation is intentionally removed in 2.0.

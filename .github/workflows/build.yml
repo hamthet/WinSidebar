@@ -1,4 +1,4 @@
-name: Verify WinSidebar 2.0.0 portable build
+name: Verify WinSidebar 2.0 portable build
 
 # Owner-directed manual workflow only. Do not add push/pull_request triggers
 # while hosted Actions are intentionally not part of the active test path.
@@ -24,7 +24,7 @@ jobs:
           $ErrorActionPreference = 'Stop'
           [xml]$project = Get-Content -LiteralPath '.\WinSidebar.csproj' -Raw
           $p = $project.Project.PropertyGroup | Select-Object -First 1
-          if ($p.Version -ne '2.0.0' -or $p.AssemblyVersion -ne '2.0.0.0' -or $p.FileVersion -ne '2.0.0.0') {
+          if ($p.Version -ne '2.0' -or $p.AssemblyVersion -ne '2.0.0' -or $p.FileVersion -ne '2.0.0') {
             throw 'Unexpected WinSidebar release version.'
           }
           if ($p.NeutralLanguage -ne 'en-US') { throw 'English must remain the neutral/default language.' }
@@ -91,7 +91,7 @@ jobs:
           Copy-Item docs\i18n\README.ru-RU.txt staging\README.ru-RU.txt
           Copy-Item docs\i18n\README.zh-CN.txt staging\README.zh-CN.txt
 
-          $zip = 'dist\WinSidebar-v2.0.0-win-x64.zip'
+          $zip = 'dist\WinSidebar-v2.0-win-x64.zip'
           Compress-Archive staging\* $zip -CompressionLevel Optimal
 
           $expected = @(
@@ -116,12 +116,12 @@ jobs:
           $zipHash = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLowerInvariant()
           $lines = @(
             "$exeHash  WinSidebar.exe",
-            "$zipHash  WinSidebar-v2.0.0-win-x64.zip"
+            "$zipHash  WinSidebar-v2.0-win-x64.zip"
           )
           [IO.File]::WriteAllLines('dist\SHA256SUMS.txt', $lines, [Text.UTF8Encoding]::new($false))
 
       - uses: actions/upload-artifact@v4
         with:
-          name: WinSidebar-v2.0.0-win-x64
+          name: WinSidebar-v2.0-win-x64
           path: dist/
           if-no-files-found: error

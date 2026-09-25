@@ -1,4 +1,4 @@
-WinSidebar 2.0.0 - Windows 10/11 x64
+WinSidebar 2.0 - Windows 10/11 x64
 
 INSTALAR
 Extraia o ZIP em uma pasta sob seu controle e execute WinSidebar.exe.

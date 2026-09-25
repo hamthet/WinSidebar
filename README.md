@@ -1,4 +1,4 @@
-# WinSidebar 2.0.0
+# WinSidebar 2.0
 
 **English** · [Português (Brasil)](docs/i18n/README.pt-BR.md) · [Español](docs/i18n/README.es-ES.md) · [Русский](docs/i18n/README.ru-RU.md) · [简体中文](docs/i18n/README.zh-CN.md)
 
@@ -6,11 +6,11 @@
 
 > **Concept illustration, not an application screenshot.** The Windows 98-inspired appearance is intentional.
 
-WinSidebar is a portable, self-contained Windows 10/11 x64 sidebar for finding and switching between open windows, launching frequently used folders or websites, and pasting reusable text snippets. Version 2.0.0 is the first release line with the complete five-language runtime, expandable shortcuts and text snippets.
+WinSidebar is a portable, self-contained Windows 10/11 x64 sidebar for finding and switching between open windows, launching frequently used folders or websites, and pasting reusable text snippets. Version 2.0 is the first release line with the complete five-language runtime, expandable shortcuts and text snippets.
 
-**Download:** [WinSidebar 2.0.0](https://github.com/hamthet/WinSidebar/releases/tag/v2.0.0) · **Tutorial:** [English](docs/TUTORIAL.md)
+**Download:** [WinSidebar 2.0](https://github.com/hamthet/WinSidebar/releases/tag/v2.0) · **Tutorial:** [English](docs/TUTORIAL.md)
 
-## What changed in 2.0.0
+## What changed in 2.0
 
 - Five runtime languages: English, Brazilian Portuguese, Spanish, Russian and Simplified Chinese.
 - English is the default for a brand-new installation; the first-run chooser lets the user select any supported language.
@@ -24,7 +24,7 @@ WinSidebar is a portable, self-contained Windows 10/11 x64 sidebar for finding a
 
 ## Quick start
 
-1. Download the v2.0.0 ZIP and extract it to a folder you control.
+1. Download the v2.0 ZIP and extract it to a folder you control.
 2. Run WinSidebar.exe.
 3. On a new profile, English is preselected. Choose another language if preferred.
 4. Click the narrow sidebar tab or press AltGr+Y to open/close the sidebar.
@@ -41,7 +41,7 @@ The distribution is portable and unsigned. Windows SmartScreen or organizational
 - **Shift+F1–F4** — default hotkeys for snippets 1–4.
 - Each snippet can be assigned **None** or **Shift+F1 through Shift+F12**. Duplicate snippet hotkeys are rejected.
 
-The former window-list Shift+F navigation is not part of 2.0.0.
+The former window-list Shift+F navigation is not part of 2.0.
 
 ## Shortcuts and snippets
 
@@ -81,7 +81,7 @@ Text snippets use the Windows clipboard temporarily for paste injection and atte
 
 ## Portable distribution
 
-WinSidebar 2.0.0 targets Windows x64 and is published as a self-contained single executable. The bundled .NET 8 runtime is inside WinSidebar.exe. End users do not need a separate .NET download, PowerShell, Git, a compiler or an installer.
+WinSidebar 2.0 targets Windows x64 and is published as a self-contained single executable. The bundled .NET 8 runtime is inside WinSidebar.exe. End users do not need a separate .NET download, PowerShell, Git, a compiler or an installer.
 
 To uninstall, exit WinSidebar and delete the executable. Delete %LOCALAPPDATA%\WinSidebar only if you also want to remove its saved profile.
 

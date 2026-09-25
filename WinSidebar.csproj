@@ -7,7 +7,7 @@
     <RootNamespace>WinSidebar</RootNamespace>
     <NeutralLanguage>en-US</NeutralLanguage>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-    <Version>2.0.0</Version>
+    <Version>2.0</Version>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <FileVersion>2.0.0.0</FileVersion>
     <Product>WinSidebar</Product>

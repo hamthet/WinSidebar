@@ -1,10 +1,10 @@
-# WinSidebar 2.0.0 — publishing notes
+# WinSidebar 2.0 — publishing notes
 
 [README](../README.md) · [Português](i18n/OUTREACH.pt-BR.md) · [Español](i18n/OUTREACH.es-ES.md) · [Русский](i18n/OUTREACH.ru-RU.md) · [简体中文](i18n/OUTREACH.zh-CN.md)
 
 ## Suggested short announcement
 
-WinSidebar 2.0.0 is a portable Windows 10/11 x64 sidebar for switching among open windows, launching up to 12 shortcuts and pasting up to 8 reusable text snippets. It is self-contained in one executable, supports English, Brazilian Portuguese, Spanish, Russian and Simplified Chinese, and defaults to English on a new installation.
+WinSidebar 2.0 is a portable Windows 10/11 x64 sidebar for switching among open windows, launching up to 12 shortcuts and pasting up to 8 reusable text snippets. It is self-contained in one executable, supports English, Brazilian Portuguese, Spanish, Russian and Simplified Chinese, and defaults to English on a new installation.
 
 Key controls: AltGr+Y toggles the sidebar, F1–F4 open shortcuts 1–4, and Shift+F1–F4 are the default snippet hotkeys.
 

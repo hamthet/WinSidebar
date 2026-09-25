@@ -1,4 +1,4 @@
-# WinSidebar 2.0.0
+# WinSidebar 2.0
 
 [English](../../README.md) · **Português (Brasil)** · [Español](README.es-ES.md) · [Русский](README.ru-RU.md) · [简体中文](README.zh-CN.md)
 
@@ -6,11 +6,11 @@
 
 > **Ilustração conceitual, não uma captura de tela do aplicativo.** A aparência inspirada no Windows 98 é intencional.
 
-WinSidebar é uma barra lateral portátil e autocontida para Windows 10/11 x64, feita para localizar e alternar entre janelas abertas, abrir pastas ou sites frequentes e colar trechos de texto reutilizáveis. A versão 2.0.0 é a primeira linha de lançamento com runtime completo em cinco idiomas, atalhos expansíveis e snippets de texto.
+WinSidebar é uma barra lateral portátil e autocontida para Windows 10/11 x64, feita para localizar e alternar entre janelas abertas, abrir pastas ou sites frequentes e colar trechos de texto reutilizáveis. A versão 2.0 é a primeira linha de lançamento com runtime completo em cinco idiomas, atalhos expansíveis e snippets de texto.
 
-**Download:** [WinSidebar 2.0.0](https://github.com/hamthet/WinSidebar/releases/tag/v2.0.0) · **Tutorial:** [Português](TUTORIAL.pt-BR.md)
+**Download:** [WinSidebar 2.0](https://github.com/hamthet/WinSidebar/releases/tag/v2.0) · **Tutorial:** [Português](TUTORIAL.pt-BR.md)
 
-## O que mudou na 2.0.0
+## O que mudou na 2.0
 
 - Cinco idiomas no aplicativo: inglês, português brasileiro, espanhol, russo e chinês simplificado.
 - Inglês é o padrão de uma instalação nova; o seletor inicial permite escolher qualquer idioma suportado.
@@ -24,7 +24,7 @@ WinSidebar é uma barra lateral portátil e autocontida para Windows 10/11 x64, 
 
 ## Início rápido
 
-1. Baixe o ZIP da versão 2.0.0 e extraia em uma pasta sob seu controle.
+1. Baixe o ZIP da versão 2.0 e extraia em uma pasta sob seu controle.
 2. Execute WinSidebar.exe.
 3. Em um perfil novo, English vem pré-selecionado. Escolha outro idioma se desejar.
 4. Clique na aba estreita ou pressione AltGr+Y para abrir/recolher.
@@ -41,7 +41,7 @@ A distribuição é portátil e não possui assinatura digital. O Windows SmartS
 - **Shift+F1–F4** — atalhos padrão dos snippets 1–4.
 - Cada snippet pode usar **Nenhum** ou **Shift+F1 até Shift+F12**. Duplicidades entre snippets são rejeitadas.
 
-A antiga navegação da lista de janelas por Shift+F não faz parte da 2.0.0.
+A antiga navegação da lista de janelas por Shift+F não faz parte da 2.0.
 
 ## Atalhos e snippets
 
@@ -81,7 +81,7 @@ Os snippets usam temporariamente a área de transferência do Windows para a col
 
 ## Distribuição portátil
 
-WinSidebar 2.0.0 é destinado a Windows x64 e publicado como um único executável autocontido. O runtime .NET 8 está incluído dentro de WinSidebar.exe. O usuário final não precisa baixar .NET, PowerShell, Git, compilador ou instalador.
+WinSidebar 2.0 é destinado a Windows x64 e publicado como um único executável autocontido. O runtime .NET 8 está incluído dentro de WinSidebar.exe. O usuário final não precisa baixar .NET, PowerShell, Git, compilador ou instalador.
 
 Para remover, encerre o WinSidebar e apague o executável. Apague %LOCALAPPDATA%\WinSidebar somente se também quiser remover o perfil salvo.
 

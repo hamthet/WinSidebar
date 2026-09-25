@@ -1,8 +1,8 @@
-# WinSidebar 2.0.0 release notes
+# WinSidebar 2.0 release notes
 
 [Português](i18n/RELEASE-NOTES.pt-BR.md) · [Español](i18n/RELEASE-NOTES.es-ES.md) · [Русский](i18n/RELEASE-NOTES.ru-RU.md) · [简体中文](i18n/RELEASE-NOTES.zh-CN.md)
 
-Version 2.0.0 is a major product revision.
+Version 2.0 is a major product revision.
 
 ## Highlights
 
@@ -21,7 +21,7 @@ Version 2.0.0 is a major product revision.
 
 ## Compatibility notes
 
-The former Shift+F window-navigation contract is removed. Existing legacy profiles without a saved language may retain Portuguese until the user selects another language. Cross-version preference migration is outside the 2.0.0 validation scope.
+The former Shift+F window-navigation contract is removed. Existing legacy profiles without a saved language may retain Portuguese until the user selects another language. Cross-version preference migration is outside the 2.0 validation scope.
 
 ## Security and distribution
 
