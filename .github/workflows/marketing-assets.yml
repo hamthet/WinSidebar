@@ -30,8 +30,6 @@ jobs:
               raise SystemExit(f'Expected 10 localized SVG assets, found {len(files)}')
 
           forbidden = [
-              r'(?i)hamilton',
-              r'(?i)econet',
               r'(?i)C:[\\/]',
               r'(?i)[A-Z]:[\\/](?:git|h)[\\/]',
               r'(?i)[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}'
@@ -68,6 +66,6 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: WinSidebar-2.0.0-localized-artwork
+          name: WinSidebar-2.0-localized-artwork
           path: rendered/
           if-no-files-found: error

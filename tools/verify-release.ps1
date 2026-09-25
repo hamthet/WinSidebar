@@ -68,6 +68,33 @@ if ($manifest.distribution.executable -ne 'WinSidebar.exe' -or
     throw 'project.json distribution contract mismatch.'
 }
 
+Write-Host 'Auditing public repository hygiene...'
+$publicTextFiles = @(
+    (Join-Path $root 'README.md'),
+    (Join-Path $root 'START-HERE.txt'),
+    (Join-Path $root 'PROJECT.md'),
+    (Join-Path $root 'CONTRIBUTING.md')
+)
+$publicTextFiles += @(Get-ChildItem -LiteralPath (Join-Path $root 'docs') -File -Recurse |
+    Where-Object { $_.Extension -eq '.md' -or $_.Extension -eq '.txt' } |
+    ForEach-Object FullName)
+$publicText = ($publicTextFiles | ForEach-Object { [IO.File]::ReadAllText($_, $utf8) }) -join [Environment]::NewLine
+
+if ($publicText -match '(?<![0-9.])v?2[.]0[.]0(?![0-9.])') {
+    throw 'Obsolete public version label 2.0.0 remains in user/repository documentation.'
+}
+foreach ($pattern in @(
+    'C:\\Users\\',
+    'C:\\Git\\',
+    'C:\\H\\',
+    'HAMILTON_NAODELETAR',
+    'C:\\dotnet8',
+    'feature/text-snippets',
+    'chore/release-2.0.0'
+)) {
+    if ($publicText -match $pattern) { throw "Personal/obsolete repository reference remains in public docs: $pattern" }
+}
+
 Write-Host 'Auditing five-language catalog parity...'
 $base = [IO.File]::ReadAllText((Join-Path $root 'i18n\catalog.json'), $utf8) | ConvertFrom-Json
 $baseKeys = @($base.PSObject.Properties.Name)
