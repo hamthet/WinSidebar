@@ -14,6 +14,8 @@ The supported runtime languages are English, Brazilian Portuguese, Spanish, Russ
 
 Legacy profiles created before language persistence can retain Portuguese when no `language=` value exists. This preserves existing user state rather than silently migrating it.
 
+The first-run language chooser is bootstrap UI shown before a language preference exists. Its framing text is intentionally English, and the five language options are displayed as autonyms: English, Português (Brasil), Español, Русский and 简体中文. After the user chooses, application-owned UI uses the selected runtime catalog. Treat the bootstrap chooser as an explicit product decision, not as an untranslated fallback.
+
 Sources: `src/Localization.cs`, `src/FirstRunLanguageDialog.cs`, `tests/LocalizationSmoke.cs`.
 
 ## User content is never translated
