@@ -89,6 +89,11 @@ jobs:
                   label = localized_value(language, key)
                   if f'>{label}</text>' not in text:
                       raise SystemExit(f'Concept artwork default shortcut label mismatch: {file} / {key}')
+              shortcut_heading = localized_value(language, 'sidebar.shortcuts').strip()
+              if f'>{shortcut_heading}' not in text:
+                  raise SystemExit(f'Concept artwork shortcut heading mismatch: {file}')
+              if 'AltGr+Y' not in text:
+                  raise SystemExit(f'Concept artwork is missing the current sidebar hotkey: {file}')
               for pattern in forbidden:
                   if re.search(pattern, text):
                       raise SystemExit(f'Blocked possible personal content in {file}: {pattern}')

@@ -277,6 +277,18 @@ foreach ($code in $artByLocale.Keys) {
                 throw "Concept artwork default shortcut label mismatch: $path / $key"
             }
         }
+        if ($code -eq 'en-US' -or $code -eq 'pt-BR') {
+            $shortcutTitle = $base.'sidebar.shortcuts'.$code.Trim()
+        }
+        else {
+            $shortcutTitle = $additionalLocales[$code].'sidebar.shortcuts'.Trim()
+        }
+        if (-not $svg.Contains(('>' + $shortcutTitle + '<'))) {
+            throw "Concept artwork shortcut heading mismatch: $path"
+        }
+        if (-not $svg.Contains('AltGr+Y')) {
+            throw "Concept artwork is missing the current sidebar hotkey: $path"
+        }
     }
 }
 
