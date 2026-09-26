@@ -10,7 +10,7 @@ WinSidebar 2.0 是面向 Windows 10/11 x64 的便携侧边栏，可用于切换�
 
 ## 视觉资源
 
-社交发布可使用 ../../assets/i18n/zh-CN/linkedin-illustration.svg，项目展示可使用 hero-illustration.svg。
+社交发布可使用 `../../assets/i18n/zh-CN/linkedin-illustration.svg`，项目展示可使用 `../../assets/i18n/zh-CN/hero-illustration.svg`。
 
 这些是概念插图，不是应用截图。导出或裁剪时应保留这一说明。
 

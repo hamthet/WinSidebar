@@ -10,7 +10,7 @@ Key controls: AltGr+Y toggles the sidebar, F1–F4 open shortcuts 1–4, and Shi
 
 ## Visual assets
 
-Use assets/linkedin-illustration.svg for social publishing and assets/hero-illustration.svg for repository/web presentation.
+Use `../assets/linkedin-illustration.svg` for social publishing and `../assets/hero-illustration.svg` for repository/web presentation.
 
 Both are concept illustrations, not application screenshots. Preserve that disclosure when exporting, cropping or reposting them. Do not describe the artwork as an exact representation of the current controls.
 

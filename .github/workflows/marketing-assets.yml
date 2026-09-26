@@ -34,14 +34,48 @@ jobs:
               r'(?i)[A-Z]:[\\/](?:git|h)[\\/]',
               r'(?i)[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}'
           ]
+          expected_languages = {
+              Path('assets/hero-illustration.svg'): 'en-US',
+              Path('assets/linkedin-illustration.svg'): 'en-US',
+              Path('assets/i18n/pt-BR/hero-illustration.svg'): 'pt-BR',
+              Path('assets/i18n/pt-BR/linkedin-illustration.svg'): 'pt-BR',
+              Path('assets/i18n/es-ES/hero-illustration.svg'): 'es-ES',
+              Path('assets/i18n/es-ES/linkedin-illustration.svg'): 'es-ES',
+              Path('assets/i18n/ru-RU/hero-illustration.svg'): 'ru-RU',
+              Path('assets/i18n/ru-RU/linkedin-illustration.svg'): 'ru-RU',
+              Path('assets/i18n/zh-CN/hero-illustration.svg'): 'zh-CN',
+              Path('assets/i18n/zh-CN/linkedin-illustration.svg'): 'zh-CN',
+          }
+          english_accessibility = {}
+          for source in (Path('assets/hero-illustration.svg'), Path('assets/linkedin-illustration.svg')):
+              text = source.read_text(encoding='utf-8')
+              title = re.search(r'<title id="title">([^<]+)</title>', text)
+              desc = re.search(r'<desc id="desc">([^<]+)</desc>', text)
+              if not title or not desc:
+                  raise SystemExit(f'Missing English accessibility text: {source}')
+              english_accessibility[source.name] = (title.group(1), desc.group(1))
+
           for file in files:
               text = file.read_text(encoding='utf-8')
-              if 'CONCEPT_ART_NOT_SCREENSHOT' not in text:
-                  raise SystemExit(f'Missing concept-art marker: {file}')
+              if text.count('CONCEPT_ART_NOT_SCREENSHOT') != 1:
+                  raise SystemExit(f'Concept-art marker count mismatch: {file}')
+              if 'aria-labelledby="title desc"' not in text:
+                  raise SystemExit(f'Missing SVG accessibility relationship: {file}')
+              language = expected_languages[file]
+              if f'xml:lang="{language}"' not in text:
+                  raise SystemExit(f'SVG language metadata mismatch: {file}')
+              title = re.search(r'<title id="title">([^<]+)</title>', text)
+              desc = re.search(r'<desc id="desc">([^<]+)</desc>', text)
+              if not title or not desc:
+                  raise SystemExit(f'Missing SVG accessibility text: {file}')
+              if language != 'en-US':
+                  english_title, english_desc = english_accessibility[file.name]
+                  if title.group(1) == english_title or desc.group(1) == english_desc:
+                      raise SystemExit(f'Localized SVG accessibility text still matches English: {file}')
               for pattern in forbidden:
                   if re.search(pattern, text):
                       raise SystemExit(f'Blocked possible personal content in {file}: {pattern}')
-          print('PASS: localized concept-art disclosure/privacy audit')
+          print('PASS: localized concept-art disclosure/privacy/accessibility audit')
           PY
 
       - name: Render SVGs to PNG
