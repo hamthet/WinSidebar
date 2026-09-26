@@ -251,6 +251,35 @@ foreach ($code in @('es-ES','ru-RU','zh-CN')) {
     }
 }
 
+Write-Host 'Auditing concept-art default shortcut labels against runtime catalogs...'
+$additionalLocales = @{}
+foreach ($code in @('es-ES','ru-RU','zh-CN')) {
+    $additionalLocales[$code] = [IO.File]::ReadAllText((Join-Path $root ('i18n\' + $code + '.json')), $utf8) | ConvertFrom-Json
+}
+$artByLocale = @{
+    'en-US' = @('assets\hero-illustration.svg','assets\linkedin-illustration.svg')
+    'pt-BR' = @('assets\i18n\pt-BR\hero-illustration.svg','assets\i18n\pt-BR\linkedin-illustration.svg')
+    'es-ES' = @('assets\i18n\es-ES\hero-illustration.svg','assets\i18n\es-ES\linkedin-illustration.svg')
+    'ru-RU' = @('assets\i18n\ru-RU\hero-illustration.svg','assets\i18n\ru-RU\linkedin-illustration.svg')
+    'zh-CN' = @('assets\i18n\zh-CN\hero-illustration.svg','assets\i18n\zh-CN\linkedin-illustration.svg')
+}
+foreach ($code in $artByLocale.Keys) {
+    foreach ($path in $artByLocale[$code]) {
+        $svg = [IO.File]::ReadAllText((Join-Path $root $path), $utf8)
+        foreach ($key in @('defaults.documents','defaults.downloads','defaults.archive','defaults.website')) {
+            if ($code -eq 'en-US' -or $code -eq 'pt-BR') {
+                $label = $base.$key.$code
+            }
+            else {
+                $label = $additionalLocales[$code].$key
+            }
+            if (-not $svg.Contains(('>' + $label + '</text>'))) {
+                throw "Concept artwork default shortcut label mismatch: $path / $key"
+            }
+        }
+    }
+}
+
 $sourceText = (Get-ChildItem -LiteralPath (Join-Path $root 'src') -Filter '*.cs' -File | ForEach-Object {
     [IO.File]::ReadAllText($_.FullName, $utf8)
 }) -join [Environment]::NewLine

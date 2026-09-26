@@ -55,6 +55,19 @@ jobs:
                   raise SystemExit(f'Missing English accessibility text: {source}')
               english_accessibility[source.name] = (title.group(1), desc.group(1))
 
+          import json
+          base_catalog = json.loads(Path('i18n/catalog.json').read_text(encoding='utf-8'))
+          additional_catalogs = {
+              code: json.loads((Path('i18n') / f'{code}.json').read_text(encoding='utf-8'))
+              for code in ('es-ES', 'ru-RU', 'zh-CN')
+          }
+          default_keys = ('defaults.documents', 'defaults.downloads', 'defaults.archive', 'defaults.website')
+
+          def localized_value(code, key):
+              if code in ('en-US', 'pt-BR'):
+                  return base_catalog[key][code]
+              return additional_catalogs[code][key]
+
           for file in files:
               text = file.read_text(encoding='utf-8')
               if text.count('CONCEPT_ART_NOT_SCREENSHOT') != 1:
@@ -72,6 +85,10 @@ jobs:
                   english_title, english_desc = english_accessibility[file.name]
                   if title.group(1) == english_title or desc.group(1) == english_desc:
                       raise SystemExit(f'Localized SVG accessibility text still matches English: {file}')
+              for key in default_keys:
+                  label = localized_value(language, key)
+                  if f'>{label}</text>' not in text:
+                      raise SystemExit(f'Concept artwork default shortcut label mismatch: {file} / {key}')
               for pattern in forbidden:
                   if re.search(pattern, text):
                       raise SystemExit(f'Blocked possible personal content in {file}: {pattern}')
