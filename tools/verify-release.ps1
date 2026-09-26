@@ -153,7 +153,7 @@ $localizedSupportDocs = @(
 )
 foreach ($path in $localizedSupportDocs) {
     $document = [IO.File]::ReadAllText((Join-Path $root $path), $utf8)
-    foreach ($token in @('WinSidebar 2.0', 'Windows 10', 'Windows 11', '%LOCALAPPDATA%\WinSidebar', 'shortcuts.xml', 'snippets.json', 'ignored-apps.json')) {
+    foreach ($token in @('WinSidebar 2.0', 'Windows 10', 'Windows 11', '%LOCALAPPDATA%\WinSidebar', 'shortcuts.xml', 'snippets.json', 'ignored-apps.json', 'icons/')) {
         if (-not $document.Contains($token)) {
             throw "Localized support documentation is missing a current 2.0 contract token: $path / $token"
         }

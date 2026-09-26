@@ -28,7 +28,13 @@
 
 WinSidebar 可能在 `%LOCALAPPDATA%\WinSidebar` 保存私人路径和文本。
 
-公开上传文件前请先检查。尤其是 `shortcuts.xml`、`snippets.json` 和 `ignored-apps.json` 可能包含路径、网站或个人文本。不要发布密码、凭据、机密文本或私人路径。截图也可能泄露信息。
+公开上传文件前请先检查。尤其是：
+- `shortcuts.xml` 可能包含本地路径和网站地址；
+- `snippets.json` 可能包含保存的文本；
+- `ignored-apps.json` 可能包含应用路径；
+- 复制到 `icons/` 的自定义图标可能暴露文件名或品牌信息。
+
+不要发布密码、凭据、机密文本或私人路径。截图也可能泄露信息。
 
 ## 在哪里报告
 

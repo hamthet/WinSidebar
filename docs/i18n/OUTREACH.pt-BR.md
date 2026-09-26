@@ -12,7 +12,7 @@ Controles principais: AltGr+Y abre/recolhe a barra, F1–F4 abrem os atalhos 1�
 
 Use `../../assets/i18n/pt-BR/linkedin-illustration.svg` para redes sociais e `../../assets/i18n/pt-BR/hero-illustration.svg` para apresentação.
 
-São ilustrações conceituais, não capturas de tela. Preserve essa informação ao exportar ou recortar.
+São ilustrações conceituais, não capturas de tela. Preserve essa informação ao exportar ou recortar. Não descreva a arte como uma representação exata dos controles atuais.
 
 ## Afirmações que devem permanecer precisas
 

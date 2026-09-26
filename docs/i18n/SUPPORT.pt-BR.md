@@ -32,7 +32,7 @@ Antes de publicar qualquer arquivo, revise o conteúdo. Em especial:
 - `shortcuts.xml` pode conter caminhos locais e endereços de sites;
 - `snippets.json` pode conter textos salvos;
 - `ignored-apps.json` pode conter caminhos de aplicativos;
-- ícones personalizados podem revelar nomes ou marcas.
+- ícones personalizados copiados em `icons/` podem revelar nomes de arquivo ou marcas.
 
 Não publique senhas, credenciais, textos confidenciais ou caminhos privados. Capturas de tela também podem expor informações.
 

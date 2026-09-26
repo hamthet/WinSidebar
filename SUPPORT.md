@@ -32,7 +32,7 @@ Before posting any file publicly, review it first. In particular:
 - `shortcuts.xml` can contain local folder paths and website addresses;
 - `snippets.json` can contain your saved text;
 - `ignored-apps.json` can contain application paths;
-- copied custom icons may reveal filenames or branding.
+- copied custom icons under `icons/` may reveal filenames or branding.
 
 Do not post passwords, credentials, confidential text or private paths. A screenshot can also expose private information.
 
