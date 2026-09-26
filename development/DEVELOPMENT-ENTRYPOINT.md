@@ -162,3 +162,46 @@ Revalidated deletion candidates against current `main` `790cd352b11f67625f121a8f
 All four refs are unprotected. The connected GitHub mutation surface available in this session does not expose branch/ref deletion, so those deletions were **not** claimed or simulated. They remain pending as a local authenticated Git/gh cleanup step. No divergent feature/checkpoint branch is authorized for deletion by this classification.
 
 No rulesets were observed. Direct branch-protection read returned integration-level 403, so no claim is made about branch-protection configuration beyond the branch-list `protected:false` values observed for the four cleanup candidates.
+
+
+## 2026-09-26 — exhaustive branch ancestry audit
+
+Current comparison base: `main` at `790cd352b11f67625f121a8fb9dcd4d9022ed6e0`.
+
+### Fully incorporated refs — cleanup already authorized
+
+These refs have zero commits unique relative to current `main`:
+
+- `checkpoint/pre-final-review-fixes-20260925` — main is 5 commits ahead / branch 0 unique;
+- `chore/release-2.0` — main is 3 commits ahead / branch 0 unique;
+- `chore/release-2.0.0` — main is 27 commits ahead / branch 0 unique;
+- `docs/post-release-2.0-sync` — main is 1 commit ahead / branch 0 unique.
+
+They remain physically present only because the connected GitHub mutation surface does not expose branch/ref deletion in this session. No additional approval is required for these four refs; deletion is technically pending.
+
+### Divergent refs — preserve
+
+The following refs contain commits that are not present in the clean `main` lineage and therefore remain provenance/rollback evidence:
+
+- `checkpoint/expandable-rows-tested-20260923` — 126 unique commits;
+- `checkpoint/fresh-profile-controls-pass-20260923` — 145 unique commits;
+- `checkpoint/functional-menu-approved-20260923` — 80 unique commits;
+- `checkpoint/self-contained-owner-release-20260924` — 168 unique commits;
+- `checkpoint/snippet-hotkey-paste-pass-20260923` — 96 unique commits;
+- `checkpoint/snippets-configurable-hotkeys-pass-20260924` — 156 unique commits;
+- `checkpoint/software-2.0.0-final-20260924` — 178 unique commits;
+- `feature/functional-dialog-placement` — 80 unique commits;
+- `feature/runtime-i18n-en` — 37 unique commits;
+- `feature/runtime-i18n-es` — 48 unique commits;
+- `feature/runtime-i18n-ru` — 61 unique commits;
+- `feature/runtime-i18n-zh` — 70 unique commits;
+- `feature/text-snippets` — 178 unique commits;
+- `feature/window-management` — 27 unique commits;
+- `fix/complete-english-localization` — 5 unique commits;
+- `develop` — 116 commits unique relative to current `main`.
+
+The numeric counts describe Git ancestry, not product quality or current authority. Do not infer that divergent branches should be merged into `main`; the published/current producer authority remains `main`, with tag `v2.0` as the exact shipped 2.0 baseline.
+
+### PR/issue state
+
+PRs #1–#5 are closed as superseded without merge; PR #7 and PR #8 are merged; no open pull requests or open issues were observed at this checkpoint.
