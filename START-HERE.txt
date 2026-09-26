@@ -12,7 +12,7 @@ GET STARTED - 3 STEPS
 2. Open the extracted folder.
 3. Double-click WinSidebar.exe.
 
-Nothing else needs to be installed. Everything required to run WinSidebar is included in WinSidebar.exe.
+No separate .NET installation is needed. The self-contained .NET 8 runtime is included in WinSidebar.exe.
 The executable is not digitally signed, so Windows SmartScreen or company security policy may show a warning.
 
 FIRST RUN
