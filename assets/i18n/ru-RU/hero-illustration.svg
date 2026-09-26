@@ -1,8 +1,7 @@
 <!-- CONCEPT_ART_NOT_SCREENSHOT -->
-<!-- CONCEPT_ART_NOT_SCREENSHOT -->
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
-<title id="title">WinSidebar: window management with an intentional Windows 98 look</title>
-<desc id="desc">Concept illustration, not a screenshot: a generic dual-monitor desktop, a collapsible sidebar, and sample shortcuts. It does not reproduce the application interface exactly.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" xml:lang="ru-RU" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
+<title id="title">WinSidebar: управление окнами в намеренно выбранном стиле Windows 98</title>
+<desc id="desc">Концептуальная иллюстрация, а не снимок экрана: условный рабочий стол с двумя мониторами, сворачиваемой боковой панелью и примерами ярлыков. Она не воспроизводит интерфейс приложения в точности.</desc>
 <defs>
 <linearGradient id="sky" x2="1" y2="1"><stop stop-color="#101b48"/><stop offset="0.62" stop-color="#154e91"/><stop offset="1" stop-color="#247b9d"/></linearGradient>
 <linearGradient id="screen" x2="0" y2="1"><stop stop-color="#55a9d8"/><stop offset="1" stop-color="#a8d2d6"/></linearGradient>

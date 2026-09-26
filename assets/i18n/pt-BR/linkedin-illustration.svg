@@ -1,7 +1,6 @@
 <!-- CONCEPT_ART_NOT_SCREENSHOT -->
-<!-- CONCEPT_ART_NOT_SCREENSHOT -->
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200" role="img" aria-labelledby="title desc">
-<title id="title">WinSidebar, a retro sidebar for your open windows</title><desc id="desc">Illustrative promotional artwork, not a screenshot. An intentionally Windows 98-inspired interface with generic window titles.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" xml:lang="pt-BR" width="1200" height="1200" viewBox="0 0 1200 1200" role="img" aria-labelledby="title desc">
+<title id="title">WinSidebar, uma barra lateral retrô para suas janelas abertas</title><desc id="desc">Arte promocional ilustrativa, não uma captura de tela. Interface intencionalmente inspirada no Windows 98, com títulos de janela genéricos.</desc>
 <defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#101d4d"/><stop offset="0.58" stop-color="#125da1"/><stop offset="1" stop-color="#218f96"/></linearGradient><linearGradient id="field" x2="0" y2="1"><stop stop-color="#69b48b"/><stop offset="1" stop-color="#135756"/></linearGradient><filter id="drop" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#040d27" flood-opacity="0.5"/></filter><pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1" fill="#ffffff" opacity=".11"/></pattern></defs>
 <rect width="1200" height="1200" fill="url(#bg)"/><rect width="1200" height="1200" fill="url(#dots)"/>
 <g opacity=".28" fill="#dcfbff"><path d="M104 400h19v-17h51v17h25v17h-95zM431 534h18v-16h44v16h20v17h-82zM878 98h22V82h55v16h24v17H878z"/></g>
