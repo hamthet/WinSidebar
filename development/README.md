@@ -1,6 +1,6 @@
 # WinSidebar — development dossier
 
-**Repository:** `hamthet/WinSidebar` · **development branch:** `develop` · updated 2026-09-25. Project source, tests, resources and engineering records belong in WinSidebar. `development/**` must **not** enter shipping `main` or the release ZIP. Target languages: English, Brazilian Portuguese, Spanish, Russian and Simplified Chinese. Official **v2.0 is published**; v1.0.0 remains a historical public release.
+**Repository:** `hamthet/WinSidebar` · **development branch:** `develop` · updated 2026-09-26. Project source, tests, resources and engineering records belong in WinSidebar. `development/**` must **not** enter shipping `main` or the release ZIP. Target languages: English, Brazilian Portuguese, Spanish, Russian and Simplified Chinese. Official **v2.0 is published**; v1.0.0 remains a historical public release.
 
 ## Operating decisions
 
@@ -8,12 +8,12 @@ Read [`WORKFLOW-LOCAL-FILEBRIDGE.md`](WORKFLOW-LOCAL-FILEBRIDGE.md) before worki
 
 ## Product and branch / PR stack
 
-1. [Draft PR #1](https://github.com/hamthet/WinSidebar/pull/1) — window-management prototype; historical compilation evidence, comprehensive real Alt+Tab/phantom-window/alias/ignored-app/monitor acceptance still pending.
-2. [Draft PR #2](https://github.com/hamthet/WinSidebar/pull/2) — English/Portuguese runtime, stacked on #1; historical automated smoke/build evidence. Owner previously reported positive local language review.
-3. [Draft PR #3](https://github.com/hamthet/WinSidebar/pull/3) — Spanish runtime, stacked on #2; historical automated smoke/preview evidence. Spanish base still has a `pull_request` workflow trigger: neutralize safely before opening a Russian PR against it.
+1. [Closed PR #1](https://github.com/hamthet/WinSidebar/pull/1) — historical window-management prototype, closed as superseded without merge after the clean v2.0 integration. Its branch remains provenance only.
+2. [Closed PR #2](https://github.com/hamthet/WinSidebar/pull/2) — historical English/Portuguese runtime stage, stacked on #1; closed as superseded without merge. Its branch remains provenance only.
+3. [Closed PR #3](https://github.com/hamthet/WinSidebar/pull/3) — historical Spanish runtime stage, stacked on #2; closed as superseded without merge. Its branch remains provenance only.
 4. [Russian feature branch](https://github.com/hamthet/WinSidebar/tree/feature/runtime-i18n-ru) — based on Spanish. Russian catalog/loader/embedded resources and smoke source; Russian menu committed in [`ed98ddd`](https://github.com/hamthet/WinSidebar/commit/ed98ddd). UI correction [`67fe834`](https://github.com/hamthet/WinSidebar/commit/67fe83493bbe07861acfbfa55d076f922bff9280) adds a visible language chooser, removes redundant sidebar Save and positions the shortcut editor above the bar. Russian PR not yet opened.
-5. [Draft PR #4](https://github.com/hamthet/WinSidebar/pull/4) — Chinese (`zh-CN`) stacked on Russian. Chinese catalog, loader, embeddings, five-language smoke source and fifth menu option as [`29f88af`](https://github.com/hamthet/WinSidebar/commit/29f88af) are committed. Owner reopened the local preview and replied **“aprovado”**. This approves the five-language preview/Chinese locale stage, not blanket functional acceptance.
-6. [Draft PR #5](https://github.com/hamthet/WinSidebar/pull/5) — functional context-menu hardening. Owner now confirms: per-window right-click works; Rename and Reset Name work; the restored global menu on blank/list-nonwindow areas also works. The tested branch head is [`6af6343`](https://github.com/hamthet/WinSidebar/commit/6af6343e8d5e6e0dc8cbd19f3d40e378cb583194). This does not yet certify Ignore/undo, Alt+Tab fidelity, persistence failure paths or the broader release matrix.
+5. [Closed PR #4](https://github.com/hamthet/WinSidebar/pull/4) — historical Chinese (`zh-CN`) stage stacked on Russian; closed as superseded without merge. Its branch remains provenance only.
+6. [Closed PR #5](https://github.com/hamthet/WinSidebar/pull/5) — historical functional context-menu hardening stage; closed as superseded without merge. Its tested branch head remains preserved as provenance.
 
 The stacked feature PRs remain historical snapshots and were not merged wholesale. The clean integration PR #7 has been merged to `main`; distinguish historical source commits, executable test output, owner preview approval, functional acceptance and the published release.
 
@@ -21,16 +21,18 @@ The stacked feature PRs remain historical snapshots and were not merged wholesal
 
 - **Functional-menu checkpoint:** [`checkpoint/functional-menu-approved-20260923`](https://github.com/hamthet/WinSidebar/tree/checkpoint/functional-menu-approved-20260923) at `6af6343e8d5e6e0dc8cbd19f3d40e378cb583194`.
 - **Final software checkpoint:** [`checkpoint/software-2.0.0-final-20260924`](https://github.com/hamthet/WinSidebar/tree/checkpoint/software-2.0.0-final-20260924) at `8f85cd1377f1677f710366ae121e9fe7bc98be55`. The owner subsequently reported the software state as functional.
-- **Release integration branch:** [`chore/release-2.0`](https://github.com/hamthet/WinSidebar/tree/chore/release-2.0) was the clean shipping candidate and intentionally contained no `development/**`. PR #7 merged this state to `main` as `2597fe5ddda8906fd4e2a31ab8591ed4e7f6a2a4`. PR #6 / `chore/release-2.0.0` remains closed as superseded without merge.
+- **Release integration branch:** [`chore/release-2.0`](https://github.com/hamthet/WinSidebar/tree/chore/release-2.0) was the clean shipping candidate and intentionally contained no `development/**`. PR #7 merged this state to `main` as `2597fe5ddda8906fd4e2a31ab8591ed4e7f6a2a4`. PR #6 / `chore/release-2.0.0` is closed as superseded without merge. Both release branches are fully incorporated into current `main` and are approved cleanup candidates once branch deletion is technically available.
 - **Integration record:** [`RELEASE-2.0.0-INTEGRATION-2026-09-24.md`](RELEASE-2.0.0-INTEGRATION-2026-09-24.md).
 
 ## Official v2.0 closure
-- **Canonical Windows gate: PASS.** `tools/verify-release.ps1` was run on artifact-producing head `72a6a76f58d67751abdb2e4bb8025dcefafde11f` with .NET SDK `8.0.425` and returned `WINSIDEBAR 2.0 RELEASE VERIFICATION: PASS`. Current release head `a156c3fff7497fc7f33c262eb3d20f029818d59e` differs only by the manual workflow upload path; runtime, verifier and package inputs are unchanged.
-- **Artifact sanity: PASS.** The owner opened the generated `WinSidebar.exe` successfully after the canonical release gate. This did not reopen feature acceptance.
-- **Pull Request:** final review of PR #7 against `main` is complete with no release blocker found; PR #7 is now ready for review. Old stacked PRs remain historical evidence and must not be merged wholesale.
-- **Merge:** all known technical gates are closed; merge remains a separate explicit action.
-- **Publication:** tag/release `v2.0` only after merge. Git merge and GitHub Release publication remain separate acts.
-- **Scope:** runtime behavior is frozen and owner-approved; avoid opportunistic functional changes during release review. Cross-version preference migration remains out of scope by owner decision.
+- **Canonical Windows gate: PASS.** Final preservation head `81a80987fe37eca822bc7462355a0e1c63dbc1bc` passed `tools/verify-release.ps1` with .NET SDK `8.0.425`.
+- **Artifact sanity: PASS.** The owner opened the EXE produced by that final-head gate and confirmed normal startup.
+- **Integration: COMPLETE.** PR #7 merged the clean release line to `main`; the tested head and release merge commit had identical Git tree `00d4c1502e529bcaea609a8da6971088171fa6aa`.
+- **Publication: COMPLETE.** Annotated tag `v2.0` points to published source commit `2597fe5ddda8906fd4e2a31ab8591ed4e7f6a2a4`; GitHub Release `WinSidebar 2.0 — Windows x64` is public, non-draft and non-prerelease with the verified ZIP and checksum assets.
+- **Post-release docs: COMPLETE.** PR #8 merged the repository-state synchronization to current `main` `790cd352b11f67625f121a8fb9dcd4d9022ed6e0`.
+- **Historical PR cleanup: COMPLETE.** PRs #1–#5 are closed as superseded without merge and their divergent branches are preserved as provenance.
+- **Remaining housekeeping:** four fully incorporated refs are approved for deletion but still physically present because branch/ref deletion is not exposed by the connected GitHub mutation surface in this session.
+- **Scope:** runtime behavior remains the published v2.0 contract. Cross-version preference migration remains outside the 2.0 validation scope.
 
 Supporting records: [`BASELINE.md`](BASELINE.md), [`ENGINEERING-NOTES.md`](ENGINEERING-NOTES.md), [`IMPLEMENTATION-BACKLOG.md`](IMPLEMENTATION-BACKLOG.md), [`PLAN.md`](PLAN.md), [`PRODUCT-REVIEW.md`](PRODUCT-REVIEW.md), [`VERIFICATION.md`](VERIFICATION.md), [`RELEASE-GATE-OVERRIDE.md`](RELEASE-GATE-OVERRIDE.md), [`DECISIONS.md`](DECISIONS.md), [`LOG.md`](LOG.md), dated `LOG-*.md` and locale dossiers.
 
