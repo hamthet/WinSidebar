@@ -256,6 +256,13 @@ $additionalLocales = @{}
 foreach ($code in @('es-ES','ru-RU','zh-CN')) {
     $additionalLocales[$code] = [IO.File]::ReadAllText((Join-Path $root ('i18n\' + $code + '.json')), $utf8) | ConvertFrom-Json
 }
+function Get-CatalogValue([string]$code, [string]$key) {
+    if ($code -eq 'en-US' -or $code -eq 'pt-BR') {
+        $entry = $base.PSObject.Properties[$key].Value
+        return $entry.PSObject.Properties[$code].Value
+    }
+    return $additionalLocales[$code].PSObject.Properties[$key].Value
+}
 $artByLocale = @{
     'en-US' = @('assets\hero-illustration.svg','assets\linkedin-illustration.svg')
     'pt-BR' = @('assets\i18n\pt-BR\hero-illustration.svg','assets\i18n\pt-BR\linkedin-illustration.svg')
@@ -267,22 +274,12 @@ foreach ($code in $artByLocale.Keys) {
     foreach ($path in $artByLocale[$code]) {
         $svg = [IO.File]::ReadAllText((Join-Path $root $path), $utf8)
         foreach ($key in @('defaults.documents','defaults.downloads','defaults.archive','defaults.website')) {
-            if ($code -eq 'en-US' -or $code -eq 'pt-BR') {
-                $label = $base.$key.$code
-            }
-            else {
-                $label = $additionalLocales[$code].$key
-            }
+            $label = Get-CatalogValue $code $key
             if (-not $svg.Contains(('>' + $label + '</text>'))) {
                 throw "Concept artwork default shortcut label mismatch: $path / $key"
             }
         }
-        if ($code -eq 'en-US' -or $code -eq 'pt-BR') {
-            $shortcutTitle = $base.'sidebar.shortcuts'.$code.Trim()
-        }
-        else {
-            $shortcutTitle = $additionalLocales[$code].'sidebar.shortcuts'.Trim()
-        }
+        $shortcutTitle = (Get-CatalogValue $code 'sidebar.shortcuts').Trim()
         if (-not $svg.Contains(('>' + $shortcutTitle + '<'))) {
             throw "Concept artwork shortcut heading mismatch: $path"
         }
