@@ -10,9 +10,9 @@ Controles principales: AltGr+Y abre/cierra la barra, F1–F4 abren los accesos d
 
 ## Recursos visuales
 
-Usa ../../assets/i18n/es-ES/linkedin-illustration.svg para redes sociales y hero-illustration.svg para presentación.
+Usa `../../assets/i18n/es-ES/linkedin-illustration.svg` para redes sociales y `../../assets/i18n/es-ES/hero-illustration.svg` para presentación.
 
-Son ilustraciones conceptuales, no capturas de pantalla. Conserva esa aclaración al exportarlas o recortarlas.
+Son ilustraciones conceptuales, no capturas de pantalla. Conserva esa aclaración al exportarlas o recortarlas. No describas la ilustración como una representación exacta de los controles actuales.
 
 ## Afirmaciones que deben seguir siendo precisas
 

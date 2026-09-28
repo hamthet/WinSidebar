@@ -63,7 +63,10 @@ $required = @(
     'assets\i18n\pt-BR\hero-illustration.svg', 'assets\i18n\pt-BR\linkedin-illustration.svg',
     'assets\i18n\es-ES\hero-illustration.svg', 'assets\i18n\es-ES\linkedin-illustration.svg',
     'assets\i18n\ru-RU\hero-illustration.svg', 'assets\i18n\ru-RU\linkedin-illustration.svg',
-    'assets\i18n\zh-CN\hero-illustration.svg', 'assets\i18n\zh-CN\linkedin-illustration.svg'
+    'assets\i18n\zh-CN\hero-illustration.svg', 'assets\i18n\zh-CN\linkedin-illustration.svg',
+    '.github\ISSUE_TEMPLATE\bug_report.yml', '.github\ISSUE_TEMPLATE\bug_report.pt-BR.yml',
+    '.github\ISSUE_TEMPLATE\bug_report.es-ES.yml', '.github\ISSUE_TEMPLATE\bug_report.ru-RU.yml',
+    '.github\ISSUE_TEMPLATE\bug_report.zh-CN.yml'
 )
 foreach ($path in $required) {
     if (-not (Test-Path -LiteralPath (Join-Path $root $path) -PathType Leaf)) {
@@ -132,6 +135,119 @@ foreach ($path in $localizedProductDocs) {
     }
 }
 
+$localizedStartDocs = @(
+    'START-HERE.txt',
+    'docs\i18n\START-HERE.pt-BR.txt', 'docs\i18n\START-HERE.es-ES.txt',
+    'docs\i18n\START-HERE.ru-RU.txt', 'docs\i18n\START-HERE.zh-CN.txt'
+)
+foreach ($path in $localizedStartDocs) {
+    $document = [IO.File]::ReadAllText((Join-Path $root $path), $utf8)
+    foreach ($token in @('WinSidebar 2.0', 'Windows 10/11 x64', '.NET 8', 'AltGr+Y', 'F1-F4', 'Shift+F1-F4', '%LOCALAPPDATA%\WinSidebar', 'WinSidebar.exe')) {
+        if (-not $document.Contains($token)) {
+            throw "Localized start-here documentation is missing a current 2.0 contract token: $path / $token"
+        }
+    }
+}
+
+$localizedSupportDocs = @(
+    'SUPPORT.md',
+    'docs\i18n\SUPPORT.pt-BR.md', 'docs\i18n\SUPPORT.es-ES.md',
+    'docs\i18n\SUPPORT.ru-RU.md', 'docs\i18n\SUPPORT.zh-CN.md'
+)
+foreach ($path in $localizedSupportDocs) {
+    $document = [IO.File]::ReadAllText((Join-Path $root $path), $utf8)
+    foreach ($token in @('WinSidebar 2.0', 'Windows 10', 'Windows 11', '%LOCALAPPDATA%\WinSidebar', 'shortcuts.xml', 'snippets.json', 'ignored-apps.json', 'icons/')) {
+        if (-not $document.Contains($token)) {
+            throw "Localized support documentation is missing a current 2.0 contract token: $path / $token"
+        }
+    }
+}
+
+$localizedOutreachDocs = @(
+    'docs\OUTREACH.md',
+    'docs\i18n\OUTREACH.pt-BR.md', 'docs\i18n\OUTREACH.es-ES.md',
+    'docs\i18n\OUTREACH.ru-RU.md', 'docs\i18n\OUTREACH.zh-CN.md'
+)
+foreach ($path in $localizedOutreachDocs) {
+    $document = [IO.File]::ReadAllText((Join-Path $root $path), $utf8)
+    foreach ($token in @('WinSidebar 2.0', 'Windows 10/11 x64', '.NET 8', 'AltGr+Y', 'F1', '12', '8', 'Alt+Tab')) {
+        if (-not $document.Contains($token)) {
+            throw "Localized outreach documentation is missing a current 2.0 contract token: $path / $token"
+        }
+    }
+}
+
+$outreachAssetPaths = @{
+    'docs\OUTREACH.md' = @('../assets/linkedin-illustration.svg', '../assets/hero-illustration.svg')
+    'docs\i18n\OUTREACH.pt-BR.md' = @('../../assets/i18n/pt-BR/linkedin-illustration.svg', '../../assets/i18n/pt-BR/hero-illustration.svg')
+    'docs\i18n\OUTREACH.es-ES.md' = @('../../assets/i18n/es-ES/linkedin-illustration.svg', '../../assets/i18n/es-ES/hero-illustration.svg')
+    'docs\i18n\OUTREACH.ru-RU.md' = @('../../assets/i18n/ru-RU/linkedin-illustration.svg', '../../assets/i18n/ru-RU/hero-illustration.svg')
+    'docs\i18n\OUTREACH.zh-CN.md' = @('../../assets/i18n/zh-CN/linkedin-illustration.svg', '../../assets/i18n/zh-CN/hero-illustration.svg')
+}
+foreach ($path in $outreachAssetPaths.Keys) {
+    $document = [IO.File]::ReadAllText((Join-Path $root $path), $utf8)
+    foreach ($assetPath in $outreachAssetPaths[$path]) {
+        if (-not $document.Contains($assetPath)) {
+            throw "Outreach documentation is missing its localized asset path: $path / $assetPath"
+        }
+    }
+}
+
+Write-Host 'Auditing localized concept-art accessibility metadata...'
+$artLanguages = @{
+    'assets\hero-illustration.svg' = 'en-US'
+    'assets\linkedin-illustration.svg' = 'en-US'
+    'assets\i18n\pt-BR\hero-illustration.svg' = 'pt-BR'
+    'assets\i18n\pt-BR\linkedin-illustration.svg' = 'pt-BR'
+    'assets\i18n\es-ES\hero-illustration.svg' = 'es-ES'
+    'assets\i18n\es-ES\linkedin-illustration.svg' = 'es-ES'
+    'assets\i18n\ru-RU\hero-illustration.svg' = 'ru-RU'
+    'assets\i18n\ru-RU\linkedin-illustration.svg' = 'ru-RU'
+    'assets\i18n\zh-CN\hero-illustration.svg' = 'zh-CN'
+    'assets\i18n\zh-CN\linkedin-illustration.svg' = 'zh-CN'
+}
+$englishArt = @{}
+foreach ($name in @('hero-illustration.svg','linkedin-illustration.svg')) {
+    $text = [IO.File]::ReadAllText((Join-Path $root ('assets\' + $name)), $utf8)
+    $titleMatch = [regex]::Match($text, '<title id="title">([^<]+)</title>')
+    $descMatch = [regex]::Match($text, '<desc id="desc">([^<]+)</desc>')
+    if (-not $titleMatch.Success -or -not $descMatch.Success) { throw "Missing English SVG accessibility metadata: $name" }
+    $englishArt[$name] = @($titleMatch.Groups[1].Value, $descMatch.Groups[1].Value)
+}
+foreach ($path in $artLanguages.Keys) {
+    $text = [IO.File]::ReadAllText((Join-Path $root $path), $utf8)
+    $language = $artLanguages[$path]
+    if (-not $text.Contains(('xml:lang="' + $language + '"'))) { throw "SVG language metadata mismatch: $path" }
+    if (-not $text.Contains('aria-labelledby="title desc"')) { throw "SVG accessibility relationship missing: $path" }
+    if ([regex]::Matches($text, 'CONCEPT_ART_NOT_SCREENSHOT').Count -ne 1) { throw "SVG concept-art marker count mismatch: $path" }
+    $titleMatch = [regex]::Match($text, '<title id="title">([^<]+)</title>')
+    $descMatch = [regex]::Match($text, '<desc id="desc">([^<]+)</desc>')
+    if (-not $titleMatch.Success -or -not $descMatch.Success) { throw "SVG accessibility text missing: $path" }
+    if ($language -ne 'en-US') {
+        $name = Split-Path -Leaf $path
+        if ($titleMatch.Groups[1].Value -eq $englishArt[$name][0] -or $descMatch.Groups[1].Value -eq $englishArt[$name][1]) {
+            throw "Localized SVG accessibility metadata still matches English: $path"
+        }
+    }
+}
+
+Write-Host 'Auditing localized GitHub issue forms...'
+$issueForms = @(
+    '.github\ISSUE_TEMPLATE\bug_report.yml',
+    '.github\ISSUE_TEMPLATE\bug_report.pt-BR.yml',
+    '.github\ISSUE_TEMPLATE\bug_report.es-ES.yml',
+    '.github\ISSUE_TEMPLATE\bug_report.ru-RU.yml',
+    '.github\ISSUE_TEMPLATE\bug_report.zh-CN.yml'
+)
+foreach ($path in $issueForms) {
+    $form = [IO.File]::ReadAllText((Join-Path $root $path), $utf8)
+    foreach ($token in @('WinSidebar 2.0','Windows 11','Windows 10','id: language','id: privacy','title: "[Bug] "')) {
+        if (-not $form.Contains($token)) {
+            throw "Localized issue form is missing a required structural/product token: $path / $token"
+        }
+    }
+}
+
 Write-Host 'Auditing five-language catalog parity...'
 $base = [IO.File]::ReadAllText((Join-Path $root 'i18n\catalog.json'), $utf8) | ConvertFrom-Json
 $baseKeys = @($base.PSObject.Properties.Name)
@@ -151,6 +267,44 @@ foreach ($code in @('es-ES','ru-RU','zh-CN')) {
     foreach ($key in $baseKeys) {
         if (-not ($locale.PSObject.Properties.Name -contains $key) -or [string]::IsNullOrWhiteSpace($locale.$key)) {
             throw "$code catalog mismatch: $key"
+        }
+    }
+}
+
+Write-Host 'Auditing concept-art default shortcut labels against runtime catalogs...'
+$additionalLocales = @{}
+foreach ($code in @('es-ES','ru-RU','zh-CN')) {
+    $additionalLocales[$code] = [IO.File]::ReadAllText((Join-Path $root ('i18n\' + $code + '.json')), $utf8) | ConvertFrom-Json
+}
+function Get-CatalogValue([string]$code, [string]$key) {
+    if ($code -eq 'en-US' -or $code -eq 'pt-BR') {
+        $entry = $base.PSObject.Properties[$key].Value
+        return $entry.PSObject.Properties[$code].Value
+    }
+    return $additionalLocales[$code].PSObject.Properties[$key].Value
+}
+$artByLocale = @{
+    'en-US' = @('assets\hero-illustration.svg','assets\linkedin-illustration.svg')
+    'pt-BR' = @('assets\i18n\pt-BR\hero-illustration.svg','assets\i18n\pt-BR\linkedin-illustration.svg')
+    'es-ES' = @('assets\i18n\es-ES\hero-illustration.svg','assets\i18n\es-ES\linkedin-illustration.svg')
+    'ru-RU' = @('assets\i18n\ru-RU\hero-illustration.svg','assets\i18n\ru-RU\linkedin-illustration.svg')
+    'zh-CN' = @('assets\i18n\zh-CN\hero-illustration.svg','assets\i18n\zh-CN\linkedin-illustration.svg')
+}
+foreach ($code in $artByLocale.Keys) {
+    foreach ($path in $artByLocale[$code]) {
+        $svg = [IO.File]::ReadAllText((Join-Path $root $path), $utf8)
+        foreach ($key in @('defaults.documents','defaults.downloads','defaults.archive','defaults.website')) {
+            $label = Get-CatalogValue $code $key
+            if (-not $svg.Contains(('>' + $label + '</text>'))) {
+                throw "Concept artwork default shortcut label mismatch: $path / $key"
+            }
+        }
+        $shortcutTitle = (Get-CatalogValue $code 'sidebar.shortcuts').Trim()
+        if (-not $svg.Contains(('>' + $shortcutTitle))) {
+            throw "Concept artwork shortcut heading mismatch: $path"
+        }
+        if (-not $svg.Contains('AltGr+Y')) {
+            throw "Concept artwork is missing the current sidebar hotkey: $path"
         }
     }
 }

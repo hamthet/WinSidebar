@@ -28,10 +28,16 @@ Una explicación sencilla paso a paso es suficiente.
 
 WinSidebar puede guardar rutas y texto privados en `%LOCALAPPDATA%\WinSidebar`.
 
-Revisa cualquier archivo antes de publicarlo. `shortcuts.xml`, `snippets.json` e `ignored-apps.json` pueden contener rutas, sitios o texto personal. No publiques contraseñas, credenciales, información confidencial ni rutas privadas. Las capturas también pueden mostrar datos personales.
+Revisa cualquier archivo antes de publicarlo. En particular:
+- `shortcuts.xml` puede contener rutas locales y direcciones de sitios web;
+- `snippets.json` puede contener texto guardado;
+- `ignored-apps.json` puede contener rutas de aplicaciones;
+- los iconos personalizados copiados en `icons/` pueden revelar nombres de archivo o marcas.
+
+No publiques contraseñas, credenciales, información confidencial ni rutas privadas. Las capturas también pueden mostrar datos personales.
 
 ## Dónde informar
 
-Usa el formulario **Bug report** de GitHub Issues. Si no sabes si es un bug, simplemente describe lo ocurrido.
+Usa el formulario **Informar de un bug — Español** de GitHub Issues. Si no sabes si es un bug, simplemente describe lo ocurrido.
 
 Consulta también las [preguntas frecuentes](FAQ.es-ES.md).

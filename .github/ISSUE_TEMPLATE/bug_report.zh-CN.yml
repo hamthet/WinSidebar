@@ -1,0 +1,68 @@
+name: 报告错误 — 简体中文
+description: 请说明哪里出了问题，无需技术背景。
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢报告 WinSidebar 2.0 的问题。请勿发布密码、私人文本片段、机密路径或未经检查的配置文件。
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: 发生了什么？
+      description: 请用自己的话描述问题。
+      placeholder: 我点击了……，然后……
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 重现步骤
+      description: 请列出能够再次触发问题的最少步骤。
+      placeholder: |
+        1. 打开 WinSidebar
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 你原本期望什么？
+    validations:
+      required: true
+  - type: dropdown
+    id: windows
+    attributes:
+      label: Windows 版本
+      options: [Windows 11, Windows 10, 不确定]
+    validations:
+      required: true
+  - type: dropdown
+    id: language
+    attributes:
+      label: WinSidebar 语言
+      options: [English, Português (Brasil), Español, Русский, 简体中文, 不确定]
+    validations:
+      required: true
+  - type: dropdown
+    id: monitors
+    attributes:
+      label: 显示器数量
+      options: ["1", "2", "3 个或更多", 不确定]
+  - type: dropdown
+    id: elevated
+    attributes:
+      label: 如果是粘贴问题，目标应用是否以管理员身份运行？
+      options: ["否", "是", 不确定, 不是粘贴问题]
+  - type: textarea
+    id: exact-message
+    attributes:
+      label: 完整错误消息（如果有）
+      description: 如有可能请复制原文。提交前先检查是否包含私人信息。
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: 隐私检查
+      options:
+        - label: 我已检查粘贴或上传的所有内容，并删除密码、机密文本和私人路径。
+          required: true

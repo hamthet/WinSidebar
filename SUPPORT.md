@@ -32,12 +32,12 @@ Before posting any file publicly, review it first. In particular:
 - `shortcuts.xml` can contain local folder paths and website addresses;
 - `snippets.json` can contain your saved text;
 - `ignored-apps.json` can contain application paths;
-- copied custom icons may reveal filenames or branding.
+- copied custom icons under `icons/` may reveal filenames or branding.
 
 Do not post passwords, credentials, confidential text or private paths. A screenshot can also expose private information.
 
 ## Where to report
 
-Use the repository's **Bug report** form under GitHub Issues. If you are unsure whether something is a bug, describe what happened; the form is written for normal users.
+Use the **Bug report — English** form under GitHub Issues. The issue chooser also provides equivalent forms in Português (Brasil), Español, Русский and 简体中文. If you are unsure whether something is a bug, describe what happened; the form is written for normal users.
 
 For common questions first see the [FAQ](docs/FAQ.md).

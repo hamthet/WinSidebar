@@ -37,7 +37,7 @@ Run from the repository root:
 
     .\tools\verify-release.ps1
 
-If dotnet is not on PATH, use -Dotnet with the .NET 8 SDK executable. The script checks release metadata, repository structure, five-language parity, source localization references, smoke tests, self-contained publish, ZIP layout and SHA-256 hashes.
+If dotnet is not on PATH, use -Dotnet with the .NET 8 SDK executable. The script checks release metadata, repository structure, five-language runtime parity, localized public-document contract tokens, localized GitHub bug-report forms, localized outreach asset paths, SVG language/accessibility metadata and runtime-default labels in concept artwork, source localization references, smoke tests, self-contained publish, ZIP layout and SHA-256 hashes.
 
 A PASS from this script is build/test evidence only; it does not authorize merge or publication.
 
