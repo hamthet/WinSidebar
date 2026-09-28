@@ -241,9 +241,9 @@ $issueForms = @(
 )
 foreach ($path in $issueForms) {
     $form = [IO.File]::ReadAllText((Join-Path $root $path), $utf8)
-    foreach ($token in @('WinSidebar 2.0','Windows 11','Windows 10','English','Português (Brasil)','Español','Русский','简体中文')) {
+    foreach ($token in @('WinSidebar 2.0','Windows 11','Windows 10','id: language','id: privacy','title: "[Bug] "')) {
         if (-not $form.Contains($token)) {
-            throw "Localized issue form is missing a required product/language token: $path / $token"
+            throw "Localized issue form is missing a required structural/product token: $path / $token"
         }
     }
 }
