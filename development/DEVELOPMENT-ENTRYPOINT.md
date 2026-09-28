@@ -205,3 +205,30 @@ The numeric counts describe Git ancestry, not product quality or current authori
 ### PR/issue state
 
 PRs #1–#5 are closed as superseded without merge; PR #7 and PR #8 are merged; no open pull requests or open issues were observed at this checkpoint.
+
+
+## 2026-09-28 — five-language public-surface / concept-art audit
+
+A post-release audit is open as PR #9 from `docs/localization-art-audit-2.0`. Current audit head: `352f4c560e6d14db7117c5d450f55790abc7cc72`; base/current public `main`: `790cd352b11f67625f121a8fb9dcd4d9022ed6e0`.
+
+Observed/corrected scope:
+- no `src/**`, runtime locale catalog, tests or project file changed;
+- localized README/tutorial/release-note/START-HERE/support/outreach families were checked against current 2.0 contract tokens;
+- five GitHub bug-report forms now mirror the supported languages;
+- support privacy guidance now retains custom-icon disclosure in all five languages;
+- outreach artwork paths and concept-art disclosure were aligned in all five languages;
+- all ten SVGs now carry explicit `xml:lang`, one concept-art marker, accessible title/description, and localized metadata;
+- pt-BR concept artwork was corrected to the runtime defaults `Pasta local`, `Downloads`, `Acervo`, `Site`;
+- Spanish artwork shortcut heading was aligned to runtime `ACCESOS DIRECTOS`;
+- artwork gates now compare default shortcut labels/heading and `AltGr+Y` to the current runtime catalogs;
+- the first-run chooser is documented as intentional bootstrap UI: English framing before a preference exists, with five autonym language choices;
+- English START-HERE was aligned to the explicit self-contained .NET 8 contract;
+- the canonical verifier remains ASCII-only and was statically reviewed for PowerShell 5.1-compatible constructs.
+
+Review state:
+- PR #9 is open, non-draft, mergeable, zero unresolved review threads;
+- automated Copilot/Codex reviews were unavailable due service/account quota, not because of a reported finding;
+- static gate logic was exercised against repository content and corrected for one false-negative shortcut-heading assertion.
+
+Remaining gate before merge:
+- execute the modified `tools/verify-release.ps1` under Windows PowerShell 5.1 with .NET 8 and record PASS/failure. Because the verifier itself changed, do not merge PR #9 solely on static inspection.
