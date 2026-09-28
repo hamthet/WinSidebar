@@ -1,0 +1,68 @@
+name: Informar de un bug — Español
+description: Cuéntanos qué salió mal. No hace falta tener conocimientos técnicos.
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por informar de un problema de WinSidebar 2.0. No publiques contraseñas, texto privado de fragmentos, rutas confidenciales ni archivos de perfil sin revisar.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: ¿Qué ocurrió?
+      description: Describe el problema con tus propias palabras.
+      placeholder: Hice clic en..., después...
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Pasos para reproducirlo
+      description: Indica el menor conjunto de pasos que hace que el problema vuelva a ocurrir.
+      placeholder: |
+        1. Abre WinSidebar
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: ¿Qué esperabas que ocurriera?
+    validations:
+      required: true
+  - type: dropdown
+    id: windows
+    attributes:
+      label: Versión de Windows
+      options: [Windows 11, Windows 10, No estoy seguro]
+    validations:
+      required: true
+  - type: dropdown
+    id: language
+    attributes:
+      label: Idioma de WinSidebar
+      options: [English, Português (Brasil), Español, Русский, 简体中文, No estoy seguro]
+    validations:
+      required: true
+  - type: dropdown
+    id: monitors
+    attributes:
+      label: Número de monitores
+      options: ["1", "2", "3 o más", No estoy seguro]
+  - type: dropdown
+    id: elevated
+    attributes:
+      label: Si es un problema de pegado, ¿la aplicación de destino se ejecutaba como administrador?
+      options: ["No", "Sí", No estoy seguro, No es un problema de pegado]
+  - type: textarea
+    id: exact-message
+    attributes:
+      label: Mensaje de error exacto, si lo hay
+      description: Copia el texto si es posible. Revísalo antes para eliminar información privada.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Comprobación de privacidad
+      options:
+        - label: Revisé todo lo que pegué o subí y eliminé contraseñas, texto confidencial y rutas privadas.
+          required: true

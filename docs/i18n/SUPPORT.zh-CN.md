@@ -38,6 +38,6 @@ WinSidebar 可能在 `%LOCALAPPDATA%\WinSidebar` 保存私人路径和文本。
 
 ## 在哪里报告
 
-请使用 GitHub Issues 中的 **Bug report** 表单。如果不确定是不是 bug，直接描述发生的情况即可。
+请使用 GitHub Issues 中的 **报告错误 — 简体中文** 表单。如果不确定是不是 bug，直接描述发生的情况即可。
 
 常见问题请先查看 [FAQ](FAQ.zh-CN.md)。

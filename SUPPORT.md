@@ -38,6 +38,6 @@ Do not post passwords, credentials, confidential text or private paths. A screen
 
 ## Where to report
 
-Use the repository's **Bug report** form under GitHub Issues. If you are unsure whether something is a bug, describe what happened; the form is written for normal users.
+Use the **Bug report — English** form under GitHub Issues. The issue chooser also provides equivalent forms in Português (Brasil), Español, Русский and 简体中文. If you are unsure whether something is a bug, describe what happened; the form is written for normal users.
 
 For common questions first see the [FAQ](docs/FAQ.md).

@@ -38,6 +38,6 @@ Não publique senhas, credenciais, textos confidenciais ou caminhos privados. Ca
 
 ## Onde relatar
 
-Use o formulário **Bug report** em GitHub Issues. Se não souber se é realmente um bug, descreva o que aconteceu; o formulário foi feito para usuários comuns.
+Use o formulário **Relatar bug — Português (Brasil)** em GitHub Issues. Se não souber se é realmente um bug, descreva o que aconteceu; o formulário foi feito para usuários comuns.
 
 Para dúvidas frequentes, consulte primeiro as [perguntas frequentes](FAQ.pt-BR.md).

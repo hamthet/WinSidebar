@@ -38,6 +38,6 @@ No publiques contraseñas, credenciales, información confidencial ni rutas priv
 
 ## Dónde informar
 
-Usa el formulario **Bug report** de GitHub Issues. Si no sabes si es un bug, simplemente describe lo ocurrido.
+Usa el formulario **Informar de un bug — Español** de GitHub Issues. Si no sabes si es un bug, simplemente describe lo ocurrido.
 
 Consulta también las [preguntas frecuentes](FAQ.es-ES.md).

@@ -63,7 +63,10 @@ $required = @(
     'assets\i18n\pt-BR\hero-illustration.svg', 'assets\i18n\pt-BR\linkedin-illustration.svg',
     'assets\i18n\es-ES\hero-illustration.svg', 'assets\i18n\es-ES\linkedin-illustration.svg',
     'assets\i18n\ru-RU\hero-illustration.svg', 'assets\i18n\ru-RU\linkedin-illustration.svg',
-    'assets\i18n\zh-CN\hero-illustration.svg', 'assets\i18n\zh-CN\linkedin-illustration.svg'
+    'assets\i18n\zh-CN\hero-illustration.svg', 'assets\i18n\zh-CN\linkedin-illustration.svg',
+    '.github\ISSUE_TEMPLATE\bug_report.yml', '.github\ISSUE_TEMPLATE\bug_report.pt-BR.yml',
+    '.github\ISSUE_TEMPLATE\bug_report.es-ES.yml', '.github\ISSUE_TEMPLATE\bug_report.ru-RU.yml',
+    '.github\ISSUE_TEMPLATE\bug_report.zh-CN.yml'
 )
 foreach ($path in $required) {
     if (-not (Test-Path -LiteralPath (Join-Path $root $path) -PathType Leaf)) {
@@ -224,6 +227,23 @@ foreach ($path in $artLanguages.Keys) {
         $name = Split-Path -Leaf $path
         if ($titleMatch.Groups[1].Value -eq $englishArt[$name][0] -or $descMatch.Groups[1].Value -eq $englishArt[$name][1]) {
             throw "Localized SVG accessibility metadata still matches English: $path"
+        }
+    }
+}
+
+Write-Host 'Auditing localized GitHub issue forms...'
+$issueForms = @(
+    '.github\ISSUE_TEMPLATE\bug_report.yml',
+    '.github\ISSUE_TEMPLATE\bug_report.pt-BR.yml',
+    '.github\ISSUE_TEMPLATE\bug_report.es-ES.yml',
+    '.github\ISSUE_TEMPLATE\bug_report.ru-RU.yml',
+    '.github\ISSUE_TEMPLATE\bug_report.zh-CN.yml'
+)
+foreach ($path in $issueForms) {
+    $form = [IO.File]::ReadAllText((Join-Path $root $path), $utf8)
+    foreach ($token in @('WinSidebar 2.0','Windows 11','Windows 10','English','Português (Brasil)','Español','Русский','简体中文')) {
+        if (-not $form.Contains($token)) {
+            throw "Localized issue form is missing a required product/language token: $path / $token"
         }
     }
 }
