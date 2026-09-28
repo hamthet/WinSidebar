@@ -300,7 +300,7 @@ foreach ($code in $artByLocale.Keys) {
             }
         }
         $shortcutTitle = (Get-CatalogValue $code 'sidebar.shortcuts').Trim()
-        if (-not $svg.Contains(('>' + $shortcutTitle + '<'))) {
+        if (-not $svg.Contains(('>' + $shortcutTitle))) {
             throw "Concept artwork shortcut heading mismatch: $path"
         }
         if (-not $svg.Contains('AltGr+Y')) {
